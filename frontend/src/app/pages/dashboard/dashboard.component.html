@@ -1,1 +1,14 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <h1>Sistema Agropecuário</h1>
+    <div class="header-actions">
+      <span class="role-badge" *ngIf="role">Perfil: {{ role }}</span>
+      <button type="button" class="btn-logout" (click)="onLogout()">Sair</button>
+    </div>
+  </header>
+
+  <main class="dashboard-content">
+    <h2>Dashboard</h2>
+    <p>Você está autenticado. Use o menu para gerenciar o rebanho.</p>
+  </main>
+</div>

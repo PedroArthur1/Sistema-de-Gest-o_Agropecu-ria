@@ -1,5 +1,6 @@
 package model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,6 +23,7 @@ public class User implements UserDetails {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 
@@ -37,6 +39,22 @@ public class User implements UserDetails {
         this.role = role;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.toUpperCase()));
@@ -47,24 +65,20 @@ public class User implements UserDetails {
         return this.password;
     }
 
-    public String getEmail() {
-        return email;
+    @Override
+    public String getUsername() {
+        return this.email;
     }
 
     @Override
-    public String getUsername() {
-        return this.nome;
-    }
+    public boolean isAccountNonExpired() { return true; }
 
-        @Override
-        public boolean isAccountNonExpired() { return true; }
+    @Override
+    public boolean isAccountNonLocked() { return true; }
 
-        @Override
-        public boolean isAccountNonLocked() { return true; }
+    @Override
+    public boolean isCredentialsNonExpired() { return true; }
 
-        @Override
-        public boolean isCredentialsNonExpired() { return true; }
-
-        @Override
-        public boolean isEnabled() { return true; }
+    @Override
+    public boolean isEnabled() { return true; }
 }
