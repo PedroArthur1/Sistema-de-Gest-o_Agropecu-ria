@@ -19,9 +19,25 @@ Sistema Agropecuário de animais voltado para o cuidado, manejo, vacinação e a
 ---
 
 ## 🛠️ Tecnologias Utilizadas
-* **Frontend:** Angular CLI
-* **Backend:** Java com Spring Boot
+* **Frontend:** Angular 17+ (TypeScript, HTML5, CSS3)
+* **Backend:** Java 17+ com Spring Boot, Spring Security e JWT
 * **Gestão e Versionamento:** Git, GitHub Organizations e GitHub Projects (Scrum)
+
+---
+
+## 🔒 Funcionalidades
+
+### Frontend (Angular)
+- **Páginas de Autenticação:** Login (`/login`) e Registro de Usuários (`/register`) com formulários estilizados via CSS.
+- **Gerenciamento de Sessão (`AuthService`):** Integração com a API para login/registro e armazenamento seguro do Token JWT e Roles (`ADMIN` / `USER`) no `localStorage`.
+- **Injeção de Token (`HTTP Interceptor`):** Interceptador que anexa automaticamente o cabeçalho `Authorization: Bearer <token>` em todas as requisições enviadas ao backend.
+- **Proteção de Rotas (`AuthGuard`):** Bloqueio de navegação para usuários não autenticados ou sem o perfil de acesso (`Role`) necessário.
+
+### Backend (Spring Boot)
+- **Spring Security & JWT:** Configuração de segurança para autenticação via token Bearer.
+- **Controle de Autorização:** Restrição de endpoints por perfis de acesso (`ADMIN` e `USER`).
+- **Filtro de Interceptação (`OncePerRequestFilter`):** Validação de tokens JWT recebidos em cada requisição.
+- **CORS Configurado:** Permissão para requisições vindas da aplicação Angular (`http://localhost:4200`).
 
 ---
 
