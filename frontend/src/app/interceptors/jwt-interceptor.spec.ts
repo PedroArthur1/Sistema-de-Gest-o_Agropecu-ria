@@ -1,6 +1,6 @@
+import { describe, it, expect, beforeEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { HttpInterceptorFn } from '@angular/common/http';
-
 import { jwtInterceptor } from './jwt-interceptor';
 
 describe('jwtInterceptor', () => {
