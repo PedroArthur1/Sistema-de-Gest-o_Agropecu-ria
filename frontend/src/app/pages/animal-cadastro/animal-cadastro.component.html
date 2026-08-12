@@ -1,145 +1,138 @@
-<div class="cadastro-container">
-  <div class="cadastro-card">
-    <!-- Cabeçalho -->
-    <header class="card-header">
-      <div class="header-title">
-        <span class="icon">🐄</span>
-        <h2>Cadastrar Novo Animal</h2>
-      </div>
-      <button type="button" class="btn-back" (click)="voltar()">← Voltar ao Dashboard</button>
-    </header>
+<div class="pagina-cadastro">
+  <!-- Cabeçalho da página -->
+  <app-cabecalho-pagina
+    titulo="Cadastrar Novo Animal"
+    subtitulo="Preencha os dados do animal para registrá-lo no sistema."
+    icone="🐄"
+  >
+    <button type="button" class="btn-voltar" (click)="voltar()">← Voltar</button>
+  </app-cabecalho-pagina>
 
-    <!-- Alertas -->
-    <div *ngIf="mensagemSucesso" class="alert alert-success" role="alert">
-      <span>✅ {{ mensagemSucesso }}</span>
-    </div>
+  <!-- Alertas de feedback -->
+  <app-alerta-mensagem [mensagem]="mensagemSucesso" tipo="sucesso"></app-alerta-mensagem>
+  <app-alerta-mensagem [mensagem]="mensagemErro" tipo="erro"></app-alerta-mensagem>
 
-    <div *ngIf="mensagemErro" class="alert alert-danger" role="alert">
-      <span>⚠️ {{ mensagemErro }}</span>
-    </div>
+  <!-- Card do formulário -->
+  <div class="formulario-card">
+    <form [formGroup]="formularioAnimal" (ngSubmit)="cadastrar()">
+      <div class="formulario-grid">
+        <!-- Código de Identificação -->
+        <app-campo-formulario
+          label="Código de Identificação"
+          tipo="text"
+          campoId="codigoIdentificacao"
+          placeholder="Ex: BOV-2026-001"
+          [obrigatorio]="true"
+          [invalido]="campoInvalido('codigoIdentificacao')"
+          mensagemErro="O código de identificação é obrigatório (mínimo 2 caracteres)."
+          formControlName="codigoIdentificacao"
+        ></app-campo-formulario>
 
-    <!-- Formulário de Cadastro -->
-    <form [formGroup]="formularioAnimal" (ngSubmit)="cadastrar()" class="cadastro-form">
-      <div class="form-grid">
-        <div class="form-group">
-          <label for="codigoIdentificacao">Código de Identificação <span class="required">*</span></label>
-          <input
-            id="codigoIdentificacao"
-            type="text"
-            formControlName="codigoIdentificacao"
-            placeholder="Ex: BOV-2026-001"
-            [class.is-invalid]="campoInvalido('codigoIdentificacao')"
-          />
-          <small *ngIf="campoInvalido('codigoIdentificacao')" class="error-text">
-            O código de identificação é obrigatório (mínimo 2 caracteres).
-          </small>
-        </div>
+        <!-- Espécie -->
+        <app-campo-formulario
+          label="Espécie"
+          tipo="select"
+          campoId="especie"
+          placeholder="Selecione a espécie"
+          [obrigatorio]="true"
+          [opcoes]="especiesDisponiveis"
+          [invalido]="campoInvalido('especie')"
+          mensagemErro="Selecione a espécie do animal."
+          formControlName="especie"
+        ></app-campo-formulario>
 
-        <div class="form-group">
-          <label for="especie">Espécie <span class="required">*</span></label>
-          <select
-            id="especie"
-            formControlName="especie"
-            [class.is-invalid]="campoInvalido('especie')"
-          >
-            <option value="" disabled selected>Selecione a espécie</option>
-            <option *ngFor="let item of especiesDisponiveis" [value]="item">{{ item }}</option>
-          </select>
-          <small *ngIf="campoInvalido('especie')" class="error-text">
-            Selecione a espécie do animal.
-          </small>
-        </div>
+        <!-- Raça -->
+        <app-campo-formulario
+          label="Raça"
+          tipo="text"
+          campoId="raca"
+          placeholder="Ex: Nelore, Angus, Holandesa"
+          [obrigatorio]="true"
+          [invalido]="campoInvalido('raca')"
+          mensagemErro="A raça é obrigatória."
+          formControlName="raca"
+        ></app-campo-formulario>
 
-        <div class="form-group">
-          <label for="raca">Raça <span class="required">*</span></label>
-          <input
-            id="raca"
-            type="text"
-            formControlName="raca"
-            placeholder="Ex: Nelore, Angus, Holandesa"
-            [class.is-invalid]="campoInvalido('raca')"
-          />
-          <small *ngIf="campoInvalido('raca')" class="error-text">
-            A raça é obrigatória.
-          </small>
-        </div>
+        <!-- Sexo -->
+        <app-campo-formulario
+          label="Sexo"
+          tipo="select"
+          campoId="sexo"
+          placeholder="Selecione o sexo"
+          [obrigatorio]="true"
+          [opcoes]="['Macho', 'Fêmea']"
+          [invalido]="campoInvalido('sexo')"
+          mensagemErro="Selecione o sexo do animal."
+          formControlName="sexo"
+        ></app-campo-formulario>
 
-        <div class="form-group">
-          <label for="sexo">Sexo <span class="required">*</span></label>
-          <select
-            id="sexo"
-            formControlName="sexo"
-            [class.is-invalid]="campoInvalido('sexo')"
-          >
-            <option value="" disabled selected>Selecione o sexo</option>
-            <option value="MACHO">Macho</option>
-            <option value="FEMEA">Fêmea</option>
-          </select>
-          <small *ngIf="campoInvalido('sexo')" class="error-text">
-            Selecione o sexo do animal.
-          </small>
-        </div>
+        <!-- Data de Nascimento / Idade -->
+        <app-campo-formulario
+          label="Data de Nascimento / Idade"
+          tipo="text"
+          campoId="dataNascimentoOuIdade"
+          placeholder="Ex: 2024-05-10 ou '2 anos'"
+          [obrigatorio]="true"
+          [invalido]="campoInvalido('dataNascimentoOuIdade')"
+          mensagemErro="Informe a data de nascimento ou idade aproximada."
+          formControlName="dataNascimentoOuIdade"
+        ></app-campo-formulario>
 
-        <div class="form-group">
-          <label for="dataNascimentoOuIdade">Data de Nascimento / Idade <span class="required">*</span></label>
-          <input
-            id="dataNascimentoOuIdade"
-            type="text"
-            formControlName="dataNascimentoOuIdade"
-            placeholder="Ex: 2024-05-10 ou '2 anos'"
-            [class.is-invalid]="campoInvalido('dataNascimentoOuIdade')"
-          />
-          <small *ngIf="campoInvalido('dataNascimentoOuIdade')" class="error-text">
-            Informe a data de nascimento ou idade aproximada.
-          </small>
-        </div>
+        <!-- Peso -->
+        <app-campo-formulario
+          label="Peso (kg)"
+          tipo="number"
+          campoId="peso"
+          placeholder="Ex: 450.5"
+          step="0.1"
+          [obrigatorio]="true"
+          [invalido]="campoInvalido('peso')"
+          mensagemErro="O peso deve ser um valor numérico positivo."
+          formControlName="peso"
+        ></app-campo-formulario>
 
-        <div class="form-group">
-          <label for="peso">Peso (kg) <span class="required">*</span></label>
-          <input
-            id="peso"
-            type="number"
-            step="0.1"
-            formControlName="peso"
-            placeholder="Ex: 450.5"
-            [class.is-invalid]="campoInvalido('peso')"
-          />
-          <small *ngIf="campoInvalido('peso')" class="error-text">
-            O peso deve ser um valor numérico positivo.
-          </small>
-        </div>
-
-        <div class="form-group full-width">
-          <label for="condicaoSaude">Condição de Saúde <span class="required">*</span></label>
-          <select
-            id="condicaoSaude"
+        <!-- Condição de Saúde -->
+        <div class="campo-largura-total">
+          <app-campo-formulario
+            label="Condição de Saúde"
+            tipo="select"
+            campoId="condicaoSaude"
+            placeholder="Selecione a condição de saúde"
+            [obrigatorio]="true"
+            [opcoes]="condicoesSaude"
+            [invalido]="campoInvalido('condicaoSaude')"
+            mensagemErro="A condição de saúde é obrigatória."
             formControlName="condicaoSaude"
-            [class.is-invalid]="campoInvalido('condicaoSaude')"
-          >
-            <option value="" disabled selected>Selecione a condição de saúde</option>
-            <option *ngFor="let status of condicoesSaude" [value]="status">{{ status }}</option>
-          </select>
-          <small *ngIf="campoInvalido('condicaoSaude')" class="error-text">
-            A condição de saúde é obrigatória.
-          </small>
+          ></app-campo-formulario>
         </div>
 
-        <div class="form-group full-width">
-          <label for="observacoes">Observações Adicionais (Opcional)</label>
-          <textarea
-            id="observacoes"
-            formControlName="observacoes"
-            rows="3"
+        <!-- Observações -->
+        <div class="campo-largura-total">
+          <app-campo-formulario
+            label="Observações Adicionais (Opcional)"
+            tipo="textarea"
+            campoId="observacoes"
             placeholder="Informações adicionais sobre o histórico, vacinação ou alimentação..."
-          ></textarea>
+            [obrigatorio]="false"
+            [linhas]="3"
+            formControlName="observacoes"
+          ></app-campo-formulario>
         </div>
       </div>
 
-      <div class="form-actions">
-        <button type="button" class="btn-cancel" (click)="voltar()">Cancelar</button>
-        <button type="submit" class="btn-submit" [disabled]="estaEnviando">
-          {{ estaEnviando ? 'Cadastrando...' : 'Cadastrar Animal' }}
-        </button>
+      <!-- Botões de ação -->
+      <div class="acoes-formulario">
+        <app-botao-acao
+          texto="Cancelar"
+          tipo="cancelar"
+          (aoClicar)="voltar()"
+        ></app-botao-acao>
+        <app-botao-acao
+          [texto]="estaEnviando ? 'Cadastrando...' : 'Cadastrar Animal'"
+          tipo="primario"
+          [tipoSubmit]="true"
+          [desabilitado]="estaEnviando"
+        ></app-botao-acao>
       </div>
     </form>
   </div>

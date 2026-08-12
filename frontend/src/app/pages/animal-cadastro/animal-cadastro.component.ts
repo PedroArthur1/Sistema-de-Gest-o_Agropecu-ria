@@ -3,11 +3,22 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AnimalService } from '../../services/animal/animal.service';
+import { AlertaMensagemComponent } from '../../components/alerta-mensagem/alerta-mensagem.component';
+import { CabecalhoPaginaComponent } from '../../components/cabecalho-pagina/cabecalho-pagina.component';
+import { CampoFormularioComponent } from '../../components/campo-formulario/campo-formulario.component';
+import { BotaoAcaoComponent } from '../../components/botao-acao/botao-acao.component';
 
 @Component({
   selector: 'app-animal-cadastro',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    AlertaMensagemComponent,
+    CabecalhoPaginaComponent,
+    CampoFormularioComponent,
+    BotaoAcaoComponent
+  ],
   templateUrl: './animal-cadastro.component.html',
   styleUrl: './animal-cadastro.component.css'
 })

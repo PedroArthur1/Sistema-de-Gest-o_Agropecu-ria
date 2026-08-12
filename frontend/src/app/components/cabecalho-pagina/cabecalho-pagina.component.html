@@ -1,0 +1,10 @@
+<div class="cabecalho">
+  <div class="cabecalho-info">
+    <span *ngIf="icone" class="cabecalho-icone">{{ icone }}</span>
+    <div>
+      <h2 class="cabecalho-titulo">{{ titulo }}</h2>
+      <p *ngIf="subtitulo" class="cabecalho-subtitulo">{{ subtitulo }}</p>
+    </div>
+  </div>
+  <ng-content></ng-content>
+</div>
