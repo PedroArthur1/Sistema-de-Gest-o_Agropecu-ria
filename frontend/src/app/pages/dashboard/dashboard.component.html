@@ -1,79 +1,11 @@
-<div class="dashboard-container">
-  <header class="dashboard-header">
-    <h1>🌱 Sistema Agropecuário</h1>
-    <div class="header-actions">
-      <span class="role-badge" *ngIf="perfil">Perfil: {{ perfil }}</span>
-      <a routerLink="/animais/cadastrar" class="btn-nav">➕ Cadastrar Animal</a>
-      <button type="button" class="btn-logout" (click)="sair()">Sair</button>
-    </div>
-  </header>
-
-  <main class="dashboard-content">
-    <div class="welcome-banner">
-      <h2>Painel de Controle do Rebanho</h2>
-      <p>Bem-vindo ao sistema de acompanhamento. Gerencie os animais do seu rebanho com facilidade.</p>
-    </div>
-
-    <div class="actions-section">
-      <div class="action-card">
-        <div class="card-icon">🐄</div>
-        <div class="card-info">
-          <h3>Cadastrar Animal</h3>
-          <p>Adicione um novo animal com informações básicas de identificação, saúde e peso.</p>
-        </div>
-        <a routerLink="/animais/cadastrar" class="btn-action">Acessar Cadastro →</a>
-      </div>
-    </div>
-
-    <section class="rebanho-section">
-      <div class="section-header">
-        <h3>Animais do Rebanho</h3>
-        <button type="button" class="btn-refresh" (click)="carregarAnimais()">🔄 Atualizar</button>
-      </div>
-
-      <div *ngIf="estaCarregando" class="loading-state">
-        <p>Carregando dados do rebanho...</p>
-      </div>
-
-      <div *ngIf="!estaCarregando && animais.length === 0" class="empty-state">
-        <p>Nenhum animal cadastrado até o momento.</p>
-        <a routerLink="/animais/cadastrar" class="btn-action-sm">Cadastrar Primeiro Animal</a>
-      </div>
-
-      <div *ngIf="!estaCarregando && animais.length > 0" class="table-responsive">
-        <table class="animals-table">
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th>Espécie</th>
-              <th>Raça</th>
-              <th>Sexo</th>
-              <th>Idade / Nascimento</th>
-              <th>Peso (kg)</th>
-              <th>Condição de Saúde</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let animal of animais">
-              <td><strong>{{ animal.codigoIdentificacao }}</strong></td>
-              <td>{{ animal.especie }}</td>
-              <td>{{ animal.raca }}</td>
-              <td>
-                <span class="badge-sexo" [class.macho]="animal.sexo === 'MACHO'" [class.femea]="animal.sexo === 'FEMEA'">
-                  {{ animal.sexo === 'MACHO' ? 'Macho' : 'Fêmea' }}
-                </span>
-              </td>
-              <td>{{ animal.dataNascimentoOuIdade }}</td>
-              <td>{{ animal.peso }} kg</td>
-              <td>
-                <span class="status-badge" [class]="'status-' + (animal.condicaoSaude | lowercase)">
-                  {{ animal.condicaoSaude }}
-                </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-  </main>
+<div class="dashboard-layout">
+  <app-sidebar></app-sidebar>
+  
+  <div class="main-content">
+    <app-header></app-header>
+    
+    <main class="content-area">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
 </div>

@@ -1,0 +1,49 @@
+<div class="welcome-container">
+  <div class="welcome-header">
+    <h2>Olá, {{ role || 'Usuário' | uppercase }}!</h2>
+    <p>Aqui está o resumo da sua propriedade hoje.</p>
+  </div>
+
+  <div class="hero-card">
+    <div class="hero-content">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path>
+        <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+      </svg>
+      <div class="hero-text">
+        <h3>Status da Propriedade Ideal</h3>
+        <p>100% do rebanho está com a vacinação em dia. A próxima etapa de manejo está agendada para o mês que vem.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="section-title">Seu mural</h3>
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-icon success">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      </div>
+      <div class="metric-info">
+        <h4>Rebanho Ativo</h4>
+        <span class="metric-value">450 Animais</span>
+      </div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-icon warning">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+          <line x1="12" y1="9" x2="12" y2="13"></line>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+      </div>
+      <div class="metric-info">
+        <h4>Estoque de Ração</h4>
+        <span class="metric-value">Abaixo de 20% no galpão 2</span>
+      </div>
+    </div>
+  </div>
+</div>
