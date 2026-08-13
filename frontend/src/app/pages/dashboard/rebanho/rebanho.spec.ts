@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Rebanho } from './rebanho';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 describe('Rebanho', () => {
   let component: Rebanho;
@@ -11,6 +13,8 @@ describe('Rebanho', () => {
     await TestBed.configureTestingModule({
       imports: [Rebanho],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         {
           provide: ActivatedRoute,
           useValue: { params: of({}) }

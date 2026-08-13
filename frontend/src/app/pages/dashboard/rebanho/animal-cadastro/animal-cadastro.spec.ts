@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AnimalCadastro } from './animal-cadastro';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 describe('AnimalCadastro', () => {
   let component: AnimalCadastro;
@@ -14,6 +16,8 @@ describe('AnimalCadastro', () => {
     await TestBed.configureTestingModule({
       imports: [AnimalCadastro, ReactiveFormsModule],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: Router, useValue: mockRouter }
       ]
     })

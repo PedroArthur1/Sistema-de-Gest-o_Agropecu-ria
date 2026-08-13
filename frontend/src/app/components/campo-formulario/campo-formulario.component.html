@@ -4,9 +4,9 @@
     <span *ngIf="obrigatorio" class="campo-obrigatorio">*</span>
   </label>
 
-  <!-- Input de texto ou número -->
+  <!-- Input de texto, número ou data -->
   <input
-    *ngIf="tipo === 'text' || tipo === 'number'"
+    *ngIf="tipo === 'text' || tipo === 'number' || tipo === 'date'"
     [id]="campoId"
     [type]="tipo"
     [placeholder]="placeholder"
