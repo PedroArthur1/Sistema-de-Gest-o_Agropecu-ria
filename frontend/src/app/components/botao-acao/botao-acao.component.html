@@ -1,0 +1,8 @@
+<button
+  [type]="tipoSubmit ? 'submit' : 'button'"
+  [class]="'botao botao-' + tipo"
+  [disabled]="desabilitado"
+  (click)="onClick()"
+>
+  {{ texto }}
+</button>

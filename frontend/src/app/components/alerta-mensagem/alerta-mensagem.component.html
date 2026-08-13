@@ -1,0 +1,4 @@
+<div *ngIf="mensagem" class="alerta" [ngClass]="tipo" role="alert">
+  <span class="alerta-icone">{{ tipo === 'sucesso' ? '✅' : '⚠️' }}</span>
+  <span class="alerta-texto">{{ mensagem }}</span>
+</div>
