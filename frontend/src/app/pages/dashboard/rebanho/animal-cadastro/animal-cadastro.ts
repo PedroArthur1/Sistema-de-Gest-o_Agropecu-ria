@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AnimalService } from '../../../../../services/animal/animal.service';
 
 @Component({
   selector: 'app-animal-cadastro',
@@ -18,7 +19,8 @@ export class AnimalCadastro implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private animalService: AnimalService
   ) {}
 
   ngOnInit(): void {
@@ -82,15 +84,21 @@ export class AnimalCadastro implements OnInit {
     const contadorAtual = parseInt(localStorage.getItem(storageKey) || '1', 10);
     localStorage.setItem(storageKey, (contadorAtual + 1).toString());
 
-    // Simulando a chamada a um serviço backend
-    setTimeout(() => {
-      this.successMessage = 'Animal cadastrado com sucesso!';
-      this.isSubmitting = false;
-      this.animalForm.reset();
-      
-      // Retorna para a tela de rebanho após 2 segundos
-      setTimeout(() => this.voltar(), 2000);
-    }, 1000);
+    // Salva o animal usando o serviço
+    this.animalService.cadastrarAnimal(this.animalForm.getRawValue()).subscribe({
+      next: () => {
+        this.successMessage = 'Animal cadastrado com sucesso!';
+        this.isSubmitting = false;
+        this.animalForm.reset();
+        
+        // Retorna para a tela de rebanho após 2 segundos
+        setTimeout(() => this.voltar(), 2000);
+      },
+      error: () => {
+        this.errorMessage = 'Erro ao cadastrar animal. Tente novamente.';
+        this.isSubmitting = false;
+      }
+    });
   }
 
   voltar(): void {

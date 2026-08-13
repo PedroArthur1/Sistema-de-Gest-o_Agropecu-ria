@@ -61,7 +61,22 @@
     <!-- Lista de Animais Renderizada (Fica oculta se vazio) -->
     <div class="list-content" *ngIf="animais.length > 0">
       <div class="list-item" *ngFor="let animal of animais">
-        <!-- Renderização da linha do animal iria aqui -->
+        <div class="col font-semibold text-primary">{{ animal.codigoIdentificacao }}</div>
+        <div class="col">{{ animal.especie }} / {{ animal.raca }}</div>
+        <div class="col">{{ animal.sexo }}</div>
+        <div class="col">{{ animal.dataNascimentoOuIdade | date:'dd/MM/yyyy' }}</div>
+        <div class="col">
+          <span class="badge" 
+                [class.badge-success]="animal.condicaoSaude === 'Saudável'"
+                [class.badge-warning]="animal.condicaoSaude === 'Em Observação'"
+                [class.badge-danger]="animal.condicaoSaude === 'Em Tratamento'">
+            {{ animal.condicaoSaude }}
+          </span>
+        </div>
+        <div class="col action-col">
+          <button class="btn-icon" title="Editar">✏️</button>
+          <button class="btn-icon" title="Excluir">🗑️</button>
+        </div>
       </div>
     </div>
   </div>

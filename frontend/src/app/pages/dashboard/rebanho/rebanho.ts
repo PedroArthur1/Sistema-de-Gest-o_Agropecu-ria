@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { AnimalService } from '../../../../services/animal/animal.service';
+import { Animal } from '../../../../models/animal.model';
 
 @Component({
   selector: 'app-rebanho',
@@ -9,9 +11,26 @@ import { RouterLink } from '@angular/router';
   templateUrl: './rebanho.html',
   styleUrl: './rebanho.css',
 })
-export class Rebanho {
-  animais: any[] = []; // Array vazio força o Empty State
+export class Rebanho implements OnInit {
+  animais: Animal[] = []; 
   
   abas = ['Todos os Animais', 'Vacinados', 'Em Tratamento', 'Mães', 'Filhotes'];
   abaAtiva = 'Todos os Animais';
+
+  constructor(private animalService: AnimalService) {}
+
+  ngOnInit(): void {
+    this.carregarAnimais();
+  }
+
+  carregarAnimais(): void {
+    this.animalService.listarAnimais().subscribe({
+      next: (dados) => {
+        this.animais = dados;
+      },
+      error: (err) => {
+        console.error('Erro ao carregar animais:', err);
+      }
+    });
+  }
 }
