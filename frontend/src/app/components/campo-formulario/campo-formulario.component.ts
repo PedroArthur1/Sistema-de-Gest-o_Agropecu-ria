@@ -22,7 +22,7 @@ import {
 })
 export class CampoFormularioComponent implements ControlValueAccessor {
   @Input() label: string = '';
-  @Input() tipo: 'text' | 'number' | 'select' | 'textarea' = 'text';
+  @Input() tipo: 'text' | 'number' | 'select' | 'textarea' | 'date' = 'text';
   @Input() placeholder: string = '';
   @Input() obrigatorio: boolean = false;
   @Input() opcoes: string[] = [];
