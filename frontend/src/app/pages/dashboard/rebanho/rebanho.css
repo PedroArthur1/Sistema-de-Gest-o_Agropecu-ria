@@ -205,14 +205,26 @@
   cursor: pointer;
   padding: 4px;
   border-radius: 4px;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #dc2626; /* Inspirado no mockup (ícones vermelhos) */
 }
 
-.btn-icon:hover {
+.btn-icon.edit {
+  color: var(--text-secondary);
+}
+
+.btn-icon.edit:hover {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+}
+
+.btn-icon.delete {
+  color: #dc2626;
+}
+
+.btn-icon.delete:hover {
   background-color: #fee2e2;
 }
 
