@@ -25,13 +25,9 @@ export class AuthService {
         return this.http.post<any>(`${this.apiUrl}/register`, userData);
     }
 
-    logout(): Observable<void> {
-        return this.http.post<void>(`${this.apiUrl}/logout`, {}).pipe(
-            finalize(() => {
-                localStorage.removeItem('jwt_token');
-                localStorage.removeItem('user_role');
-            })
-        );
+    logout(): void {
+      localStorage.removeItem('jwt_token');
+      localStorage.removeItem('user_role');
     }
 
     getToken(): string | null {
