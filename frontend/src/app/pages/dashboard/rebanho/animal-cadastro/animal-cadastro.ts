@@ -32,6 +32,30 @@ export class AnimalCadastro implements OnInit {
       condicaoSaude: ['', Validators.required],
       observacoes: ['']
     });
+
+    // Gera código automático ao mudar a espécie
+    this.animalForm.get('especie')?.valueChanges.subscribe(especie => {
+      if (especie) {
+        this.gerarCodigoAutomatico(especie);
+      }
+    });
+  }
+
+  private gerarCodigoAutomatico(especie: string): void {
+    const prefixos: Record<string, string> = {
+      'Bovino': 'BOV',
+      'Suíno': 'SUI',
+      'Equino': 'EQU',
+      'Ovino': 'OVI',
+      'Outro': 'OUT'
+    };
+    
+    const prefixo = prefixos[especie] || 'ANI';
+    const numeroAleatorio = Math.floor(10000 + Math.random() * 90000); // 5 dígitos
+    
+    this.animalForm.patchValue({
+      codigoIdentificacao: `${prefixo}-${numeroAleatorio}`
+    });
   }
 
   onSubmit(): void {

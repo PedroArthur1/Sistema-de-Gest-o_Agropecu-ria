@@ -115,6 +115,13 @@
   border-color: var(--primary-color);
 }
 
+.form-group input.input-readonly {
+  background-color: var(--bg-color);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+  border-color: var(--border-color);
+}
+
 .error-text {
   color: var(--danger-color);
   font-size: 12px;

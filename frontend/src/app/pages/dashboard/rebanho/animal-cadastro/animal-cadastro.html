@@ -25,7 +25,7 @@
       <div class="form-grid">
         <div class="form-group">
           <label>Código de Identificação *</label>
-          <input type="text" formControlName="codigoIdentificacao" placeholder="Ex: BR-12345" />
+          <input type="text" formControlName="codigoIdentificacao" placeholder="Gerado automaticamente..." readonly class="input-readonly" />
           <span class="error-text" *ngIf="animalForm.get('codigoIdentificacao')?.touched && animalForm.get('codigoIdentificacao')?.invalid">
             Código é obrigatório
           </span>
