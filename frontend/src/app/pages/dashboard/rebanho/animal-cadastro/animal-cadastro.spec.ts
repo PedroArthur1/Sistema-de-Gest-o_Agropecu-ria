@@ -6,15 +6,15 @@ import { Router } from '@angular/router';
 describe('AnimalCadastro', () => {
   let component: AnimalCadastro;
   let fixture: ComponentFixture<AnimalCadastro>;
-  let routerSpy: jasmine.SpyObj<Router>;
+  let mockRouter: any;
 
   beforeEach(async () => {
-    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    mockRouter = { navigate: () => {} };
 
     await TestBed.configureTestingModule({
       imports: [AnimalCadastro, ReactiveFormsModule],
       providers: [
-        { provide: Router, useValue: routerSpy }
+        { provide: Router, useValue: mockRouter }
       ]
     })
     .compileComponents();
@@ -34,7 +34,7 @@ describe('AnimalCadastro', () => {
 
   it('deve barrar submissão se formulário for inválido', () => {
     component.onSubmit();
-    expect(component.isSubmitting).toBeFalse();
+    expect(component.isSubmitting).toBe(false);
     expect(component.errorMessage).toContain('obrigatórios');
   });
 
