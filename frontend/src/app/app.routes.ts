@@ -3,8 +3,8 @@ import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { Welcome } from './pages/dashboard/welcome/welcome';
-import { AnimalCadastroComponent } from './pages/animal-cadastro/animal-cadastro.component';
-import { RebanhoComponent } from './pages/dashboard/rebanho/rebanho.component';
+import { Rebanho } from './pages/dashboard/rebanho/rebanho';
+import { AnimalCadastro } from './pages/dashboard/rebanho/animal-cadastro/animal-cadastro';
 import { authGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
@@ -17,8 +17,8 @@ export const routes: Routes = [
         canActivate: [authGuard],
         children: [
             { path: '', component: Welcome },
-            { path: 'rebanho', component: RebanhoComponent },
-            { path: 'rebanho/cadastrar', component: AnimalCadastroComponent },
+            { path: 'rebanho', component: Rebanho },
+            { path: 'rebanho/novo', component: AnimalCadastro },
             { path: 'pastagem', component: Welcome },
             { path: 'vacinacao', component: Welcome },
             { path: 'reproducao', component: Welcome },

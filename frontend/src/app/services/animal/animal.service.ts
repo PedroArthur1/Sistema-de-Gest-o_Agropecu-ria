@@ -1,21 +1,29 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Animal } from '../../models/animal.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AnimalService {
-  private urlApi: string = 'http://localhost:8080/animais';
+  private storageKey = 'animais_mock_db';
 
-  constructor(private clienteHttp: HttpClient) {}
+  constructor() {}
 
   cadastrarAnimal(animal: Animal): Observable<Animal> {
-    return this.clienteHttp.post<Animal>(this.urlApi, animal);
+    const animais = this.obterAnimaisDoStorage();
+    animal.id = new Date().getTime(); // Gera ID único
+    animais.push(animal);
+    localStorage.setItem(this.storageKey, JSON.stringify(animais));
+    return of(animal);
   }
 
   listarAnimais(): Observable<Animal[]> {
-    return this.clienteHttp.get<Animal[]>(this.urlApi);
+    return of(this.obterAnimaisDoStorage());
+  }
+
+  private obterAnimaisDoStorage(): Animal[] {
+    const data = localStorage.getItem(this.storageKey);
+    return data ? JSON.parse(data) : [];
   }
 }
