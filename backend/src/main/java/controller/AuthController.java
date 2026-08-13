@@ -45,4 +45,9 @@ public class AuthController {
         User registeredUser = this.authService.register(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout() {
+        return ResponseEntity.ok().build();
+    }
 }

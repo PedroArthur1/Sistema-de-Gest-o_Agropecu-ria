@@ -1,0 +1,92 @@
+<div class="rebanho-container">
+  <!-- Cabeçalho -->
+  <header class="rebanho-header">
+    <div class="header-left">
+      <h2>Gestão de Rebanho</h2>
+    </div>
+    <div class="header-right">
+      <div class="search-box">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" placeholder="Buscar animal por código, raça..." />
+      </div>
+      <button class="btn-primary" routerLink="/dashboard/rebanho/novo">
+        + Cadastrar Animal
+      </button>
+    </div>
+  </header>
+
+  <!-- Abas de Filtro -->
+  <div class="tabs-container">
+    <div 
+      class="tab-item" 
+      *ngFor="let aba of abas"
+      [class.active]="aba === abaAtiva"
+      (click)="abaAtiva = aba">
+      {{ aba }}
+    </div>
+  </div>
+
+  <!-- Tabela / Lista de Animais -->
+  <div class="list-container">
+    <div class="list-header">
+      <div class="col">CÓDIGO / IDENTIFICAÇÃO</div>
+      <div class="col">ESPÉCIE / RAÇA</div>
+      <div class="col">SEXO</div>
+      <div class="col">IDADE</div>
+      <div class="col">SAÚDE</div>
+      <div class="col action-col">AÇÕES</div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="animais.length === 0">
+      <div class="empty-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+      </div>
+      <h3>Nenhum animal cadastrado</h3>
+      <p>Comece adicionando bovinos, equinos ou outros animais ao seu rebanho.</p>
+      <button class="btn-primary" routerLink="/dashboard/rebanho/novo">
+        + Cadastrar Animal
+      </button>
+    </div>
+
+    <!-- Lista de Animais Renderizada (Fica oculta se vazio) -->
+    <div class="list-content" *ngIf="animais.length > 0">
+      <div class="list-item" *ngFor="let animal of animais">
+        <div class="col font-semibold text-primary">{{ animal.codigoIdentificacao }}</div>
+        <div class="col">{{ animal.especie }} / {{ animal.raca }}</div>
+        <div class="col">{{ animal.sexo }}</div>
+        <div class="col">{{ animal.dataNascimentoOuIdade | date:'dd/MM/yyyy' }}</div>
+        <div class="col">
+          <span class="badge" 
+                [class.badge-success]="animal.condicaoSaude === 'Saudável'"
+                [class.badge-warning]="animal.condicaoSaude === 'Em Observação'"
+                [class.badge-danger]="animal.condicaoSaude === 'Em Tratamento'">
+            {{ animal.condicaoSaude }}
+          </span>
+        </div>
+        <div class="col action-col">
+          <button class="btn-icon edit" title="Editar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+          </button>
+          <button class="btn-icon delete" title="Excluir">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Rodapé de Contagem -->
+    <div class="list-footer" *ngIf="animais.length > 0">
+      Registros Totais: <strong>{{ animais.length }}</strong>
+    </div>
+  </div>
+</div>

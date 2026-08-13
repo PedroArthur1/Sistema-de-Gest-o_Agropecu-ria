@@ -1,1 +1,56 @@
-/* You can add global styles to this file, and also import other style files */
+/* Estilos Globais e Variáveis de Tema */
+:root {
+  /* Cores Principais - Tema Verde Agro */
+  --primary-color: #16a34a;
+  --primary-hover: #15803d;
+  --secondary-color: #dcfce7;
+  
+  /* Cores de Alerta e Status */
+  --success-color: #16a34a;
+  --warning-color: #ca8a04;
+  --danger-color: #ef4444;
+  
+  /* Cores de Texto e Fundo */
+  --bg-color: #f8fafc;
+  --surface-color: #ffffff;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --border-color: #e2e8f0;
+  
+  /* Sombras */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Utilitários Botões Globais */
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

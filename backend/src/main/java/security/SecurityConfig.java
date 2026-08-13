@@ -33,10 +33,12 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Desabilita CSRF pois usamos token stateless
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll() // Login é público
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll() // Cadastro é público
-                        .requestMatchers("/location/**", "/booking/**").hasRole("ADMIN") // Restringe rotas de negócio
-                        .anyRequest().authenticated() // Qualquer outra rota exige autenticação
+                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/logout").authenticated()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/user/**").hasAnyRole("ADMIN", "USER")
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

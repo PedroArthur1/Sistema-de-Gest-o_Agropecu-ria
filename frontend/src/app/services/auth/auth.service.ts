@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, finalize } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
-    private apiUrl = 'http://localhost:8080/auth'; // url do back
+    private apiUrl = 'http://localhost:8080/auth';
 
     constructor(private http: HttpClient) { }
 
@@ -25,9 +25,13 @@ export class AuthService {
         return this.http.post<any>(`${this.apiUrl}/register`, userData);
     }
 
-    logout(): void {
-        localStorage.removeItem('jwt_token');
-        localStorage.removeItem('user_role');
+    logout(): Observable<void> {
+        return this.http.post<void>(`${this.apiUrl}/logout`, {}).pipe(
+            finalize(() => {
+                localStorage.removeItem('jwt_token');
+                localStorage.removeItem('user_role');
+            })
+        );
     }
 
     getToken(): string | null {

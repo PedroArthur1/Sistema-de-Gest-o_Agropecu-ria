@@ -1,0 +1,52 @@
+<div class="campo">
+  <label [for]="campoId" class="campo-label">
+    {{ label }}
+    <span *ngIf="obrigatorio" class="campo-obrigatorio">*</span>
+  </label>
+
+  <!-- Input de texto, número ou data -->
+  <input
+    *ngIf="tipo === 'text' || tipo === 'number' || tipo === 'date'"
+    [id]="campoId"
+    [type]="tipo"
+    [placeholder]="placeholder"
+    [value]="valor"
+    [disabled]="desabilitado"
+    [attr.step]="tipo === 'number' && step ? step : null"
+    [class.campo-invalido]="invalido"
+    (input)="aoMudar($event)"
+    (blur)="aoPerderFoco()"
+  />
+
+  <!-- Select -->
+  <select
+    *ngIf="tipo === 'select'"
+    [id]="campoId"
+    [value]="valor"
+    [disabled]="desabilitado"
+    [class.campo-invalido]="invalido"
+    (change)="aoMudar($event)"
+    (blur)="aoPerderFoco()"
+  >
+    <option value="" disabled selected>{{ placeholder || 'Selecione...' }}</option>
+    <option *ngFor="let opcao of opcoes" [value]="opcao">{{ opcao }}</option>
+  </select>
+
+  <!-- Textarea -->
+  <textarea
+    *ngIf="tipo === 'textarea'"
+    [id]="campoId"
+    [placeholder]="placeholder"
+    [value]="valor"
+    [disabled]="desabilitado"
+    [rows]="linhas"
+    [class.campo-invalido]="invalido"
+    (input)="aoMudar($event)"
+    (blur)="aoPerderFoco()"
+  ></textarea>
+
+  <!-- Mensagem de erro -->
+  <small *ngIf="invalido && mensagemErro" class="campo-erro">
+    {{ mensagemErro }}
+  </small>
+</div>

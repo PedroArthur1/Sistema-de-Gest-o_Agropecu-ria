@@ -1,0 +1,133 @@
+<div class="vacinacao-container">
+  <app-cabecalho-pagina
+    titulo="Vacinação"
+    subtitulo="Registre as vacinas aplicadas e consulte o histórico de cada animal."
+    icone="💉"
+  ></app-cabecalho-pagina>
+
+  <app-alerta-mensagem [mensagem]="successMessage" tipo="sucesso"></app-alerta-mensagem>
+  <app-alerta-mensagem [mensagem]="errorMessage" tipo="erro"></app-alerta-mensagem>
+
+  <div class="aviso-rebanho" *ngIf="!carregandoAnimais && animais.length === 0">
+    <p>A vacinação precisa estar vinculada a um animal cadastrado.</p>
+    <a routerLink="/dashboard/rebanho/novo">Cadastrar animal</a>
+  </div>
+
+  <div class="vacinacao-conteudo">
+    <section class="cadastro-card">
+      <h3 class="card-titulo">Registrar vacinação</h3>
+      <p class="card-descricao">Informe o animal e os dados da aplicação. Todos os campos são obrigatórios.</p>
+
+      <form [formGroup]="vacinacaoForm" (ngSubmit)="onSubmit()" class="form-container">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="animalId">Animal *</label>
+            <select id="animalId" formControlName="animalId" [class.campo-invalido]="campoInvalido('animalId')">
+              <option value="">Selecione um animal cadastrado...</option>
+              <option *ngFor="let animal of animais" [value]="animal.id">
+                {{ animal.codigoIdentificacao }} — {{ animal.especie }} / {{ animal.raca }}
+              </option>
+            </select>
+            <span class="error-text" *ngIf="campoInvalido('animalId')">
+              Selecione um animal cadastrado
+            </span>
+          </div>
+
+          <app-campo-formulario
+            label="Nome da vacina"
+            campoId="nomeVacina"
+            formControlName="nomeVacina"
+            [obrigatorio]="true"
+            placeholder="Ex: Febre Aftosa"
+            [invalido]="campoInvalido('nomeVacina')"
+            mensagemErro="Obrigatório"
+          ></app-campo-formulario>
+
+          <app-campo-formulario
+            label="Data da aplicação"
+            campoId="dataAplicacao"
+            tipo="date"
+            formControlName="dataAplicacao"
+            [obrigatorio]="true"
+            [invalido]="campoInvalido('dataAplicacao')"
+            mensagemErro="Obrigatória"
+          ></app-campo-formulario>
+
+          <app-campo-formulario
+            label="Dose administrada"
+            campoId="dose"
+            formControlName="dose"
+            [obrigatorio]="true"
+            placeholder="Ex: 5 mL"
+            [invalido]="campoInvalido('dose')"
+            mensagemErro="Obrigatória"
+          ></app-campo-formulario>
+
+          <app-campo-formulario
+            label="Responsável pela aplicação"
+            campoId="responsavel"
+            formControlName="responsavel"
+            [obrigatorio]="true"
+            placeholder="Ex: Dr. João Veterinário"
+            [invalido]="campoInvalido('responsavel')"
+            mensagemErro="Obrigatório"
+          ></app-campo-formulario>
+
+          <app-campo-formulario
+            label="Data prevista da próxima dose"
+            campoId="dataProximaDose"
+            tipo="date"
+            formControlName="dataProximaDose"
+            [obrigatorio]="true"
+            [invalido]="campoInvalido('dataProximaDose') || vacinacaoForm.hasError('dataProximaAnterior')"
+            mensagemErro="Obrigatória e não pode ser anterior à aplicação"
+          ></app-campo-formulario>
+        </div>
+
+        <div class="form-actions">
+          <app-botao-acao
+            [texto]="isSubmitting ? 'Salvando...' : 'Registrar vacinação'"
+            [tipoSubmit]="true"
+            [desabilitado]="isSubmitting"
+          ></app-botao-acao>
+        </div>
+      </form>
+    </section>
+
+    <section class="list-container">
+      <div class="historico-header">
+        <h3>Histórico de vacinação</h3>
+        <p *ngIf="animalSelecionado">
+          {{ animalSelecionado.codigoIdentificacao }} — {{ animalSelecionado.especie }} / {{ animalSelecionado.raca }}
+        </p>
+        <p *ngIf="!animalSelecionado">Selecione um animal para consultar o histórico.</p>
+      </div>
+
+      <div class="empty-state" *ngIf="animalSelecionado && historico.length === 0">
+        <h3>Nenhuma vacinação registrada</h3>
+        <p>Este animal ainda não possui histórico de vacinação.</p>
+      </div>
+
+      <div class="list-content" *ngIf="historico.length > 0">
+        <div class="list-header">
+          <div class="col">VACINA</div>
+          <div class="col">APLICAÇÃO</div>
+          <div class="col">DOSE</div>
+          <div class="col">RESPONSÁVEL</div>
+          <div class="col">PRÓXIMA DOSE</div>
+        </div>
+        <div class="list-item" *ngFor="let registro of historico">
+          <div class="col font-semibold text-primary">{{ registro.nomeVacina }}</div>
+          <div class="col">{{ registro.dataAplicacao | date:'dd/MM/yyyy' }}</div>
+          <div class="col">{{ registro.dose }}</div>
+          <div class="col">{{ registro.responsavel }}</div>
+          <div class="col">{{ registro.dataProximaDose | date:'dd/MM/yyyy' }}</div>
+        </div>
+      </div>
+
+      <div class="list-footer" *ngIf="historico.length > 0">
+        Registros Totais: <strong>{{ historico.length }}</strong>
+      </div>
+    </section>
+  </div>
+</div>
