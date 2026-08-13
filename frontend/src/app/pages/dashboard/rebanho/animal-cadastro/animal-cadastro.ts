@@ -51,10 +51,16 @@ export class AnimalCadastro implements OnInit {
     };
     
     const prefixo = prefixos[especie] || 'ANI';
-    const numeroAleatorio = Math.floor(10000 + Math.random() * 90000); // 5 dígitos
+    
+    // Recupera o contador atual da espécie no LocalStorage (ou inicia em 1)
+    const storageKey = `contador_especie_${especie}`;
+    const contadorAtual = parseInt(localStorage.getItem(storageKey) || '1', 10);
+    
+    // Formata o número sequencial com zeros à esquerda (ex: 001)
+    const numeroFormatado = contadorAtual.toString().padStart(3, '0');
     
     this.animalForm.patchValue({
-      codigoIdentificacao: `${prefixo}-${numeroAleatorio}`
+      codigoIdentificacao: `${prefixo}-${numeroFormatado}`
     });
   }
 
@@ -69,6 +75,12 @@ export class AnimalCadastro implements OnInit {
       this.isSubmitting = false;
       return;
     }
+
+    // Incrementa o contador para a próxima vez que a espécie for cadastrada
+    const especie = this.animalForm.get('especie')?.value;
+    const storageKey = `contador_especie_${especie}`;
+    const contadorAtual = parseInt(localStorage.getItem(storageKey) || '1', 10);
+    localStorage.setItem(storageKey, (contadorAtual + 1).toString());
 
     // Simulando a chamada a um serviço backend
     setTimeout(() => {

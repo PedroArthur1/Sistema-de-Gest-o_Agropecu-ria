@@ -67,10 +67,10 @@
         </div>
 
         <div class="form-group">
-          <label>Data de Nascimento / Idade *</label>
-          <input type="text" formControlName="dataNascimentoOuIdade" placeholder="Ex: 01/01/2023 ou 3 Anos" />
+          <label>Data de Nascimento *</label>
+          <input type="date" formControlName="dataNascimentoOuIdade" />
           <span class="error-text" *ngIf="animalForm.get('dataNascimentoOuIdade')?.touched && animalForm.get('dataNascimentoOuIdade')?.invalid">
-            Data ou idade é obrigatória
+            Data de nascimento é obrigatória
           </span>
         </div>
 
