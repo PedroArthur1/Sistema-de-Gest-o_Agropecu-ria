@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { AnimalService } from '../../../../services/animal/animal.service';
-import { Animal } from '../../../../models/animal.model';
+import { AnimalService } from '../../../services/animal/animal.service';
+import { Animal } from '../../../models/animal.model';
 
 @Component({
   selector: 'app-rebanho',
