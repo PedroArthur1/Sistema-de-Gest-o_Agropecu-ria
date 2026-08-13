@@ -133,3 +133,99 @@
   color: var(--text-secondary);
   max-width: 400px;
 }
+
+/* Tabela e Linhas */
+.list-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 14px;
+  color: var(--text-primary);
+  transition: background-color 0.2s;
+}
+
+.list-item:last-child {
+  border-bottom: none;
+}
+
+.list-item:hover {
+  background-color: var(--bg-color);
+}
+
+/* Tipografia na Tabela */
+.font-semibold {
+  font-weight: 600;
+}
+
+.text-primary {
+  color: var(--primary-color);
+}
+
+/* Badges de Status */
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.badge-success {
+  background-color: #d1fae5;
+  color: #059669;
+}
+
+.badge-warning {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.badge-danger {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+/* Botões de Ação na Tabela */
+.action-col {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.btn-icon {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #dc2626; /* Inspirado no mockup (ícones vermelhos) */
+}
+
+.btn-icon:hover {
+  background-color: #fee2e2;
+}
+
+.btn-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Rodapé da Tabela */
+.list-footer {
+  padding: 16px 24px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border-color);
+  background-color: #f8fafc;
+}
