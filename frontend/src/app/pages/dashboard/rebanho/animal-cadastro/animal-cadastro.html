@@ -1,0 +1,113 @@
+<div class="cadastro-container">
+  <div class="cadastro-card">
+    <!-- Cabeçalho -->
+    <header class="card-header">
+      <div class="header-left">
+        <button class="btn-back" (click)="voltar()">
+          &larr; Voltar
+        </button>
+        <h2>Cadastrar Animal</h2>
+      </div>
+      <p class="subtitle">Preencha as informações básicas para registrar um novo animal no rebanho.</p>
+    </header>
+
+    <!-- Alertas -->
+    <div class="alert alert-success" *ngIf="successMessage">
+      {{ successMessage }}
+    </div>
+    <div class="alert alert-error" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Formulário -->
+    <form [formGroup]="animalForm" (ngSubmit)="onSubmit()" class="form-container">
+      
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Código de Identificação *</label>
+          <input type="text" formControlName="codigoIdentificacao" placeholder="Ex: BR-12345" />
+          <span class="error-text" *ngIf="animalForm.get('codigoIdentificacao')?.touched && animalForm.get('codigoIdentificacao')?.invalid">
+            Código é obrigatório
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label>Espécie *</label>
+          <select formControlName="especie">
+            <option value="">Selecione...</option>
+            <option value="Bovino">Bovino</option>
+            <option value="Suíno">Suíno</option>
+            <option value="Equino">Equino</option>
+            <option value="Ovino">Ovino</option>
+            <option value="Outro">Outro</option>
+          </select>
+          <span class="error-text" *ngIf="animalForm.get('especie')?.touched && animalForm.get('especie')?.invalid">
+            Espécie é obrigatória
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label>Raça *</label>
+          <input type="text" formControlName="raca" placeholder="Ex: Nelore" />
+          <span class="error-text" *ngIf="animalForm.get('raca')?.touched && animalForm.get('raca')?.invalid">
+            Raça é obrigatória
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label>Sexo *</label>
+          <select formControlName="sexo">
+            <option value="">Selecione...</option>
+            <option value="Macho">Macho</option>
+            <option value="Fêmea">Fêmea</option>
+          </select>
+          <span class="error-text" *ngIf="animalForm.get('sexo')?.touched && animalForm.get('sexo')?.invalid">
+            Sexo é obrigatório
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label>Data de Nascimento / Idade *</label>
+          <input type="text" formControlName="dataNascimentoOuIdade" placeholder="Ex: 01/01/2023 ou 3 Anos" />
+          <span class="error-text" *ngIf="animalForm.get('dataNascimentoOuIdade')?.touched && animalForm.get('dataNascimentoOuIdade')?.invalid">
+            Data ou idade é obrigatória
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label>Peso (kg) *</label>
+          <input type="number" formControlName="peso" placeholder="Ex: 450" />
+          <span class="error-text" *ngIf="animalForm.get('peso')?.touched && animalForm.get('peso')?.invalid">
+            Peso válido é obrigatório
+          </span>
+        </div>
+
+        <div class="form-group full-width">
+          <label>Condição de Saúde *</label>
+          <select formControlName="condicaoSaude">
+            <option value="">Selecione...</option>
+            <option value="Saudável">Saudável</option>
+            <option value="Em Observação">Em Observação</option>
+            <option value="Em Tratamento">Em Tratamento</option>
+          </select>
+          <span class="error-text" *ngIf="animalForm.get('condicaoSaude')?.touched && animalForm.get('condicaoSaude')?.invalid">
+            Condição de saúde é obrigatória
+          </span>
+        </div>
+
+        <div class="form-group full-width">
+          <label>Observações Adicionais (Opcional)</label>
+          <textarea formControlName="observacoes" rows="3" placeholder="Insira quaisquer detalhes extras aqui..."></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="voltar()">Cancelar</button>
+        <button type="submit" class="btn-primary" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Salvando...' : 'Salvar Cadastro' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
