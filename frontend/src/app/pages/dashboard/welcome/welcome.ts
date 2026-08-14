@@ -11,10 +11,12 @@ import { AuthService } from '../../../services/auth/auth.service';
 })
 export class Welcome implements OnInit {
   role: string | null = '';
+  userName: string | null = '';
 
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
     this.role = this.authService.getRole();
+    this.userName = this.authService.getUserName();
   }
 }

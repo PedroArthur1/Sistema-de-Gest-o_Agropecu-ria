@@ -13,10 +13,12 @@ import { AuthService } from '../../services/auth/auth.service';
 })
 export class Header {
   role: string | null;
+  userName: string | null;
   pageTitle = 'Painel de Controle';
 
   constructor(private authService: AuthService, private router: Router) {
     this.role = this.authService.getRole();
+    this.userName = this.authService.getUserName();
     this.atualizarTitulo(this.router.url);
     this.router.events
       .pipe(filter((evento): evento is NavigationEnd => evento instanceof NavigationEnd))

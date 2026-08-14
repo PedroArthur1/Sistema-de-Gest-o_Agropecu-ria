@@ -1,9 +1,6 @@
 <div class="vacinacao-container">
-  <app-cabecalho-pagina
-    titulo="Vacinação"
-    subtitulo="Registre as vacinas aplicadas e consulte o histórico de cada animal."
-    icone="💉"
-  ></app-cabecalho-pagina>
+  <app-cabecalho-pagina titulo="Vacinação"
+    subtitulo="Registre as vacinas aplicadas e consulte o histórico de cada animal."></app-cabecalho-pagina>
 
   <app-alerta-mensagem [mensagem]="successMessage" tipo="sucesso"></app-alerta-mensagem>
   <app-alerta-mensagem [mensagem]="errorMessage" tipo="erro"></app-alerta-mensagem>
@@ -33,63 +30,30 @@
             </span>
           </div>
 
-          <app-campo-formulario
-            label="Nome da vacina"
-            campoId="nomeVacina"
-            formControlName="nomeVacina"
-            [obrigatorio]="true"
-            placeholder="Ex: Febre Aftosa"
-            [invalido]="campoInvalido('nomeVacina')"
-            mensagemErro="Obrigatório"
-          ></app-campo-formulario>
+          <app-campo-formulario label="Nome da vacina" campoId="nomeVacina" formControlName="nomeVacina"
+            [obrigatorio]="true" placeholder="Ex: Febre Aftosa" [invalido]="campoInvalido('nomeVacina')"
+            mensagemErro="Obrigatório"></app-campo-formulario>
 
-          <app-campo-formulario
-            label="Data da aplicação"
-            campoId="dataAplicacao"
-            tipo="date"
-            formControlName="dataAplicacao"
-            [obrigatorio]="true"
-            [invalido]="campoInvalido('dataAplicacao')"
-            mensagemErro="Obrigatória"
-          ></app-campo-formulario>
+          <app-campo-formulario label="Data da aplicação" campoId="dataAplicacao" tipo="date"
+            formControlName="dataAplicacao" [obrigatorio]="true" [invalido]="campoInvalido('dataAplicacao')"
+            mensagemErro="Obrigatória"></app-campo-formulario>
 
-          <app-campo-formulario
-            label="Dose administrada"
-            campoId="dose"
-            formControlName="dose"
-            [obrigatorio]="true"
-            placeholder="Ex: 5 mL"
-            [invalido]="campoInvalido('dose')"
-            mensagemErro="Obrigatória"
-          ></app-campo-formulario>
+          <app-campo-formulario label="Dose administrada" campoId="dose" formControlName="dose" [obrigatorio]="true"
+            placeholder="Ex: 5 mL" [invalido]="campoInvalido('dose')" mensagemErro="Obrigatória"></app-campo-formulario>
 
-          <app-campo-formulario
-            label="Responsável pela aplicação"
-            campoId="responsavel"
-            formControlName="responsavel"
-            [obrigatorio]="true"
-            placeholder="Ex: Dr. João Veterinário"
-            [invalido]="campoInvalido('responsavel')"
-            mensagemErro="Obrigatório"
-          ></app-campo-formulario>
+          <app-campo-formulario label="Responsável pela aplicação" campoId="responsavel" formControlName="responsavel"
+            [obrigatorio]="true" placeholder="Ex: Dr. João Veterinário" [invalido]="campoInvalido('responsavel')"
+            mensagemErro="Obrigatório"></app-campo-formulario>
 
-          <app-campo-formulario
-            label="Data prevista da próxima dose"
-            campoId="dataProximaDose"
-            tipo="date"
-            formControlName="dataProximaDose"
-            [obrigatorio]="true"
+          <app-campo-formulario label="Data prevista da próxima dose" campoId="dataProximaDose" tipo="date"
+            formControlName="dataProximaDose" [obrigatorio]="true"
             [invalido]="campoInvalido('dataProximaDose') || vacinacaoForm.hasError('dataProximaAnterior')"
-            mensagemErro="Obrigatória e não pode ser anterior à aplicação"
-          ></app-campo-formulario>
+            mensagemErro="Obrigatória e não pode ser anterior à aplicação"></app-campo-formulario>
         </div>
 
         <div class="form-actions">
-          <app-botao-acao
-            [texto]="isSubmitting ? 'Salvando...' : 'Registrar vacinação'"
-            [tipoSubmit]="true"
-            [desabilitado]="isSubmitting"
-          ></app-botao-acao>
+          <app-botao-acao [texto]="isSubmitting ? 'Salvando...' : 'Registrar vacinação'" [tipoSubmit]="true"
+            [desabilitado]="isSubmitting"></app-botao-acao>
         </div>
       </form>
     </section>
