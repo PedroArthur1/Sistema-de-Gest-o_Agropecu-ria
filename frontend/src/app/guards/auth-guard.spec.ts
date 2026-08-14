@@ -1,25 +1,52 @@
-import { describe, it, expect, beforeEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { CanActivateFn, provideRouter } from '@angular/router';
-import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { Router } from '@angular/router';
+import { AuthService } from '../services/auth/auth.service';
 import { authGuard } from './auth-guard';
+import { vi } from 'vitest';
 
 describe('authGuard', () => {
-  const executeGuard: CanActivateFn = (...guardParameters) =>
-    TestBed.runInInjectionContext(() => authGuard(...guardParameters));
+  let authMock: any;
+  let routerMock: any;
 
   beforeEach(() => {
+    authMock = {
+      isLoggedIn: vi.fn(),
+      getRole: vi.fn()
+    };
+
+    routerMock = {
+      navigate: vi.fn()
+    };
+
     TestBed.configureTestingModule({
       providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        provideRouter([])
+        { provide: AuthService, useValue: authMock },
+        { provide: Router, useValue: routerMock }
       ]
     });
   });
 
-  it('should be created', () => {
-    expect(executeGuard).toBeTruthy();
+  it('deve permitir a navegação se o usuário estiver autenticado', () => {
+    authMock.isLoggedIn.mockReturnValue(true);
+
+    const result = TestBed.runInInjectionContext(() => {
+      return authGuard({ data: {} } as any, {} as any);
+    });
+
+    expect(result).toBe(true);
+
+    expect(routerMock.navigate).not.toHaveBeenCalled();
+  });
+
+  it('deve bloquear a navegação e redirecionar para o login se não estiver autenticado', () => {
+    authMock.isLoggedIn.mockReturnValue(false);
+
+    const result = TestBed.runInInjectionContext(() => {
+      return authGuard({ data: {} } as any, {} as any);
+    });
+
+    expect(result).toBe(false);
+
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/login']);
   });
 });
