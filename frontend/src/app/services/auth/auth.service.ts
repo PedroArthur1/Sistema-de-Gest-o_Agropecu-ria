@@ -16,6 +16,9 @@ export class AuthService {
                 if (response.token) {
                     localStorage.setItem('jwt_token', response.token);
                     localStorage.setItem('user_role', response.role);
+                    if (response.nome) {
+                        localStorage.setItem('user_name', response.nome);
+                    }
                 }
             })
         );
@@ -28,6 +31,7 @@ export class AuthService {
     logout(): void {
       localStorage.removeItem('jwt_token');
       localStorage.removeItem('user_role');
+      localStorage.removeItem('user_name');
     }
 
     getToken(): string | null {
@@ -36,6 +40,10 @@ export class AuthService {
 
     getRole(): string | null {
         return localStorage.getItem('user_role');
+    }
+
+    getUserName(): string | null {
+        return localStorage.getItem('user_name');
     }
 
     isLoggedIn(): boolean {

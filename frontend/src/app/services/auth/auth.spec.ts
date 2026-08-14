@@ -30,8 +30,8 @@ describe('AuthService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('deve salvar o token e a role no localStorage ao fazer login com sucesso', () => {
-    const mockResponse = { token: 'fake-jwt-token', role: 'ADMIN' };
+  it('deve salvar o token, a role e o nome no localStorage ao fazer login com sucesso', () => {
+    const mockResponse = { token: 'fake-jwt-token', role: 'ADMIN', nome: 'João Silva' };
     const mockCredentials = { email: 'admin@teste.com', password: '123' };
 
     // Chama o método de login
@@ -43,16 +43,19 @@ describe('AuthService', () => {
 
     expect(localStorage.getItem('jwt_token')).toBe('fake-jwt-token');
     expect(localStorage.getItem('user_role')).toBe('ADMIN');
+    expect(localStorage.getItem('user_name')).toBe('João Silva');
   });
 
   it('deve limpar o localStorage ao fazer logout', () => {
     localStorage.setItem('jwt_token', 'fake-jwt-token');
     localStorage.setItem('user_role', 'ADMIN');
+    localStorage.setItem('user_name', 'João Silva');
 
     service.logout();
 
     expect(localStorage.getItem('jwt_token')).toBeNull();
     expect(localStorage.getItem('user_role')).toBeNull();
+    expect(localStorage.getItem('user_name')).toBeNull();
   });
 
   it('isLoggedIn deve retornar true se houver um token', () => {

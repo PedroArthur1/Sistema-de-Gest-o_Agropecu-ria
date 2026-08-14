@@ -36,8 +36,8 @@ public class AuthController {
         User user = (User) auth.getPrincipal();
         String token = this.tokenService.generateToken(user);
 
-        // Devolve o token e a role no formato que o Angular espera
-        return ResponseEntity.ok(new LoginResponseDTO(token, user.getAuthorities().iterator().next().getAuthority().replace("ROLE_", "")));
+        // Devolve o token, a role e o nome no formato que o Angular espera
+        return ResponseEntity.ok(new LoginResponseDTO(token, user.getAuthorities().iterator().next().getAuthority().replace("ROLE_", ""), user.getNome()));
     }
 
     @PostMapping("/register")
