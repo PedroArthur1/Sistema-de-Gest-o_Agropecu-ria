@@ -1,0 +1,186 @@
+<div class="detalhe-container">
+  <app-cabecalho-pagina titulo="Detalhes do Animal"
+    subtitulo="Consulte as informações cadastrais, histórico de vacinação e próximas doses previstas.">
+    <a routerLink="/dashboard/rebanho" class="btn-voltar">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      Voltar ao Rebanho
+    </a>
+  </app-cabecalho-pagina>
+
+  <app-alerta-mensagem [mensagem]="errorMessage" tipo="erro"></app-alerta-mensagem>
+
+  <!-- Estado de Carregamento -->
+  <div class="carregando" *ngIf="carregando">
+    <div class="spinner"></div>
+    <p>Carregando informações do animal...</p>
+  </div>
+
+  <!-- Conteúdo Principal -->
+  <div class="detalhe-conteudo" *ngIf="animal && !carregando">
+
+    <!-- Card de Informações do Animal -->
+    <section class="info-card">
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="animal-avatar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+          </div>
+          <div>
+            <h3 class="animal-codigo">{{ animal.codigoIdentificacao }}</h3>
+            <p class="animal-tipo">{{ animal.especie }} / {{ animal.raca }}</p>
+          </div>
+        </div>
+        <span class="badge"
+          [class.badge-success]="animal.condicaoSaude === 'Saudável'"
+          [class.badge-warning]="animal.condicaoSaude === 'Em Observação'"
+          [class.badge-danger]="animal.condicaoSaude === 'Em Tratamento'">
+          {{ animal.condicaoSaude }}
+        </span>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Código de Identificação</span>
+          <span class="info-valor">{{ animal.codigoIdentificacao }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Espécie</span>
+          <span class="info-valor">{{ animal.especie }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Raça</span>
+          <span class="info-valor">{{ animal.raca }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Sexo</span>
+          <span class="info-valor">{{ animal.sexo }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Data de Nascimento / Idade</span>
+          <span class="info-valor">{{ animal.dataNascimentoOuIdade }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Peso</span>
+          <span class="info-valor">{{ animal.peso }} kg</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Condição de Saúde</span>
+          <span class="info-valor">{{ animal.condicaoSaude }}</span>
+        </div>
+        <div class="info-item" *ngIf="animal.observacoes">
+          <span class="info-label">Observações</span>
+          <span class="info-valor">{{ animal.observacoes }}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Próximas Doses Previstas -->
+    <section class="list-container proximas-doses-section">
+      <div class="section-header">
+        <div class="section-header-icon proximas">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        </div>
+        <div>
+          <h3>Próximas Doses Previstas</h3>
+          <p>Vacinações com data futura agendada para este animal.</p>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="proximasDoses.length === 0">
+        <h4>Nenhuma dose futura agendada</h4>
+        <p>Não há vacinações com data de próxima dose prevista para este animal.</p>
+      </div>
+
+      <div class="list-content" *ngIf="proximasDoses.length > 0">
+        <div class="list-header">
+          <div class="col">VACINA</div>
+          <div class="col">ÚLTIMA APLICAÇÃO</div>
+          <div class="col">DOSE</div>
+          <div class="col">RESPONSÁVEL</div>
+          <div class="col">PRÓXIMA DOSE</div>
+        </div>
+        <div class="list-item proxima-dose-item" *ngFor="let dose of proximasDoses">
+          <div class="col font-semibold text-primary">{{ dose.nomeVacina }}</div>
+          <div class="col">{{ dose.dataAplicacao | date:'dd/MM/yyyy' }}</div>
+          <div class="col">{{ dose.dose }}</div>
+          <div class="col">{{ dose.responsavel }}</div>
+          <div class="col">
+            <span class="badge-proxima-dose">
+              {{ dose.dataProximaDose | date:'dd/MM/yyyy' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="list-footer" *ngIf="proximasDoses.length > 0">
+        Doses agendadas: <strong>{{ proximasDoses.length }}</strong>
+      </div>
+    </section>
+
+    <!-- Histórico de Vacinação -->
+    <section class="list-container historico-section">
+      <div class="section-header">
+        <div class="section-header-icon historico">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m18 2 4 4"></path>
+            <path d="m17 7 3-3"></path>
+            <path d="M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-4-4c-1-1-1-2.5 0-3.4L11.6 1.6"></path>
+            <path d="m9 11 4 4"></path>
+            <path d="m5 19-3 3"></path>
+            <path d="m14 4 6 6"></path>
+          </svg>
+        </div>
+        <div>
+          <h3>Histórico de Vacinação</h3>
+          <p>Todas as vacinas aplicadas a este animal, da mais recente para a mais antiga.</p>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="historico.length === 0">
+        <h4>Nenhuma vacinação registrada</h4>
+        <p>Este animal ainda não possui histórico de vacinação.</p>
+        <a routerLink="/dashboard/vacinacao" class="btn-primary">Registrar vacinação</a>
+      </div>
+
+      <div class="list-content" *ngIf="historico.length > 0">
+        <div class="list-header">
+          <div class="col">VACINA</div>
+          <div class="col">DATA APLICAÇÃO</div>
+          <div class="col">DOSE</div>
+          <div class="col">RESPONSÁVEL</div>
+          <div class="col">PRÓXIMA DOSE</div>
+        </div>
+        <div class="list-item" *ngFor="let registro of historico">
+          <div class="col font-semibold text-primary">{{ registro.nomeVacina }}</div>
+          <div class="col">{{ registro.dataAplicacao | date:'dd/MM/yyyy' }}</div>
+          <div class="col">{{ registro.dose }}</div>
+          <div class="col">{{ registro.responsavel }}</div>
+          <div class="col">
+            <span *ngIf="registro.dataProximaDose">{{ registro.dataProximaDose | date:'dd/MM/yyyy' }}</span>
+            <span *ngIf="!registro.dataProximaDose" class="text-muted">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="list-footer" *ngIf="historico.length > 0">
+        Registros totais: <strong>{{ historico.length }}</strong>
+      </div>
+    </section>
+  </div>
+</div>

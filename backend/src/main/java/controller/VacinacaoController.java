@@ -29,4 +29,9 @@ public class VacinacaoController {
     public ResponseEntity<List<VacinacaoResponseDTO>> listarHistorico(@PathVariable Long animalId) {
         return ResponseEntity.ok(vacinacaoService.listarHistorico(animalId));
     }
+
+    @GetMapping("/proximas")
+    public ResponseEntity<List<VacinacaoResponseDTO>> listarProximasDoses(@PathVariable Long animalId) {
+        return ResponseEntity.ok(vacinacaoService.listarProximasDoses(animalId));
+    }
 }

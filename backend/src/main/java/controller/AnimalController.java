@@ -25,4 +25,9 @@ public class AnimalController {
     public ResponseEntity<List<AnimalDTO>> listar() {
         return ResponseEntity.ok(animalService.listarDoUsuario());
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AnimalDTO> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(animalService.buscarDoUsuarioComoDTO(id));
+    }
 }
