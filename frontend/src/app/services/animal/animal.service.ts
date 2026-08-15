@@ -18,4 +18,8 @@ export class AnimalService {
   listarAnimais(): Observable<Animal[]> {
     return this.http.get<Animal[]>(this.apiUrl);
   }
+
+  buscarAnimalPorId(id: number): Observable<Animal> {
+    return this.http.get<Animal>(`${this.apiUrl}/${id}`);
+  }
 }

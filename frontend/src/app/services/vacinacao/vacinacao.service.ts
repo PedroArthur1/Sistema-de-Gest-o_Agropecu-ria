@@ -18,4 +18,8 @@ export class VacinacaoService {
   listarHistorico(animalId: number): Observable<Vacinacao[]> {
     return this.http.get<Vacinacao[]>(`${this.apiUrl}/${animalId}/vacinacoes`);
   }
+
+  listarProximasDoses(animalId: number): Observable<Vacinacao[]> {
+    return this.http.get<Vacinacao[]>(`${this.apiUrl}/${animalId}/vacinacoes/proximas`);
+  }
 }

@@ -49,6 +49,11 @@ public class AnimalService {
     }
 
     @Transactional(readOnly = true)
+    public AnimalDTO buscarDoUsuarioComoDTO(Long animalId) {
+        return toDTO(buscarDoUsuario(animalId));
+    }
+
+    @Transactional(readOnly = true)
     public Animal buscarDoUsuario(Long animalId) {
         User proprietario = usuarioAutenticadoService.obterUsuario();
         return animalRepository.findByIdAndProprietario(animalId, proprietario)

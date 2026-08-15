@@ -211,13 +211,14 @@
   justify-content: center;
 }
 
-.btn-icon.edit {
-  color: var(--text-secondary);
+.btn-icon.view {
+  color: var(--primary-color);
+  text-decoration: none;
 }
 
-.btn-icon.edit:hover {
-  background-color: var(--bg-color);
-  color: var(--text-primary);
+.btn-icon.view:hover {
+  background-color: var(--secondary-color);
+  color: var(--primary-hover);
 }
 
 .btn-icon.delete {

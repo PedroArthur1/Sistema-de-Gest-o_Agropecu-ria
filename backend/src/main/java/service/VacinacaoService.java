@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import repository.VacinacaoRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -42,6 +43,16 @@ public class VacinacaoService {
     public List<VacinacaoResponseDTO> listarHistorico(Long animalId) {
         animalService.buscarDoUsuario(animalId);
         return vacinacaoRepository.findByAnimalIdOrderByDataAplicacaoDescIdDesc(animalId).stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<VacinacaoResponseDTO> listarProximasDoses(Long animalId) {
+        animalService.buscarDoUsuario(animalId);
+        LocalDate hoje = LocalDate.now();
+        return vacinacaoRepository.findByAnimalIdAndDataProximaDoseAfterOrderByDataProximaDoseAsc(animalId, hoje)
+                .stream()
                 .map(this::toDTO)
                 .toList();
     }
