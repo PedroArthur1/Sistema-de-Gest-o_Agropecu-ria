@@ -26,10 +26,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     @SuppressWarnings("null")
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
-            response.setStatus(HttpServletResponse.SC_OK);
-            return;
-        }
+        // Let Spring Security and CorsFilter handle OPTIONS requests.
 
         var token = this.recoverToken(request);
         if (token != null) {
