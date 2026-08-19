@@ -1,0 +1,51 @@
+services:
+  - type: web
+    name: sistema-agropecuaria-api
+    runtime: docker
+    plan: free
+    region: oregon
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        value: https://sistema-agropecuaria-web.onrender.com
+      - key: DB_HOST
+        fromDatabase:
+          name: agrogestao-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: agrogestao-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: agrogestao-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: agrogestao-db
+          property: user
+      - key: DB_PASS
+        fromDatabase:
+          name: agrogestao-db
+          property: password
+
+  - type: web
+    name: sistema-agropecuaria-web
+    runtime: docker
+    plan: free
+    region: oregon
+    rootDir: frontend
+    dockerfilePath: ./Dockerfile
+
+databases:
+  - name: agrogestao-db
+    plan: free
+    region: oregon
+    databaseName: agrogestao
+    user: agrogestao
