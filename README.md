@@ -44,7 +44,26 @@ Sistema Agropecuário de animais voltado para o cuidado, manejo, vacinação e a
 - **Spring Security & JWT:** Configuração de segurança para autenticação via token Bearer.
 - **Controle de Autorização:** Restrição de endpoints por perfis de acesso (`ADMIN` e `USER`).
 - **Filtro de Interceptação (`OncePerRequestFilter`):** Validação de tokens JWT recebidos em cada requisição.
-- **CORS Configurado:** Permissão para requisições vindas da aplicação Angular (`http://localhost:4200`).
+- **CORS Configurado:** Permissão para requisições vindas do frontend (`http://localhost:4200` em dev e URL do Render em produção).
+
+---
+
+## ⚙️ Variáveis de Ambiente (Render - Backend)
+
+| Variável | Descrição |
+|----------|-----------|
+| `SPRING_PROFILES_ACTIVE` | `prod` |
+| `JWT_SECRET` | Chave secreta do JWT (gerada no Render) |
+| `FRONTEND_URL` | URL do frontend (ex.: `https://sistema-agropecuaria-web.onrender.com`) |
+| `DB_HOST` | Host do PostgreSQL (vinculado ao banco Render) |
+| `DB_PORT` | Porta do PostgreSQL (geralmente `5432`) |
+| `DB_NAME` | Nome do banco |
+| `DB_USER` | Usuário do banco |
+| `DB_PASS` | Senha do banco |
+
+Alternativa: defina `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME` e `SPRING_DATASOURCE_PASSWORD` com JDBC (`jdbc:postgresql://...`).
+
+O arquivo [`render.yaml`](render.yaml) na raiz do repositório descreve backend, frontend e PostgreSQL para deploy no Render.
 
 ---
 
