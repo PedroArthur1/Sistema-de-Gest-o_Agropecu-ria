@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap, finalize } from 'rxjs';
+import { Observable, tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { getBrowserStorage } from '../../utils/browser-storage';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
-    private apiUrl = 'http://localhost:8080/auth';
+    private apiUrl = `${environment.apiUrl}/auth`;
 
     constructor(private http: HttpClient) { }
 
@@ -14,10 +16,11 @@ export class AuthService {
         return this.http.post<any>(`${this.apiUrl}/login`, credentials).pipe(
             tap(response => {
                 if (response.token) {
-                    localStorage.setItem('jwt_token', response.token);
-                    localStorage.setItem('user_role', response.role);
+                    const storage = getBrowserStorage();
+                    storage.setItem('jwt_token', response.token);
+                    storage.setItem('user_role', response.role);
                     if (response.nome) {
-                        localStorage.setItem('user_name', response.nome);
+                        storage.setItem('user_name', response.nome);
                     }
                 }
             })
@@ -29,21 +32,22 @@ export class AuthService {
     }
 
     logout(): void {
-      localStorage.removeItem('jwt_token');
-      localStorage.removeItem('user_role');
-      localStorage.removeItem('user_name');
+      const storage = getBrowserStorage();
+      storage.removeItem('jwt_token');
+      storage.removeItem('user_role');
+      storage.removeItem('user_name');
     }
 
     getToken(): string | null {
-        return localStorage.getItem('jwt_token');
+        return getBrowserStorage().getItem('jwt_token');
     }
 
     getRole(): string | null {
-        return localStorage.getItem('user_role');
+        return getBrowserStorage().getItem('user_role');
     }
 
     getUserName(): string | null {
-        return localStorage.getItem('user_name');
+        return getBrowserStorage().getItem('user_name');
     }
 
     isLoggedIn(): boolean {

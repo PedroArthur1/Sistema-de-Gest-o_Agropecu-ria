@@ -1,11 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
-import { AuthService } from './auth.service'; // Verifique se o nome do arquivo importado bate com a sua classe
+import { AuthService } from './auth.service';
+import { getBrowserStorage } from '../../utils/browser-storage';
 
 describe('AuthService', () => {
   let service: AuthService;
   let httpMock: HttpTestingController;
+  let storage: Storage;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -18,8 +20,8 @@ describe('AuthService', () => {
 
     service = TestBed.inject(AuthService);
     httpMock = TestBed.inject(HttpTestingController);
-
-    localStorage.clear();
+    storage = getBrowserStorage();
+    storage.clear();
   });
 
   afterEach(() => {
@@ -41,25 +43,25 @@ describe('AuthService', () => {
     expect(req.request.method).toBe('POST');
     req.flush(mockResponse);
 
-    expect(localStorage.getItem('jwt_token')).toBe('fake-jwt-token');
-    expect(localStorage.getItem('user_role')).toBe('ADMIN');
-    expect(localStorage.getItem('user_name')).toBe('João Silva');
+    expect(storage.getItem('jwt_token')).toBe('fake-jwt-token');
+    expect(storage.getItem('user_role')).toBe('ADMIN');
+    expect(storage.getItem('user_name')).toBe('João Silva');
   });
 
   it('deve limpar o localStorage ao fazer logout', () => {
-    localStorage.setItem('jwt_token', 'fake-jwt-token');
-    localStorage.setItem('user_role', 'ADMIN');
-    localStorage.setItem('user_name', 'João Silva');
+    storage.setItem('jwt_token', 'fake-jwt-token');
+    storage.setItem('user_role', 'ADMIN');
+    storage.setItem('user_name', 'João Silva');
 
     service.logout();
 
-    expect(localStorage.getItem('jwt_token')).toBeNull();
-    expect(localStorage.getItem('user_role')).toBeNull();
-    expect(localStorage.getItem('user_name')).toBeNull();
+    expect(storage.getItem('jwt_token')).toBeNull();
+    expect(storage.getItem('user_role')).toBeNull();
+    expect(storage.getItem('user_name')).toBeNull();
   });
 
   it('isLoggedIn deve retornar true se houver um token', () => {
-    localStorage.setItem('jwt_token', 'fake-jwt-token');
+    storage.setItem('jwt_token', 'fake-jwt-token');
 
     expect(service.isLoggedIn()).toBe(true);
   });
