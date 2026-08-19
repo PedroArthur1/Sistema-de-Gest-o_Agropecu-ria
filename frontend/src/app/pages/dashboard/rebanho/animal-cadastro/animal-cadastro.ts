@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AnimalService } from '../../../../services/animal/animal.service';
+import { getBrowserStorage } from '../../../../utils/browser-storage';
 
 @Component({
   selector: 'app-animal-cadastro',
@@ -56,7 +57,7 @@ export class AnimalCadastro implements OnInit {
     
     // Recupera o contador atual da espécie no LocalStorage (ou inicia em 1)
     const storageKey = `contador_especie_${especie}`;
-    const contadorAtual = parseInt(localStorage.getItem(storageKey) || '1', 10);
+    const contadorAtual = parseInt(getBrowserStorage().getItem(storageKey) || '1', 10);
     
     // Formata o número sequencial com zeros à esquerda (ex: 001)
     const numeroFormatado = contadorAtual.toString().padStart(3, '0');
@@ -81,8 +82,9 @@ export class AnimalCadastro implements OnInit {
     // Incrementa o contador para a próxima vez que a espécie for cadastrada
     const especie = this.animalForm.get('especie')?.value;
     const storageKey = `contador_especie_${especie}`;
-    const contadorAtual = parseInt(localStorage.getItem(storageKey) || '1', 10);
-    localStorage.setItem(storageKey, (contadorAtual + 1).toString());
+    const storage = getBrowserStorage();
+    const contadorAtual = parseInt(storage.getItem(storageKey) || '1', 10);
+    storage.setItem(storageKey, (contadorAtual + 1).toString());
 
     // Salva o animal usando o serviço
     this.animalService.cadastrarAnimal(this.animalForm.getRawValue()).subscribe({
