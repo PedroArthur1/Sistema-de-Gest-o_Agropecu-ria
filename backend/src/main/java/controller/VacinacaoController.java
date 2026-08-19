@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/animais/{animalId}/vacinacoes")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class VacinacaoController {
 
     @Autowired
