@@ -7,7 +7,7 @@ RUN npm ci
 
 COPY . .
 
-ARG API_URL=http://localhost:8080
+ARG API_URL=https://sistema-agropecuaria-api.onrender.com
 RUN printf "export const environment = {\n  production: true,\n  apiUrl: '%s'\n};\n" "$API_URL" > src/environments/environment.production.ts
 
 RUN npm run build

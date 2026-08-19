@@ -19,9 +19,16 @@ Sistema Agropecuário de animais voltado para o cuidado, manejo, vacinação e a
 ---
 
 ## 🛠️ Tecnologias Utilizadas
-* **Frontend:** Angular 17+ (TypeScript, HTML5, CSS3)
-* **Backend:** Java 17+ com Spring Boot, Spring Security e JWT
+* **Frontend:** Angular 17+ (TypeScript, HTML5, CSS3, Nginx, Docker)
+* **Backend:** Java 17+ com Spring Boot, Spring Security, JWT, PostgreSQL e Docker
+* **Deploy & Cloud:** Render (Docker Web Services + PostgreSQL)
 * **Gestão e Versionamento:** Git, GitHub Organizations e GitHub Projects (Scrum)
+
+---
+
+## 🌐 Deploy em Produção (Render)
+* **Frontend (Aplicação Web):** [https://sistema-agropecuaria-web.onrender.com](https://sistema-agropecuaria-web.onrender.com)
+* **Backend (API REST):** [https://sistema-agropecuaria-api.onrender.com](https://sistema-agropecuaria-api.onrender.com)
 
 ---
 
