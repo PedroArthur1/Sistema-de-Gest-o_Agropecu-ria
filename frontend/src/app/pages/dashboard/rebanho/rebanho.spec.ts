@@ -4,10 +4,44 @@ import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { Animal } from '../../../models/animal.model';
 
 describe('Rebanho', () => {
   let component: Rebanho;
   let fixture: ComponentFixture<Rebanho>;
+
+  const animaisMock: Animal[] = [
+    {
+      id: 1,
+      codigoIdentificacao: 'BOV-001',
+      especie: 'Bovino',
+      raca: 'Nelore',
+      sexo: 'MACHO',
+      dataNascimentoOuIdade: '2024-05-10',
+      peso: 450,
+      condicaoSaude: 'Saudável'
+    },
+    {
+      id: 2,
+      codigoIdentificacao: 'EQU-002',
+      especie: 'Equino',
+      raca: 'Mangalarga',
+      sexo: 'FEMEA',
+      dataNascimentoOuIdade: '2023-01-15',
+      peso: 400,
+      condicaoSaude: 'Em Tratamento'
+    },
+    {
+      id: 3,
+      codigoIdentificacao: 'BOV-003',
+      especie: 'Bovino',
+      raca: 'Angus',
+      sexo: 'FEMEA',
+      dataNascimentoOuIdade: '2 anos',
+      peso: 380,
+      condicaoSaude: 'Em Observação'
+    }
+  ];
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -44,4 +78,53 @@ describe('Rebanho', () => {
     
     expect(component.abaAtiva).toBe('Vacinados');
   });
+
+  it('deve filtrar animais pelo código de identificação', () => {
+    component.animais = animaisMock;
+    component.termoPesquisa = 'BOV-001';
+    
+    expect(component.animaisFiltrados.length).toBe(1);
+    expect(component.animaisFiltrados[0].codigoIdentificacao).toBe('BOV-001');
+  });
+
+  it('deve filtrar animais pela raça', () => {
+    component.animais = animaisMock;
+    component.termoPesquisa = 'mangalarga';
+    
+    expect(component.animaisFiltrados.length).toBe(1);
+    expect(component.animaisFiltrados[0].raca).toBe('Mangalarga');
+  });
+
+  it('deve filtrar animais pelo sexo', () => {
+    component.animais = animaisMock;
+    component.termoPesquisa = 'MACHO';
+    
+    expect(component.animaisFiltrados.length).toBe(1);
+    expect(component.animaisFiltrados[0].codigoIdentificacao).toBe('BOV-001');
+
+    component.termoPesquisa = 'fêmea';
+    expect(component.animaisFiltrados.length).toBe(2);
+  });
+
+  it('deve filtrar animais pela data ou idade', () => {
+    component.animais = animaisMock;
+    component.termoPesquisa = '2024';
+    expect(component.animaisFiltrados.length).toBe(1);
+    expect(component.animaisFiltrados[0].codigoIdentificacao).toBe('BOV-001');
+
+    component.termoPesquisa = '2 anos';
+    expect(component.animaisFiltrados.length).toBe(1);
+    expect(component.animaisFiltrados[0].codigoIdentificacao).toBe('BOV-003');
+  });
+
+  it('deve limpar a pesquisa corretamente', () => {
+    component.animais = animaisMock;
+    component.termoPesquisa = 'Nelore';
+    expect(component.animaisFiltrados.length).toBe(1);
+
+    component.limparPesquisa();
+    expect(component.termoPesquisa).toBe('');
+    expect(component.animaisFiltrados.length).toBe(3);
+  });
 });
+

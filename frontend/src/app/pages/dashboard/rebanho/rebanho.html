@@ -10,7 +10,19 @@
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
-        <input type="text" placeholder="Buscar animal por código, raça..." />
+        <input 
+          type="text" 
+          [(ngModel)]="termoPesquisa" 
+          placeholder="Buscar por código, raça, sexo, data..." 
+        />
+        <button 
+          *ngIf="termoPesquisa" 
+          (click)="limparPesquisa()" 
+          class="btn-clear-search" 
+          title="Limpar pesquisa"
+          type="button">
+          ✕
+        </button>
       </div>
       <button class="btn-primary" routerLink="/dashboard/rebanho/novo">
         + Cadastrar Animal
@@ -35,12 +47,12 @@
       <div class="col">CÓDIGO / IDENTIFICAÇÃO</div>
       <div class="col">ESPÉCIE / RAÇA</div>
       <div class="col">SEXO</div>
-      <div class="col">IDADE</div>
+      <div class="col">IDADE / DATA</div>
       <div class="col">SAÚDE</div>
       <div class="col action-col">AÇÕES</div>
     </div>
 
-    <!-- Empty State -->
+    <!-- Empty State: Sem nenhum animal cadastrado -->
     <div class="empty-state" *ngIf="animais.length === 0">
       <div class="empty-icon">
         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -58,13 +70,28 @@
       </button>
     </div>
 
-    <!-- Lista de Animais Renderizada (Fica oculta se vazio) -->
-    <div class="list-content" *ngIf="animais.length > 0">
-      <div class="list-item" *ngFor="let animal of animais">
+    <!-- Empty State: Nenhum animal encontrado na busca -->
+    <div class="empty-state" *ngIf="animais.length > 0 && animaisFiltrados.length === 0">
+      <div class="empty-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </div>
+      <h3>Nenhum animal encontrado</h3>
+      <p>Nenhum resultado corresponde a "<strong>{{ termoPesquisa }}</strong>". Tente buscar por outro código, raça, sexo ou data.</p>
+      <button class="btn-secondary" (click)="limparPesquisa()">
+        Limpar Pesquisa
+      </button>
+    </div>
+
+    <!-- Lista de Animais Renderizada -->
+    <div class="list-content" *ngIf="animaisFiltrados.length > 0">
+      <div class="list-item" *ngFor="let animal of animaisFiltrados">
         <div class="col font-semibold text-primary">{{ animal.codigoIdentificacao }}</div>
         <div class="col">{{ animal.especie }} / {{ animal.raca }}</div>
         <div class="col">{{ animal.sexo }}</div>
-        <div class="col">{{ animal.dataNascimentoOuIdade | date:'dd/MM/yyyy' }}</div>
+        <div class="col">{{ animal.dataNascimentoOuIdade }}</div>
         <div class="col">
           <span class="badge" 
                 [class.badge-success]="animal.condicaoSaude === 'Saudável'"
@@ -85,8 +112,9 @@
     </div>
     
     <!-- Rodapé de Contagem -->
-    <div class="list-footer" *ngIf="animais.length > 0">
-      Registros Totais: <strong>{{ animais.length }}</strong>
+    <div class="list-footer" *ngIf="animaisFiltrados.length > 0">
+      Registros exibidos: <strong>{{ animaisFiltrados.length }}</strong> de <strong>{{ animais.length }}</strong>
     </div>
   </div>
 </div>
+
