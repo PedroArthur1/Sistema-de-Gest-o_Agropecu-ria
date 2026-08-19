@@ -70,6 +70,9 @@ describe('AnimalDetalhe', () => {
         {
           provide: ActivatedRoute,
           useValue: {
+            paramMap: of({
+              get: (key: string) => key === 'id' ? '1' : null
+            }),
             snapshot: {
               paramMap: {
                 get: (key: string) => key === 'id' ? '1' : null
@@ -113,7 +116,7 @@ describe('AnimalDetalhe', () => {
   });
 
   it('deve exibir mensagem de erro quando o animal não é encontrado', () => {
-    animalService.buscarAnimalPorId.mockReturnValue(throwError(() => new Error('Não encontrado')));
+    animalService.buscarAnimalPorId.mockReturnValue(throwError(() => ({ status: 404 })));
 
     fixture = TestBed.createComponent(AnimalDetalhe);
     component = fixture.componentInstance;
