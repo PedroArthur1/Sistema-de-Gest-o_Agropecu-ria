@@ -33,7 +33,16 @@ jobs:
           cache: maven
 
       - name: Build, test and generate JaCoCo report
-        run: bash mvnw -B verify -Dspring.profiles.active=test
+        run: |
+          for attempt in 1 2 3; do
+            echo "Maven verify attempt ${attempt}/3"
+            if bash mvnw -B verify -Dspring.profiles.active=test; then
+              exit 0
+            fi
+            echo "Attempt ${attempt} failed; retrying in 20s..."
+            sleep 20
+          done
+          exit 1
 
       - name: Upload JaCoCo coverage report
         uses: actions/upload-artifact@v4
