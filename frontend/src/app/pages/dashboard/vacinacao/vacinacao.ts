@@ -10,6 +10,8 @@ import { CabecalhoPaginaComponent } from '../../../components/cabecalho-pagina/c
 import { CampoFormularioComponent } from '../../../components/campo-formulario/campo-formulario.component';
 import { BotaoAcaoComponent } from '../../../components/botao-acao/botao-acao.component';
 import { AlertaMensagemComponent } from '../../../components/alerta-mensagem/alerta-mensagem.component';
+import { LembretesVacinacaoComponent } from './lembretes/lembretes-vacinacao.component';
+import { NotificacaoService } from '../../../services/notificacao/notificacao.service';
 
 @Component({
   selector: 'app-vacinacao',
@@ -21,7 +23,8 @@ import { AlertaMensagemComponent } from '../../../components/alerta-mensagem/ale
     CabecalhoPaginaComponent,
     CampoFormularioComponent,
     BotaoAcaoComponent,
-    AlertaMensagemComponent
+    AlertaMensagemComponent,
+    LembretesVacinacaoComponent
   ],
   templateUrl: './vacinacao.html',
   styleUrl: './vacinacao.css'
@@ -34,11 +37,13 @@ export class VacinacaoPage implements OnInit {
   isSubmitting = false;
   successMessage = '';
   errorMessage = '';
+  abaAtiva: 'registro' | 'lembretes' = 'registro';
 
   constructor(
     private fb: FormBuilder,
     private animalService: AnimalService,
-    private vacinacaoService: VacinacaoService
+    private vacinacaoService: VacinacaoService,
+    private notificacaoService: NotificacaoService
   ) {}
 
   ngOnInit(): void {
@@ -100,6 +105,10 @@ export class VacinacaoPage implements OnInit {
     return !!campo && campo.invalid && campo.touched;
   }
 
+  mudarAba(aba: 'registro' | 'lembretes'): void {
+    this.abaAtiva = aba;
+  }
+
   get animalSelecionado(): Animal | undefined {
     const animalId = Number(this.vacinacaoForm.get('animalId')?.value);
     return this.animais.find((animal) => animal.id === animalId);
@@ -133,6 +142,7 @@ export class VacinacaoPage implements OnInit {
         });
         this.vacinacaoForm.markAsUntouched();
         this.carregarHistorico(Number(animalId));
+        this.notificacaoService.atualizarNotificacoes();
       },
       error: (erro) => {
         this.isSubmitting = false;
