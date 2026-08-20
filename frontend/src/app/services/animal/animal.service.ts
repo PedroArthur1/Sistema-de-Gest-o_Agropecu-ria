@@ -17,7 +17,7 @@ export class AnimalService {
   }
 
   listarAnimais(): Observable<Animal[]> {
-    return this.http.get<Animal[]>(this.apiUrl);
+    return this.http.get<Animal[]>(`${this.apiUrl}?t=${new Date().getTime()}`);
   }
 
   buscarAnimalPorId(id: number): Observable<Animal> {
