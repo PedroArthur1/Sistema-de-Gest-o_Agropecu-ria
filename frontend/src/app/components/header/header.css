@@ -18,7 +18,56 @@
 .header-right {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 24px;
+}
+
+/* Notificações - US09 */
+.notification-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  background-color: #f8fafc;
+  transition: all 0.2s ease;
+}
+
+.notification-container:hover {
+  background-color: #f1f5f9;
+}
+
+.bell-icon {
+  color: #64748b;
+  transition: color 0.2s ease;
+}
+
+.notification-container:hover .bell-icon {
+  color: #3b82f6;
+  animation: bell-shake 0.5s ease;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background-color: #ef4444;
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 12px;
+  border: 2px solid #ffffff;
+}
+
+@keyframes bell-shake {
+  0% { transform: rotate(0); }
+  25% { transform: rotate(15deg); }
+  50% { transform: rotate(-15deg); }
+  75% { transform: rotate(10deg); }
+  100% { transform: rotate(0); }
 }
 
 .role-badge {
@@ -51,3 +100,4 @@
   color: #ef4444;
   border-color: #fecaca;
 }
+
