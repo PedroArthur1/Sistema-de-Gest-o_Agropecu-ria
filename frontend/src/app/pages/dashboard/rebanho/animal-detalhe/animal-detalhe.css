@@ -259,3 +259,85 @@
   .list-header { display: none; }
   .list-item { flex-direction: column; align-items: flex-start; gap: 8px; }
 }
+
+/* US08 - Estilos do Formulário e Histórico de Tratamentos */
+.card-formulario, .card-historico {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  border: 1px solid #e0e0e0;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.grupo-campo label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.grupo-campo input, .grupo-campo textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.grupo-campo input:focus, .grupo-campo textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.btn-salvar {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-salvar:disabled {
+  background-color: #a0c4ff;
+  cursor: not-allowed;
+}
+
+.btn-salvar:not(:disabled):hover {
+  background-color: #0056b3;
+}
+
+.tabela-tratamentos {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.tabela-tratamentos th {
+  background-color: #f8f9fa;
+  padding: 12px;
+  text-align: left;
+  border-bottom: 2px solid #dee2e6;
+  color: #495057;
+}
+
+.tabela-tratamentos td {
+  padding: 12px;
+  border-bottom: 1px solid #dee2e6;
+  color: #212529;
+}
+
+.tabela-tratamentos tbody tr:hover {
+  background-color: #f1f3f5;
+}
