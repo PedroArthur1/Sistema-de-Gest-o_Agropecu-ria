@@ -32,11 +32,13 @@
   border-radius: 8px;
   padding: 8px 12px;
   gap: 8px;
-  width: 300px;
+  width: 320px;
+  position: relative;
 }
 
 .search-box svg {
   color: var(--text-secondary);
+  flex-shrink: 0;
 }
 
 .search-box input {
@@ -46,6 +48,43 @@
   width: 100%;
   font-size: 14px;
   color: var(--text-primary);
+}
+
+.btn-clear-search {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 14px;
+  padding: 2px 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-clear-search:hover {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background-color: var(--bg-color);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
 }
 
 .tabs-container {

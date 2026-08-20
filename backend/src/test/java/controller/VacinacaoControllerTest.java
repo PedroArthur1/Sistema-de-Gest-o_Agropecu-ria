@@ -175,7 +175,7 @@ class VacinacaoControllerTest {
                                   "dataProximaDose": "2026-11-12"
                                 }
                                 """))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     private void cadastrarUsuario(String emailUsuario, String senhaUsuario) throws Exception {
