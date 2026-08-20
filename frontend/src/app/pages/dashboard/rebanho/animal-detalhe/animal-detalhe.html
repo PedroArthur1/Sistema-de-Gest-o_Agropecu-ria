@@ -184,3 +184,71 @@
     </section>
   </div>
 </div>
+<hr style="margin: 40px 0; border-top: 1px dashed #ccc;">
+<h2 style="margin-bottom: 20px;">Saúde e Histórico de Tratamentos</h2>
+
+<div *ngIf="mensagemSucessoTratamento" style="color: #155724; background-color: #d4edda; border-color: #c3e6cb; padding: 12px; border-radius: 4px; margin-bottom: 20px;">
+  {{ mensagemSucessoTratamento }}
+</div>
+
+<div class="card-formulario">
+  <h3 style="margin-top: 0;">Registrar Novo Tratamento</h3>
+  <form [formGroup]="tratamentoForm" (ngSubmit)="registrarNovoTratamento()">
+
+    <div class="form-grid">
+      <div class="grupo-campo">
+        <label>Medicamento *</label>
+        <input type="text" formControlName="medicamento">
+      </div>
+      <div class="grupo-campo">
+        <label>Data *</label>
+        <input type="date" formControlName="data">
+      </div>
+      <div class="grupo-campo">
+        <label>Motivo *</label>
+        <input type="text" formControlName="motivo">
+      </div>
+      <div class="grupo-campo">
+        <label>Dosagem</label>
+        <input type="text" formControlName="dosagem" placeholder="Opcional">
+      </div>
+    </div>
+
+    <div class="grupo-campo" style="margin-bottom: 20px;">
+      <label>Observações</label>
+      <textarea formControlName="observacoes" rows="2" placeholder="Opcional"></textarea>
+    </div>
+
+    <div style="text-align: right;">
+      <button type="submit" [disabled]="tratamentoForm.invalid" class="btn-salvar">
+        Salvar Tratamento
+      </button>
+    </div>
+  </form>
+</div>
+
+<div class="card-historico" style="margin-top: 30px;">
+  <h3 style="margin-top: 0;">Histórico Registrado</h3>
+  <p *ngIf="historicoTratamentos.length === 0" style="color: #6c757d;">Nenhum tratamento registrado para este animal.</p>
+
+  <table class="tabela-tratamentos" *ngIf="historicoTratamentos.length > 0">
+    <thead>
+    <tr>
+      <th>Data</th>
+      <th>Medicamento</th>
+      <th>Motivo</th>
+      <th>Dosagem</th>
+      <th>Observações</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let t of historicoTratamentos">
+      <td>{{ t.data }}</td>
+      <td>{{ t.medicamento }}</td>
+      <td>{{ t.motivo }}</td>
+      <td>{{ t.dosagem || '-' }}</td>
+      <td>{{ t.observacoes || '-' }}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>

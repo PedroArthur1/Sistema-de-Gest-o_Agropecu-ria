@@ -9,7 +9,8 @@ import { Animal } from '../../../../models/animal.model';
 import { Vacinacao } from '../../../../models/vacinacao.model';
 import { CabecalhoPaginaComponent } from '../../../../components/cabecalho-pagina/cabecalho-pagina.component';
 import { AlertaMensagemComponent } from '../../../../components/alerta-mensagem/alerta-mensagem.component';
-
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { TratamentoService, Tratamento } from '../../../../services/tratamento/tratamento.service';
 @Component({
   selector: 'app-animal-detalhe',
   standalone: true,
@@ -17,7 +18,8 @@ import { AlertaMensagemComponent } from '../../../../components/alerta-mensagem/
     CommonModule,
     RouterLink,
     CabecalhoPaginaComponent,
-    AlertaMensagemComponent
+    AlertaMensagemComponent,
+    ReactiveFormsModule
   ],
   templateUrl: './animal-detalhe.html',
   styleUrl: './animal-detalhe.css'
@@ -28,12 +30,18 @@ export class AnimalDetalhe implements OnInit {
   proximasDoses: Vacinacao[] = [];
   carregando = true;
   errorMessage = '';
+  tratamentoForm!: FormGroup;
+  historicoTratamentos: Tratamento[] = [];
+  mensagemSucessoTratamento: string = '';
 
   constructor(
     private route: ActivatedRoute,
     private animalService: AnimalService,
     private vacinacaoService: VacinacaoService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private fb: FormBuilder,
+    private tratamentoService: TratamentoService,
+
   ) {}
 
   ngOnInit(): void {
@@ -50,6 +58,14 @@ export class AnimalDetalhe implements OnInit {
 
       this.carregarDados(id);
     });
+    this.tratamentoForm = this.fb.group({
+      medicamento: ['', Validators.required],
+      data: ['', Validators.required],
+      motivo: ['', Validators.required],
+      dosagem: [''],
+      observacoes: ['']
+    });
+    this.carregarTratamentos();
   }
 
   carregarDados(animalId: number): void {
@@ -83,6 +99,29 @@ export class AnimalDetalhe implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+  carregarTratamentos(): void {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.tratamentoService.listarPorAnimal(id).subscribe({
+      next: (dados: Tratamento[]) => this.historicoTratamentos = dados,
+      error: (err: any) => console.error(err)
+    });
+  }
+
+  registrarNovoTratamento(): void {
+    if (this.tratamentoForm.valid) {
+      const id = Number(this.route.snapshot.paramMap.get('id'));
+      const novo: Tratamento = { animalId: id, ...this.tratamentoForm.value };
+
+      this.tratamentoService.registrarTratamento(novo).subscribe({
+        next: (res: Tratamento) => {
+          this.historicoTratamentos.push(res);
+          this.tratamentoForm.reset();
+          this.mensagemSucessoTratamento = 'Tratamento salvo!';
+          setTimeout(() => this.mensagemSucessoTratamento = '', 3000);
+        }
+      });
+    }
   }
 }
 
