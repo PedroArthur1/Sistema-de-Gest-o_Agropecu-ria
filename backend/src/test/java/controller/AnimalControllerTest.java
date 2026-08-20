@@ -119,7 +119,7 @@ class AnimalControllerTest {
     @Test
     void naoDevePermitirConsultaSemAutenticacao() throws Exception {
         mockMvc.perform(get("/animais/{id}", 1))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     // ---- Métodos auxiliares ----

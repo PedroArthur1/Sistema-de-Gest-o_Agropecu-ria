@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,17 +28,22 @@ public class AuthController {
     private TokenService tokenService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody AuthDTO authDTO) {
-        // Encapsula as credenciais para o Spring Security validar
-        var usernamePassword = new UsernamePasswordAuthenticationToken(authDTO.email(), authDTO.password());
-        var auth = this.authenticationManager.authenticate(usernamePassword);
+    public ResponseEntity<?> login(@RequestBody AuthDTO authDTO) {
+        try {
+            var usernamePassword = new UsernamePasswordAuthenticationToken(authDTO.email(), authDTO.password());
+            var auth = this.authenticationManager.authenticate(usernamePassword);
 
-        // Se a senha estiver correta, recupera o usuário e gera o token
-        User user = (User) auth.getPrincipal();
-        String token = this.tokenService.generateToken(user);
+            User user = (User) auth.getPrincipal();
+            String token = this.tokenService.generateToken(user);
 
-        // Devolve o token, a role e o nome no formato que o Angular espera
-        return ResponseEntity.ok(new LoginResponseDTO(token, user.getAuthorities().iterator().next().getAuthority().replace("ROLE_", ""), user.getNome()));
+            return ResponseEntity.ok(new LoginResponseDTO(
+                    token,
+                    user.getAuthorities().iterator().next().getAuthority().replace("ROLE_", ""),
+                    user.getNome()));
+        } catch (BadCredentialsException ex) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(java.util.Map.of("error", "Email ou senha invalidos"));
+        }
     }
 
     @PostMapping("/register")
