@@ -64,7 +64,7 @@
         <div class="col font-semibold text-primary">{{ animal.codigoIdentificacao }}</div>
         <div class="col">{{ animal.especie }} / {{ animal.raca }}</div>
         <div class="col">{{ animal.sexo }}</div>
-        <div class="col">{{ animal.dataNascimentoOuIdade | date:'dd/MM/yyyy' }}</div>
+        <div class="col">{{ animal.dataNascimentoOuIdade }}</div>
         <div class="col">
           <span class="badge" 
                 [class.badge-success]="animal.condicaoSaude === 'Saudável'"
