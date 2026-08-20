@@ -61,7 +61,11 @@ Sistema Agropecuário de animais voltado para o cuidado, manejo, vacinação e a
 | `DB_USER` | Usuário do banco |
 | `DB_PASS` | Senha do banco |
 
-Alternativa: defina `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME` e `SPRING_DATASOURCE_PASSWORD` com JDBC (`jdbc:postgresql://...`).
+No dashboard Render (serviço API), com **Root Directory = `backend`**:
+- **Dockerfile Path** = `./Dockerfile` (não `backend/Dockerfile`)
+- **Docker Build Context Directory** = `.`
+
+Vincule o Postgres do Render às variáveis `DB_*` (Environment → Link Database / valores do Internal Database).
 
 O arquivo [`render.yaml`](render.yaml) na raiz do repositório descreve backend, frontend e PostgreSQL para deploy no Render.
 
