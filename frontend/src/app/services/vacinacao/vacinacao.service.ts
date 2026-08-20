@@ -1,26 +1,44 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Vacinacao, VacinacaoRequest } from '../../models/vacinacao.model';
-import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class VacinacaoService {
-  private apiUrl = `${environment.apiUrl}/animais`;
+  private storageKey = 'vacinacoes_mock_db';
 
-  constructor(private http: HttpClient) {}
+  constructor() {}
+
+  private getVacinacoes(): Vacinacao[] {
+    const data = localStorage.getItem(this.storageKey);
+    return data ? JSON.parse(data) : [];
+  }
+
+  private saveVacinacoes(vacinacoes: Vacinacao[]): void {
+    localStorage.setItem(this.storageKey, JSON.stringify(vacinacoes));
+  }
 
   registrar(animalId: number, vacinacao: VacinacaoRequest): Observable<Vacinacao> {
-    return this.http.post<Vacinacao>(`${this.apiUrl}/${animalId}/vacinacoes`, vacinacao);
+    const vacinacoes = this.getVacinacoes();
+    const novaVacinacao: Vacinacao = {
+      id: new Date().getTime(),
+      animalId,
+      ...vacinacao
+    };
+    vacinacoes.push(novaVacinacao);
+    this.saveVacinacoes(vacinacoes);
+    return of(novaVacinacao);
   }
 
   listarHistorico(animalId: number): Observable<Vacinacao[]> {
-    return this.http.get<Vacinacao[]>(`${this.apiUrl}/${animalId}/vacinacoes`);
+    const vacinacoes = this.getVacinacoes().filter(v => v.animalId === animalId);
+    return of(vacinacoes);
   }
 
   listarProximasDoses(animalId: number): Observable<Vacinacao[]> {
-    return this.http.get<Vacinacao[]>(`${this.apiUrl}/${animalId}/vacinacoes/proximas`);
+    const hoje = new Date().toISOString().split('T')[0];
+    const vacinacoes = this.getVacinacoes().filter(v => v.animalId === animalId && v.dataProximaDose >= hoje);
+    return of(vacinacoes);
   }
 }

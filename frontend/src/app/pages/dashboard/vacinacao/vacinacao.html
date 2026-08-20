@@ -10,7 +10,16 @@
     <a routerLink="/dashboard/rebanho/novo">Cadastrar animal</a>
   </div>
 
-  <div class="vacinacao-conteudo">
+  <div class="tabs-container">
+    <button class="tab-btn" [class.active]="abaAtiva === 'registro'" (click)="mudarAba('registro')">
+      Registrar & Histórico
+    </button>
+    <button class="tab-btn" [class.active]="abaAtiva === 'lembretes'" (click)="mudarAba('lembretes')">
+      Lembretes
+    </button>
+  </div>
+
+  <div class="vacinacao-conteudo" *ngIf="abaAtiva === 'registro'">
     <section class="cadastro-card">
       <h3 class="card-titulo">Registrar vacinação</h3>
       <p class="card-descricao">Informe o animal e os dados da aplicação. Todos os campos são obrigatórios.</p>
@@ -93,5 +102,9 @@
         Registros Totais: <strong>{{ historico.length }}</strong>
       </div>
     </section>
+  </div>
+
+  <div class="lembretes-aba-conteudo" *ngIf="abaAtiva === 'lembretes'">
+    <app-lembretes-vacinacao></app-lembretes-vacinacao>
   </div>
 </div>
