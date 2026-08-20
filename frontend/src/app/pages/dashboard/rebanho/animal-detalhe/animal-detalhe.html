@@ -192,38 +192,40 @@
 </div>
 
 <div class="card-formulario">
-  <h3 style="margin-top: 0;">Registrar Novo Tratamento</h3>
+  <h3>Registrar Novo Tratamento</h3>
   <form [formGroup]="tratamentoForm" (ngSubmit)="registrarNovoTratamento()">
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
 
-    <div class="form-grid">
-      <div class="grupo-campo">
-        <label>Medicamento *</label>
-        <input type="text" formControlName="medicamento">
+      <div style="flex: 1;">
+        <label for="inputMedicamento">Medicamento *</label><br>
+        <input type="text" id="inputMedicamento" formControlName="medicamento" style="width: 100%; padding: 8px;">
       </div>
-      <div class="grupo-campo">
-        <label>Data *</label>
-        <input type="date" formControlName="data">
+
+      <div style="flex: 1;">
+        <label for="inputData">Data *</label><br>
+        <input type="date" id="inputData" formControlName="data" style="width: 100%; padding: 8px;">
       </div>
-      <div class="grupo-campo">
-        <label>Motivo *</label>
-        <input type="text" formControlName="motivo">
+
+      <div style="flex: 1;">
+        <label for="inputMotivo">Motivo *</label><br>
+        <input type="text" id="inputMotivo" formControlName="motivo" style="width: 100%; padding: 8px;">
       </div>
-      <div class="grupo-campo">
-        <label>Dosagem</label>
-        <input type="text" formControlName="dosagem" placeholder="Opcional">
+
+      <div style="flex: 1;">
+        <label for="inputDosagem">Dosagem</label><br>
+        <input type="text" id="inputDosagem" formControlName="dosagem" style="width: 100%; padding: 8px;">
       </div>
+
     </div>
 
-    <div class="grupo-campo" style="margin-bottom: 20px;">
-      <label>Observações</label>
-      <textarea formControlName="observacoes" rows="2" placeholder="Opcional"></textarea>
+    <div style="margin-bottom: 15px;">
+      <label for="inputObservacoes">Observações</label><br>
+      <textarea id="inputObservacoes" formControlName="observacoes" rows="2" style="width: 100%; padding: 8px;"></textarea>
     </div>
 
-    <div style="text-align: right;">
-      <button type="submit" [disabled]="tratamentoForm.invalid" class="btn-salvar">
-        Salvar Tratamento
-      </button>
-    </div>
+    <button type="submit" [disabled]="tratamentoForm.invalid" style="padding: 10px 20px; cursor: pointer;">
+      Salvar Tratamento
+    </button>
   </form>
 </div>
 
