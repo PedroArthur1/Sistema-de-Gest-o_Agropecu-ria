@@ -254,3 +254,150 @@
     </tbody>
   </table>
 </div>
+
+<!-- ===== CONSULTAS VETERINÁRIAS ===== -->
+<hr class="section-divider">
+
+<section class="consultas-section">
+  <div class="consultas-header">
+    <div class="consultas-header-left">
+      <div class="section-header-icon consultas">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+          <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+          <path d="M9 14h.01"></path>
+          <path d="M13 14h2"></path>
+          <path d="M9 18h.01"></path>
+          <path d="M13 18h2"></path>
+        </svg>
+      </div>
+      <div>
+        <h2 class="consultas-title">Consultas Veterinárias</h2>
+        <p class="consultas-subtitle">Registre e acompanhe o histórico de consultas de saúde deste animal.</p>
+      </div>
+    </div>
+    <button class="btn-nova-consulta" (click)="toggleFormConsulta()" id="btn-toggle-consulta">
+      <svg *ngIf="!mostrarFormConsulta" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      <svg *ngIf="mostrarFormConsulta" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+      {{ mostrarFormConsulta ? 'Cancelar' : 'Nova Consulta' }}
+    </button>
+  </div>
+
+  <!-- Mensagem de Sucesso -->
+  <div class="alerta-sucesso-consulta" *ngIf="mensagemSucessoConsulta">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+    </svg>
+    {{ mensagemSucessoConsulta }}
+  </div>
+
+  <!-- Formulário de Nova Consulta -->
+  <div class="card-formulario-consulta" *ngIf="mostrarFormConsulta">
+    <h3>Registrar Nova Consulta</h3>
+    <form [formGroup]="consultaForm" (ngSubmit)="registrarNovaConsulta()" id="form-nova-consulta">
+      <div class="form-grid-consulta">
+        <div class="grupo-campo-consulta">
+          <label for="inputDataConsulta">Data da Consulta *</label>
+          <input type="date" id="inputDataConsulta" formControlName="dataConsulta">
+        </div>
+
+        <div class="grupo-campo-consulta">
+          <label for="inputMotivoConsulta">Motivo *</label>
+          <input type="text" id="inputMotivoConsulta" formControlName="motivo" placeholder="Ex.: Revisão periódica, claudicação...">
+        </div>
+
+        <div class="grupo-campo-consulta">
+          <label for="inputProfissional">Profissional Responsável *</label>
+          <input type="text" id="inputProfissional" formControlName="profissionalResponsavel" placeholder="Ex.: Dr. João Silva">
+        </div>
+
+        <div class="grupo-campo-consulta">
+          <label for="inputDiagnostico">Diagnóstico</label>
+          <input type="text" id="inputDiagnostico" formControlName="diagnostico" placeholder="Ex.: Dermatite bacteriana">
+        </div>
+      </div>
+
+      <div class="grupo-campo-consulta campo-full">
+        <label for="inputObsConsulta">Observações</label>
+        <textarea id="inputObsConsulta" formControlName="observacoes" rows="3"
+          placeholder="Detalhes adicionais sobre a consulta..."></textarea>
+      </div>
+
+      <!-- Vincular Tratamentos (opcional) -->
+      <div class="grupo-campo-consulta campo-full" *ngIf="historicoTratamentos.length > 0">
+        <label>Vincular Tratamentos (opcional)</label>
+        <p class="campo-hint">Selecione tratamentos existentes para associar a esta consulta.</p>
+        <div class="tratamentos-checkbox-list">
+          <label *ngFor="let t of historicoTratamentos" class="checkbox-item">
+            <input type="checkbox"
+              [value]="t.id"
+              (change)="onTratamentoCheckChange($event, t.id!)">
+            <span>{{ t.data }} — {{ t.medicamento }} ({{ t.motivo }})</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-actions-consulta">
+        <button type="submit" class="btn-salvar-consulta" [disabled]="consultaForm.invalid" id="btn-salvar-consulta">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          Salvar Consulta
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Histórico de Consultas -->
+  <div class="card-historico-consulta">
+    <div class="empty-state-consulta" *ngIf="historicoConsultas.length === 0">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: #94a3b8; margin-bottom: 12px;">
+        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+      </svg>
+      <h4>Nenhuma consulta registrada</h4>
+      <p>Este animal ainda não possui consultas veterinárias registradas.</p>
+    </div>
+
+    <table class="tabela-consultas" *ngIf="historicoConsultas.length > 0">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Motivo</th>
+          <th>Profissional</th>
+          <th>Diagnóstico</th>
+          <th>Observações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of historicoConsultas">
+          <td>
+            <span class="data-badge">{{ c.dataConsulta }}</span>
+          </td>
+          <td class="font-semibold">{{ c.motivo }}</td>
+          <td>{{ c.profissionalResponsavel }}</td>
+          <td>{{ c.diagnostico || '—' }}</td>
+          <td>{{ c.observacoes || '—' }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="consultas-footer" *ngIf="historicoConsultas.length > 0">
+      Total de consultas: <strong>{{ historicoConsultas.length }}</strong>
+    </div>
+  </div>
+</section>
+

@@ -53,7 +53,8 @@ public class TratamentoService {
                 t.getData(),
                 t.getMotivo(),
                 t.getDosagem(),
-                t.getObservacoes()
+                t.getObservacoes(),
+                t.getConsulta() != null ? t.getConsulta().getId() : null
         );
     }
 }
