@@ -27,6 +27,10 @@ public class Tratamento {
     private String dosagem;
     private String observacoes;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "consulta_id")
+    private Consulta consulta;
+
     public Tratamento() {}
 
     public Tratamento(Animal animal, String medicamento, LocalDate data, String motivo, String dosagem, String observacoes) {
@@ -52,4 +56,6 @@ public class Tratamento {
     public void setDosagem(String dosagem) { this.dosagem = dosagem; }
     public String getObservacoes() { return observacoes; }
     public void setObservacoes(String observacoes) { this.observacoes = observacoes; }
+    public Consulta getConsulta() { return consulta; }
+    public void setConsulta(Consulta consulta) { this.consulta = consulta; }
 }

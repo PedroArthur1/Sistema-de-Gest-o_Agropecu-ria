@@ -11,6 +11,8 @@ import { CabecalhoPaginaComponent } from '../../../../components/cabecalho-pagin
 import { AlertaMensagemComponent } from '../../../../components/alerta-mensagem/alerta-mensagem.component';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TratamentoService, Tratamento } from '../../../../services/tratamento/tratamento.service';
+import { ConsultaService } from '../../../../services/consulta/consulta.service';
+import { Consulta } from '../../../../models/consulta.model';
 @Component({
   selector: 'app-animal-detalhe',
   standalone: true,
@@ -34,6 +36,12 @@ export class AnimalDetalhe implements OnInit {
   historicoTratamentos: Tratamento[] = [];
   mensagemSucessoTratamento: string = '';
 
+  // Consultas Veterinárias
+  consultaForm!: FormGroup;
+  historicoConsultas: Consulta[] = [];
+  mensagemSucessoConsulta: string = '';
+  mostrarFormConsulta: boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     private animalService: AnimalService,
@@ -41,7 +49,7 @@ export class AnimalDetalhe implements OnInit {
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private tratamentoService: TratamentoService,
-
+    private consultaService: ConsultaService,
   ) {}
 
   ngOnInit(): void {
@@ -65,7 +73,14 @@ export class AnimalDetalhe implements OnInit {
       dosagem: [''],
       observacoes: ['']
     });
-    this.carregarTratamentos();
+    this.consultaForm = this.fb.group({
+      dataConsulta: ['', Validators.required],
+      motivo: ['', Validators.required],
+      profissionalResponsavel: ['', Validators.required],
+      diagnostico: [''],
+      observacoes: [''],
+      tratamentoIds: [[]]
+    });
   }
 
   carregarDados(animalId: number): void {
@@ -78,12 +93,16 @@ export class AnimalDetalhe implements OnInit {
     forkJoin({
       animal: this.animalService.buscarAnimalPorId(animalId),
       historico: this.vacinacaoService.listarHistorico(animalId).pipe(catchError(() => of([]))),
-      proximas: this.vacinacaoService.listarProximasDoses(animalId).pipe(catchError(() => of([])))
+      proximas: this.vacinacaoService.listarProximasDoses(animalId).pipe(catchError(() => of([]))),
+      tratamentos: this.tratamentoService.listarPorAnimal(animalId).pipe(catchError(() => of([]))),
+      consultas: this.consultaService.listarPorAnimal(animalId).pipe(catchError(() => of([])))
     }).subscribe({
-      next: ({ animal, historico, proximas }) => {
+      next: ({ animal, historico, proximas, tratamentos, consultas }) => {
         this.animal = animal;
         this.historico = historico ?? [];
         this.proximasDoses = proximas ?? [];
+        this.historicoTratamentos = tratamentos ?? [];
+        this.historicoConsultas = consultas ?? [];
         this.carregando = false;
         this.cdr.detectChanges();
       },
@@ -98,13 +117,6 @@ export class AnimalDetalhe implements OnInit {
         }
         this.cdr.detectChanges();
       }
-    });
-  }
-  carregarTratamentos(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.tratamentoService.listarPorAnimal(id).subscribe({
-      next: (dados: Tratamento[]) => this.historicoTratamentos = dados,
-      error: (err: any) => console.error(err)
     });
   }
 
@@ -123,5 +135,50 @@ export class AnimalDetalhe implements OnInit {
       });
     }
   }
-}
 
+  // === Consultas Veterinárias ===
+
+  registrarNovaConsulta(): void {
+    if (this.consultaForm.valid) {
+      const id = Number(this.route.snapshot.paramMap.get('id'));
+      const formValue = this.consultaForm.value;
+      const nova: Consulta = {
+        animalId: id,
+        dataConsulta: formValue.dataConsulta,
+        motivo: formValue.motivo,
+        profissionalResponsavel: formValue.profissionalResponsavel,
+        diagnostico: formValue.diagnostico || undefined,
+        observacoes: formValue.observacoes || undefined,
+        tratamentoIds: formValue.tratamentoIds?.length ? formValue.tratamentoIds : undefined
+      };
+
+      this.consultaService.registrar(nova).subscribe({
+        next: (res: Consulta) => {
+          this.historicoConsultas.unshift(res);
+          this.consultaForm.reset({ tratamentoIds: [] });
+          this.mostrarFormConsulta = false;
+          this.mensagemSucessoConsulta = 'Consulta registrada com sucesso!';
+          setTimeout(() => this.mensagemSucessoConsulta = '', 4000);
+        },
+        error: (err: any) => {
+          console.error('Erro ao registrar consulta:', err);
+        }
+      });
+    }
+  }
+
+  toggleFormConsulta(): void {
+    this.mostrarFormConsulta = !this.mostrarFormConsulta;
+  }
+
+  onTratamentoCheckChange(event: Event, tratamentoId: number): void {
+    const checkbox = event.target as HTMLInputElement;
+    const currentIds: number[] = this.consultaForm.get('tratamentoIds')?.value || [];
+
+    if (checkbox.checked) {
+      this.consultaForm.patchValue({ tratamentoIds: [...currentIds, tratamentoId] });
+    } else {
+      this.consultaForm.patchValue({ tratamentoIds: currentIds.filter(id => id !== tratamentoId) });
+    }
+  }
+}
