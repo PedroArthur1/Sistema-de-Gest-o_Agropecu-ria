@@ -1,4 +1,4 @@
-export type StatusLembrete = 'Atrasada' | 'Hoje' | 'Próxima';
+export type StatusLembrete = "Atrasada" | "Hoje" | "Próxima";
 
 export interface Lembrete {
   animalId: number;
@@ -7,4 +7,5 @@ export interface Lembrete {
   vacina: string;
   dataPrevista: string;
   status: StatusLembrete;
+  tipo: "Vacina" | "Tratamento";
 }

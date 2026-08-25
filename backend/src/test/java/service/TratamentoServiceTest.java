@@ -54,7 +54,8 @@ class TratamentoServiceTest {
                 animal, "Ivermectina",
                 LocalDate.of(2026, 8, 15),
                 "Parasitas intestinais",
-                "10 mL", "Aplicação subcutânea"
+                "10 mL", "Aplicação subcutânea",
+                LocalDate.of(2026, 9, 15)
         );
         tratamento.setId(1L);
     }
@@ -65,7 +66,8 @@ class TratamentoServiceTest {
                 1L, "Ivermectina",
                 LocalDate.of(2026, 8, 15),
                 "Parasitas intestinais",
-                "10 mL", "Aplicação subcutânea"
+                "10 mL", "Aplicação subcutânea",
+                LocalDate.of(2026, 9, 15)
         );
 
         when(animalService.buscarDoUsuario(1L)).thenReturn(animal);
@@ -77,6 +79,7 @@ class TratamentoServiceTest {
         assertEquals("Ivermectina", resultado.medicamento());
         assertEquals("Parasitas intestinais", resultado.motivo());
         assertEquals("10 mL", resultado.dosagem());
+        assertEquals(LocalDate.of(2026, 9, 15), resultado.dataPrevista());
         verify(tratamentoRepository).save(any(Tratamento.class));
     }
 
@@ -85,7 +88,7 @@ class TratamentoServiceTest {
         TratamentoRequestDTO dto = new TratamentoRequestDTO(
                 99L, "Ivermectina",
                 LocalDate.of(2026, 8, 15),
-                "Parasitas", "10 mL", null
+                "Parasitas", "10 mL", null, null
         );
 
         when(animalService.buscarDoUsuario(99L))
@@ -122,13 +125,13 @@ class TratamentoServiceTest {
                 1L, "Antibiótico",
                 LocalDate.of(2026, 8, 20),
                 "Infecção cutânea",
-                null, null
+                null, null, null
         );
 
         Tratamento tratSemExtras = new Tratamento(
                 animal, "Antibiótico",
                 LocalDate.of(2026, 8, 20),
-                "Infecção cutânea", null, null
+                "Infecção cutânea", null, null, null
         );
         tratSemExtras.setId(2L);
 
@@ -140,6 +143,7 @@ class TratamentoServiceTest {
         assertNotNull(resultado);
         assertNull(resultado.dosagem());
         assertNull(resultado.observacoes());
+        assertNull(resultado.dataPrevista());
         assertNull(resultado.consultaId());
     }
 
@@ -156,5 +160,21 @@ class TratamentoServiceTest {
 
         assertEquals(1, resultado.size());
         assertEquals(5L, resultado.get(0).consultaId());
+    }
+
+    @Test
+    void deveLancarExcecaoQuandoDataPrevistaAnteriorADataTratamento() {
+        TratamentoRequestDTO dto = new TratamentoRequestDTO(
+                1L, "Ivermectina",
+                LocalDate.of(2026, 8, 15),
+                "Parasitas", "10 mL", null,
+                LocalDate.of(2026, 8, 14)
+        );
+
+        when(animalService.buscarDoUsuario(1L)).thenReturn(animal);
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> tratamentoService.registrarTratamento(dto));
+        assertEquals("Data prevista para a próxima dose não pode ser anterior à data do tratamento", ex.getReason());
     }
 }

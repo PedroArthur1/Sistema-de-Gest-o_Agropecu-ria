@@ -44,7 +44,7 @@ describe('AnimalService', () => {
       expect(resposta).toEqual({ ...animalExemplo, id: 1 });
     });
 
-    const requisicao = simuladorHttp.expectOne('http://localhost:8080/animais');
+    const requisicao = simuladorHttp.expectOne(req => req.url.startsWith('http://localhost:8080/animais'));
     expect(requisicao.request.method).toBe('POST');
     expect(requisicao.request.body).toEqual(animalExemplo);
 
@@ -70,7 +70,7 @@ describe('AnimalService', () => {
       expect(animais).toEqual(listaExemplo);
     });
 
-    const requisicao = simuladorHttp.expectOne('http://localhost:8080/animais');
+    const requisicao = simuladorHttp.expectOne(req => req.url.startsWith('http://localhost:8080/animais'));
     expect(requisicao.request.method).toBe('GET');
     requisicao.flush(listaExemplo);
   });

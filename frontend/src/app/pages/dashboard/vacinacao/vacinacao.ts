@@ -1,20 +1,20 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { Animal } from '../../../models/animal.model';
-import { Vacinacao } from '../../../models/vacinacao.model';
-import { AnimalService } from '../../../services/animal/animal.service';
-import { VacinacaoService } from '../../../services/vacinacao/vacinacao.service';
-import { CabecalhoPaginaComponent } from '../../../components/cabecalho-pagina/cabecalho-pagina.component';
-import { CampoFormularioComponent } from '../../../components/campo-formulario/campo-formulario.component';
-import { BotaoAcaoComponent } from '../../../components/botao-acao/botao-acao.component';
-import { AlertaMensagemComponent } from '../../../components/alerta-mensagem/alerta-mensagem.component';
-import { LembretesVacinacaoComponent } from './lembretes/lembretes-vacinacao.component';
-import { NotificacaoService } from '../../../services/notificacao/notificacao.service';
+import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from "@angular/forms";
+import { RouterLink, ActivatedRoute } from "@angular/router";
+import { Animal } from "../../../models/animal.model";
+import { Vacinacao } from "../../../models/vacinacao.model";
+import { AnimalService } from "../../../services/animal/animal.service";
+import { VacinacaoService } from "../../../services/vacinacao/vacinacao.service";
+import { CabecalhoPaginaComponent } from "../../../components/cabecalho-pagina/cabecalho-pagina.component";
+import { CampoFormularioComponent } from "../../../components/campo-formulario/campo-formulario.component";
+import { BotaoAcaoComponent } from "../../../components/botao-acao/botao-acao.component";
+import { AlertaMensagemComponent } from "../../../components/alerta-mensagem/alerta-mensagem.component";
+import { LembretesVacinacaoComponent } from "./lembretes/lembretes-vacinacao.component";
+import { NotificacaoService } from "../../../services/notificacao/notificacao.service";
 
 @Component({
-  selector: 'app-vacinacao',
+  selector: "app-vacinacao",
   standalone: true,
   imports: [
     CommonModule,
@@ -26,8 +26,8 @@ import { NotificacaoService } from '../../../services/notificacao/notificacao.se
     AlertaMensagemComponent,
     LembretesVacinacaoComponent
   ],
-  templateUrl: './vacinacao.html',
-  styleUrl: './vacinacao.css'
+  templateUrl: "./vacinacao.html",
+  styleUrl: "./vacinacao.css"
 })
 export class VacinacaoPage implements OnInit {
   vacinacaoForm!: FormGroup;
@@ -35,40 +35,51 @@ export class VacinacaoPage implements OnInit {
   historico: Vacinacao[] = [];
   carregandoAnimais = false;
   isSubmitting = false;
-  successMessage = '';
-  errorMessage = '';
-  abaAtiva: 'registro' | 'lembretes' = 'registro';
+  successMessage = "";
+  errorMessage = "";
+  abaAtiva: "registro" | "lembretes" = "registro";
 
   constructor(
     private fb: FormBuilder,
     private animalService: AnimalService,
     private vacinacaoService: VacinacaoService,
-    private notificacaoService: NotificacaoService
+    private notificacaoService: NotificacaoService,
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.vacinacaoForm = this.fb.group({
-      animalId: ['', Validators.required],
-      nomeVacina: ['', Validators.required],
-      dataAplicacao: ['', Validators.required],
-      dose: ['', Validators.required],
-      responsavel: ['', Validators.required],
-      dataProximaDose: ['', Validators.required]
+      animalId: ["", Validators.required],
+      nomeVacina: ["", Validators.required],
+      dataAplicacao: ["", Validators.required],
+      dose: ["", Validators.required],
+      responsavel: ["", Validators.required],
+      dataProximaDose: ["", Validators.required]
     }, { validators: VacinacaoPage.validarDatas });
 
     this.carregarAnimais();
 
-    this.vacinacaoForm.get('animalId')?.valueChanges.subscribe((animalId) => {
+    this.vacinacaoForm.get("animalId")?.valueChanges.subscribe((animalId) => {
       this.historico = [];
       if (animalId) {
         this.carregarHistorico(Number(animalId));
+      } else {
+        this.cdr.detectChanges();
+      }
+    });
+
+    this.route.queryParams?.subscribe(params => {
+      if (params["tab"] === "lembretes") {
+        this.abaAtiva = "lembretes";
+        this.cdr.detectChanges();
       }
     });
   }
 
   static validarDatas(group: AbstractControl): ValidationErrors | null {
-    const aplicacao = group.get('dataAplicacao')?.value;
-    const proxima = group.get('dataProximaDose')?.value;
+    const aplicacao = group.get("dataAplicacao")?.value;
+    const proxima = group.get("dataProximaDose")?.value;
     if (aplicacao && proxima && proxima < aplicacao) {
       return { dataProximaAnterior: true };
     }
@@ -81,10 +92,12 @@ export class VacinacaoPage implements OnInit {
       next: (dados) => {
         this.animais = dados ?? [];
         this.carregandoAnimais = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.carregandoAnimais = false;
-        this.errorMessage = 'Não foi possível carregar os animais cadastrados.';
+        this.errorMessage = "Não foi possível carregar os animais cadastrados.";
+        this.cdr.detectChanges();
       }
     });
   }
@@ -93,9 +106,11 @@ export class VacinacaoPage implements OnInit {
     this.vacinacaoService.listarHistorico(animalId).subscribe({
       next: (dados) => {
         this.historico = dados;
+        this.cdr.detectChanges();
       },
       error: () => {
-        this.errorMessage = 'Não foi possível carregar o histórico de vacinação.';
+        this.errorMessage = "Não foi possível carregar o histórico de vacinação.";
+        this.cdr.detectChanges();
       }
     });
   }
@@ -105,48 +120,53 @@ export class VacinacaoPage implements OnInit {
     return !!campo && campo.invalid && campo.touched;
   }
 
-  mudarAba(aba: 'registro' | 'lembretes'): void {
+  mudarAba(aba: "registro" | "lembretes"): void {
     this.abaAtiva = aba;
+    this.cdr.detectChanges();
   }
 
   get animalSelecionado(): Animal | undefined {
-    const animalId = Number(this.vacinacaoForm.get('animalId')?.value);
+    const animalId = Number(this.vacinacaoForm.get("animalId")?.value);
     return this.animais.find((animal) => animal.id === animalId);
   }
 
   onSubmit(): void {
-    this.successMessage = '';
-    this.errorMessage = '';
+    this.successMessage = "";
+    this.errorMessage = "";
 
     if (this.vacinacaoForm.invalid) {
       this.vacinacaoForm.markAllAsTouched();
-      this.errorMessage = this.vacinacaoForm.hasError('dataProximaAnterior')
-        ? 'Data prevista para a próxima dose não pode ser anterior à data da aplicação.'
-        : 'Por favor, preencha todos os campos obrigatórios.';
+      this.errorMessage = this.vacinacaoForm.hasError("dataProximaAnterior")
+        ? "Data prevista para a próxima dose não pode ser anterior à data da aplicação."
+        : "Por favor, preencha todos os campos obrigatórios.";
+      this.cdr.detectChanges();
       return;
     }
 
     const { animalId, ...dadosVacinacao } = this.vacinacaoForm.getRawValue();
     this.isSubmitting = true;
+    this.cdr.detectChanges();
 
     this.vacinacaoService.registrar(Number(animalId), dadosVacinacao).subscribe({
       next: () => {
-        this.successMessage = 'Vacinação registrada com sucesso!';
+        this.successMessage = "Vacinação registrada com sucesso!";
         this.isSubmitting = false;
         this.vacinacaoForm.patchValue({
-          nomeVacina: '',
-          dataAplicacao: '',
-          dose: '',
-          responsavel: '',
-          dataProximaDose: ''
+          nomeVacina: "",
+          dataAplicacao: "",
+          dose: "",
+          responsavel: "",
+          dataProximaDose: ""
         });
         this.vacinacaoForm.markAsUntouched();
         this.carregarHistorico(Number(animalId));
         this.notificacaoService.atualizarNotificacoes();
+        this.cdr.detectChanges();
       },
       error: (erro) => {
         this.isSubmitting = false;
-        this.errorMessage = erro?.error?.message || 'Erro ao registrar vacinação. Tente novamente.';
+        this.errorMessage = erro?.error?.message || "Erro ao registrar vacinação. Tente novamente.";
+        this.cdr.detectChanges();
       }
     });
   }

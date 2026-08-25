@@ -1,20 +1,20 @@
 <div class="lembretes-container">
   <div class="lembretes-header">
-    <h3>Lembretes de Vacinação</h3>
-    <p>Consulte aqui as próximas vacinas previstas e as que já passaram do prazo.</p>
+    <h3>Lembretes de Saúde</h3>
+    <p>Consulte aqui as próximas vacinas e tratamentos previstos e os que já passaram do prazo.</p>
   </div>
 
   <div class="list-container">
     <ng-container *ngIf="lembretes$ | async as lembretes">
       <div class="empty-state" *ngIf="lembretes.length === 0">
         <h3>Tudo em dia!</h3>
-        <p>Não há lembretes de vacinação pendentes ou futuros no momento.</p>
+        <p>Não há lembretes de vacinação ou tratamento pendentes ou futuros no momento.</p>
       </div>
 
       <div class="list-content" *ngIf="lembretes.length > 0">
         <div class="list-header">
           <div class="col">ANIMAL</div>
-          <div class="col">VACINA</div>
+          <div class="col">CUIDADO / ITEM</div>
           <div class="col">DATA PREVISTA</div>
           <div class="col">STATUS</div>
           <div class="col">AÇÃO</div>
@@ -25,7 +25,12 @@
             {{ lembrete.codigoAnimal }}<br>
             <small class="text-gray">{{ lembrete.nomeAnimal }}</small>
           </div>
-          <div class="col font-semibold text-primary">{{ lembrete.vacina }}</div>
+          <div class="col font-semibold text-primary">
+            <span class="tipo-tag" [ngClass]="'tag-' + lembrete.tipo.toLowerCase()">
+              {{ lembrete.tipo }}
+            </span><br>
+            {{ lembrete.vacina }}
+          </div>
           <div class="col">
             <strong>{{ lembrete.dataPrevista | date:'dd/MM/yyyy' }}</strong>
           </div>

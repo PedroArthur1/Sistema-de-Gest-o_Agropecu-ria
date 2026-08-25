@@ -10,5 +10,6 @@ public record TratamentoResponseDTO(
         String motivo,
         String dosagem,
         String observacoes,
+        LocalDate dataPrevista,
         Long consultaId
 ) {}

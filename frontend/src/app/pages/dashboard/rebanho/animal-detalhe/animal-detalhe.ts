@@ -1,20 +1,21 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
-import { forkJoin, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { AnimalService } from '../../../../services/animal/animal.service';
-import { VacinacaoService } from '../../../../services/vacinacao/vacinacao.service';
-import { Animal } from '../../../../models/animal.model';
-import { Vacinacao } from '../../../../models/vacinacao.model';
-import { CabecalhoPaginaComponent } from '../../../../components/cabecalho-pagina/cabecalho-pagina.component';
-import { AlertaMensagemComponent } from '../../../../components/alerta-mensagem/alerta-mensagem.component';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { TratamentoService, Tratamento } from '../../../../services/tratamento/tratamento.service';
-import { ConsultaService } from '../../../../services/consulta/consulta.service';
-import { Consulta } from '../../../../models/consulta.model';
+import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { ActivatedRoute, RouterLink } from "@angular/router";
+import { forkJoin, of } from "rxjs";
+import { catchError } from "rxjs/operators";
+import { AnimalService } from "../../../../services/animal/animal.service";
+import { VacinacaoService } from "../../../../services/vacinacao/vacinacao.service";
+import { Animal } from "../../../../models/animal.model";
+import { Vacinacao } from "../../../../models/vacinacao.model";
+import { CabecalhoPaginaComponent } from "../../../../components/cabecalho-pagina/cabecalho-pagina.component";
+import { AlertaMensagemComponent } from "../../../../components/alerta-mensagem/alerta-mensagem.component";
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from "@angular/forms";
+import { TratamentoService, Tratamento } from "../../../../services/tratamento/tratamento.service";
+import { ConsultaService } from "../../../../services/consulta/consulta.service";
+import { Consulta } from "../../../../models/consulta.model";
+
 @Component({
-  selector: 'app-animal-detalhe',
+  selector: "app-animal-detalhe",
   standalone: true,
   imports: [
     CommonModule,
@@ -23,23 +24,23 @@ import { Consulta } from '../../../../models/consulta.model';
     AlertaMensagemComponent,
     ReactiveFormsModule
   ],
-  templateUrl: './animal-detalhe.html',
-  styleUrl: './animal-detalhe.css'
+  templateUrl: "./animal-detalhe.html",
+  styleUrl: "./animal-detalhe.css"
 })
 export class AnimalDetalhe implements OnInit {
   animal: Animal | null = null;
   historico: Vacinacao[] = [];
   proximasDoses: Vacinacao[] = [];
   carregando = true;
-  errorMessage = '';
+  errorMessage = "";
   tratamentoForm!: FormGroup;
   historicoTratamentos: Tratamento[] = [];
-  mensagemSucessoTratamento: string = '';
+  mensagemSucessoTratamento: string = "";
 
   // Consultas Veterinárias
   consultaForm!: FormGroup;
   historicoConsultas: Consulta[] = [];
-  mensagemSucessoConsulta: string = '';
+  mensagemSucessoConsulta: string = "";
   mostrarFormConsulta: boolean = false;
 
   constructor(
@@ -54,11 +55,11 @@ export class AnimalDetalhe implements OnInit {
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      const idParam = params.get('id');
+      const idParam = params.get("id");
       const id = Number(idParam);
 
       if (!idParam || isNaN(id) || id <= 0) {
-        this.errorMessage = 'Identificador do animal inválido.';
+        this.errorMessage = "Identificador do animal inválido.";
         this.carregando = false;
         this.cdr.detectChanges();
         return;
@@ -67,25 +68,46 @@ export class AnimalDetalhe implements OnInit {
       this.carregarDados(id);
     });
     this.tratamentoForm = this.fb.group({
-      medicamento: ['', Validators.required],
-      data: ['', Validators.required],
-      motivo: ['', Validators.required],
-      dosagem: [''],
-      observacoes: ['']
-    });
+      medicamento: ["", Validators.required],
+      data: ["", Validators.required],
+      motivo: ["", Validators.required],
+      dosagem: [""],
+      observacoes: [""],
+      dataPrevista: [""]
+    }, { validators: this.validarDataPrevista });
+    
     this.consultaForm = this.fb.group({
-      dataConsulta: ['', Validators.required],
-      motivo: ['', Validators.required],
-      profissionalResponsavel: ['', Validators.required],
-      diagnostico: [''],
-      observacoes: [''],
+      dataConsulta: ["", Validators.required],
+      motivo: ["", Validators.required],
+      profissionalResponsavel: ["", Validators.required],
+      diagnostico: [""],
+      observacoes: [""],
       tratamentoIds: [[]]
     });
   }
 
+  validarDataPrevista(group: FormGroup) {
+    const data = group.get("data")?.value;
+    const dataPrevista = group.get("dataPrevista")?.value;
+    if (data && dataPrevista && dataPrevista < data) {
+      group.get("dataPrevista")?.setErrors({ anterior: true });
+      return { dataPrevistaAnterior: true };
+    }
+    const errors = group.get("dataPrevista")?.errors;
+    if (errors) {
+      delete errors["anterior"];
+      if (Object.keys(errors).length === 0) {
+        group.get("dataPrevista")?.setErrors(null);
+      } else {
+        group.get("dataPrevista")?.setErrors(errors);
+      }
+    }
+    return null;
+  }
+
   carregarDados(animalId: number): void {
     this.carregando = true;
-    this.errorMessage = '';
+    this.errorMessage = "";
     this.animal = null;
     this.historico = [];
     this.proximasDoses = [];
@@ -109,11 +131,11 @@ export class AnimalDetalhe implements OnInit {
       error: (err) => {
         this.carregando = false;
         if (err.status === 404) {
-          this.errorMessage = 'Animal não encontrado ou você não tem permissão para acessá-lo.';
+          this.errorMessage = "Animal não encontrado ou você não tem permissão para acessá-lo.";
         } else if (err.status === 401 || err.status === 403) {
-          this.errorMessage = 'Sessão expirada ou não autenticada. Por favor, faça login novamente.';
+          this.errorMessage = "Sessão expirada ou não autenticada. Por favor, faça login novamente.";
         } else {
-          this.errorMessage = 'Erro ao carregar informações do animal. Verifique a conexão com o backend.';
+          this.errorMessage = "Erro ao carregar informações do animal. Verifique a conexão com o backend.";
         }
         this.cdr.detectChanges();
       }
@@ -122,15 +144,24 @@ export class AnimalDetalhe implements OnInit {
 
   registrarNovoTratamento(): void {
     if (this.tratamentoForm.valid) {
-      const id = Number(this.route.snapshot.paramMap.get('id'));
-      const novo: Tratamento = { animalId: id, ...this.tratamentoForm.value };
+      const id = Number(this.route.snapshot.paramMap.get("id"));
+      const formValue = this.tratamentoForm.value;
+      const novo: Tratamento = {
+        animalId: id,
+        medicamento: formValue.medicamento,
+        data: formValue.data,
+        motivo: formValue.motivo,
+        dosagem: formValue.dosagem || undefined,
+        observacoes: formValue.observacoes || undefined,
+        dataPrevista: formValue.dataPrevista || undefined
+      };
 
       this.tratamentoService.registrarTratamento(novo).subscribe({
         next: (res: Tratamento) => {
           this.historicoTratamentos.push(res);
           this.tratamentoForm.reset();
-          this.mensagemSucessoTratamento = 'Tratamento salvo!';
-          setTimeout(() => this.mensagemSucessoTratamento = '', 3000);
+          this.mensagemSucessoTratamento = "Tratamento salvo!";
+          setTimeout(() => this.mensagemSucessoTratamento = "", 3000);
         }
       });
     }
@@ -140,7 +171,7 @@ export class AnimalDetalhe implements OnInit {
 
   registrarNovaConsulta(): void {
     if (this.consultaForm.valid) {
-      const id = Number(this.route.snapshot.paramMap.get('id'));
+      const id = Number(this.route.snapshot.paramMap.get("id"));
       const formValue = this.consultaForm.value;
       const nova: Consulta = {
         animalId: id,
@@ -157,11 +188,11 @@ export class AnimalDetalhe implements OnInit {
           this.historicoConsultas.unshift(res);
           this.consultaForm.reset({ tratamentoIds: [] });
           this.mostrarFormConsulta = false;
-          this.mensagemSucessoConsulta = 'Consulta registrada com sucesso!';
-          setTimeout(() => this.mensagemSucessoConsulta = '', 4000);
+          this.mensagemSucessoConsulta = "Consulta registrada com sucesso!";
+          setTimeout(() => this.mensagemSucessoConsulta = "", 4000);
         },
         error: (err: any) => {
-          console.error('Erro ao registrar consulta:', err);
+          console.error("Erro ao registrar consulta:", err);
         }
       });
     }
@@ -173,7 +204,7 @@ export class AnimalDetalhe implements OnInit {
 
   onTratamentoCheckChange(event: Event, tratamentoId: number): void {
     const checkbox = event.target as HTMLInputElement;
-    const currentIds: number[] = this.consultaForm.get('tratamentoIds')?.value || [];
+    const currentIds: number[] = this.consultaForm.get("tratamentoIds")?.value || [];
 
     if (checkbox.checked) {
       this.consultaForm.patchValue({ tratamentoIds: [...currentIds, tratamentoId] });
