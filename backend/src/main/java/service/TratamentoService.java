@@ -4,7 +4,6 @@ import dto.TratamentoRequestDTO;
 import dto.TratamentoResponseDTO;
 import model.Animal;
 import model.Tratamento;
-import repository.AnimalRepository;
 import repository.TratamentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,11 +18,10 @@ public class TratamentoService {
     private TratamentoRepository tratamentoRepository;
 
     @Autowired
-    private AnimalRepository animalRepository;
+    private AnimalService animalService;
 
     public TratamentoResponseDTO registrarTratamento(TratamentoRequestDTO dto) {
-        Animal animal = animalRepository.findById(dto.animalId())
-                .orElseThrow(() -> new RuntimeException("Animal não encontrado."));
+        Animal animal = animalService.buscarDoUsuario(dto.animalId());
 
         Tratamento tratamento = new Tratamento(
                 animal,
@@ -39,6 +37,7 @@ public class TratamentoService {
     }
 
     public List<TratamentoResponseDTO> listarPorAnimal(Long animalId) {
+        animalService.buscarDoUsuario(animalId);
         return tratamentoRepository.findByAnimalId(animalId)
                 .stream()
                 .map(this::mapToDTO)
