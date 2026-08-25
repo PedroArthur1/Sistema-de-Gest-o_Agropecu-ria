@@ -1,0 +1,201 @@
+package service;
+
+import dto.AnimalDTO;
+import model.Animal;
+import model.User;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.server.ResponseStatusException;
+import repository.AnimalRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class AnimalServiceTest {
+
+    @Mock
+    private AnimalRepository animalRepository;
+
+    @Mock
+    private UsuarioAutenticadoService usuarioAutenticadoService;
+
+    @InjectMocks
+    private AnimalService animalService;
+
+    private User usuario;
+    private Animal animal;
+
+    @BeforeEach
+    void setUp() {
+        usuario = new User("Agricultor", "agri@fazenda.com", "hash", "USER");
+
+        animal = new Animal();
+        animal.setCodigoIdentificacao("BOV-001");
+        animal.setEspecie("Bovino");
+        animal.setRaca("Nelore");
+        animal.setSexo("MACHO");
+        animal.setDataNascimentoOuIdade("2 anos");
+        animal.setPeso(450.0);
+        animal.setCondicaoSaude("Saudável");
+        animal.setProprietario(usuario);
+    }
+
+    @Test
+    void deveCadastrarAnimalComSucesso() {
+        AnimalDTO dto = new AnimalDTO(null, "BOV-001", "Bovino", "Nelore", "MACHO",
+                "2 anos", 450.0, "Saudável", null);
+
+        when(usuarioAutenticadoService.obterUsuario()).thenReturn(usuario);
+        when(animalRepository.save(any(Animal.class))).thenReturn(animal);
+
+        AnimalDTO resultado = animalService.cadastrar(dto);
+
+        assertNotNull(resultado);
+        assertEquals("BOV-001", resultado.codigoIdentificacao());
+        assertEquals("Bovino", resultado.especie());
+        verify(animalRepository).save(any(Animal.class));
+    }
+
+    @Test
+    void deveLancarExcecaoParaDtoNulo() {
+        assertThrows(ResponseStatusException.class, () -> animalService.cadastrar(null));
+    }
+
+    @Test
+    void deveLancarExcecaoParaCodigoVazio() {
+        AnimalDTO dto = new AnimalDTO(null, "", "Bovino", "Nelore", "MACHO",
+                "2 anos", 450.0, "Saudável", null);
+
+        assertThrows(ResponseStatusException.class, () -> animalService.cadastrar(dto));
+    }
+
+    @Test
+    void deveLancarExcecaoParaEspecieVazia() {
+        AnimalDTO dto = new AnimalDTO(null, "BOV-001", "", "Nelore", "MACHO",
+                "2 anos", 450.0, "Saudável", null);
+
+        assertThrows(ResponseStatusException.class, () -> animalService.cadastrar(dto));
+    }
+
+    @Test
+    void deveLancarExcecaoParaRacaVazia() {
+        AnimalDTO dto = new AnimalDTO(null, "BOV-001", "Bovino", "", "MACHO",
+                "2 anos", 450.0, "Saudável", null);
+
+        assertThrows(ResponseStatusException.class, () -> animalService.cadastrar(dto));
+    }
+
+    @Test
+    void deveLancarExcecaoParaSexoNulo() {
+        AnimalDTO dto = new AnimalDTO(null, "BOV-001", "Bovino", "Nelore", null,
+                "2 anos", 450.0, "Saudável", null);
+
+        assertThrows(ResponseStatusException.class, () -> animalService.cadastrar(dto));
+    }
+
+    @Test
+    void deveLancarExcecaoParaDataNascimentoVazia() {
+        AnimalDTO dto = new AnimalDTO(null, "BOV-001", "Bovino", "Nelore", "MACHO",
+                "  ", 450.0, "Saudável", null);
+
+        assertThrows(ResponseStatusException.class, () -> animalService.cadastrar(dto));
+    }
+
+    @Test
+    void deveLancarExcecaoParaPesoNulo() {
+        AnimalDTO dto = new AnimalDTO(null, "BOV-001", "Bovino", "Nelore", "MACHO",
+                "2 anos", null, "Saudável", null);
+
+        assertThrows(ResponseStatusException.class, () -> animalService.cadastrar(dto));
+    }
+
+    @Test
+    void deveLancarExcecaoParaPesoNegativo() {
+        AnimalDTO dto = new AnimalDTO(null, "BOV-001", "Bovino", "Nelore", "MACHO",
+                "2 anos", -10.0, "Saudável", null);
+
+        assertThrows(ResponseStatusException.class, () -> animalService.cadastrar(dto));
+    }
+
+    @Test
+    void deveLancarExcecaoParaCondicaoSaudeVazia() {
+        AnimalDTO dto = new AnimalDTO(null, "BOV-001", "Bovino", "Nelore", "MACHO",
+                "2 anos", 450.0, "", null);
+
+        assertThrows(ResponseStatusException.class, () -> animalService.cadastrar(dto));
+    }
+
+    @Test
+    void deveListarAnimaisDoUsuario() {
+        when(usuarioAutenticadoService.obterUsuario()).thenReturn(usuario);
+        when(animalRepository.findByProprietario(usuario)).thenReturn(List.of(animal));
+
+        List<AnimalDTO> resultado = animalService.listarDoUsuario();
+
+        assertEquals(1, resultado.size());
+        assertEquals("BOV-001", resultado.get(0).codigoIdentificacao());
+    }
+
+    @Test
+    void deveRetornarListaVaziaQuandoSemAnimais() {
+        when(usuarioAutenticadoService.obterUsuario()).thenReturn(usuario);
+        when(animalRepository.findByProprietario(usuario)).thenReturn(List.of());
+
+        List<AnimalDTO> resultado = animalService.listarDoUsuario();
+
+        assertTrue(resultado.isEmpty());
+    }
+
+    @Test
+    void deveBuscarAnimalDoUsuarioComSucesso() {
+        when(usuarioAutenticadoService.obterUsuario()).thenReturn(usuario);
+        when(animalRepository.findByIdAndProprietario(1L, usuario)).thenReturn(Optional.of(animal));
+
+        AnimalDTO resultado = animalService.buscarDoUsuarioComoDTO(1L);
+
+        assertNotNull(resultado);
+        assertEquals("BOV-001", resultado.codigoIdentificacao());
+    }
+
+    @Test
+    void deveLancarExcecaoQuandoAnimalNaoEncontrado() {
+        when(usuarioAutenticadoService.obterUsuario()).thenReturn(usuario);
+        when(animalRepository.findByIdAndProprietario(99L, usuario)).thenReturn(Optional.empty());
+
+        assertThrows(ResponseStatusException.class, () -> animalService.buscarDoUsuario(99L));
+    }
+
+    @Test
+    void deveCadastrarAnimalComObservacoes() {
+        AnimalDTO dto = new AnimalDTO(null, "BOV-002", "Bovino", "Gir", "FEMEA",
+                "3 anos", 380.0, "Em Observação", "Animal gestante");
+
+        when(usuarioAutenticadoService.obterUsuario()).thenReturn(usuario);
+
+        Animal animalComObs = new Animal();
+        animalComObs.setCodigoIdentificacao("BOV-002");
+        animalComObs.setEspecie("Bovino");
+        animalComObs.setRaca("Gir");
+        animalComObs.setSexo("FEMEA");
+        animalComObs.setDataNascimentoOuIdade("3 anos");
+        animalComObs.setPeso(380.0);
+        animalComObs.setCondicaoSaude("Em Observação");
+        animalComObs.setObservacoes("Animal gestante");
+        animalComObs.setProprietario(usuario);
+
+        when(animalRepository.save(any(Animal.class))).thenReturn(animalComObs);
+
+        AnimalDTO resultado = animalService.cadastrar(dto);
+
+        assertEquals("Animal gestante", resultado.observacoes());
+    }
+}
