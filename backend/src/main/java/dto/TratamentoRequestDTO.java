@@ -10,5 +10,6 @@ public record TratamentoRequestDTO(
         @NotNull(message = "A data é obrigatória") LocalDate data,
         @NotBlank(message = "O motivo é obrigatório") String motivo,
         String dosagem,
-        String observacoes
+        String observacoes,
+        LocalDate dataPrevista
 ) {}

@@ -1,25 +1,22 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Lembrete } from '../../models/lembrete.model';
-import { LembreteVacinacaoStrategy } from './strategy/lembrete-vacinacao.strategy';
-import { LembreteLocalStorageStrategy } from './strategy/lembrete-local-storage.strategy';
-// import { LembreteHttpStrategy } from './strategy/lembrete-http.strategy'; // Descomentar quando o backend estiver pronto
+import { Injectable } from "@angular/core";
+import { Observable } from "rxjs";
+import { Lembrete } from "../../models/lembrete.model";
+import { LembreteVacinacaoStrategy } from "./strategy/lembrete-vacinacao.strategy";
+import { LembreteHttpStrategy } from "./strategy/lembrete-http.strategy";
 
 /**
  * Serviço de Contexto (Padrão Strategy).
  * Orquestra e fornece os lembretes para a UI, abstraindo a origem dos dados.
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class LembreteVacinacaoService {
 
   private strategy: LembreteVacinacaoStrategy;
 
-  constructor(private localStorageStrategy: LembreteLocalStorageStrategy) {
-    // Para a apresentação/desenvolvimento atual, utilizamos a estratégia de LocalStorage.
-    // Futuramente, basta trocar `localStorageStrategy` por `httpStrategy` aqui.
-    this.strategy = this.localStorageStrategy;
+  constructor(private httpStrategy: LembreteHttpStrategy) {
+    this.strategy = this.httpStrategy;
   }
 
   /**

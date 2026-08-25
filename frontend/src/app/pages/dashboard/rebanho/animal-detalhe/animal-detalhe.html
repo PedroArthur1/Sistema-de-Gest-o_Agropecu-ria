@@ -216,6 +216,15 @@
         <input type="text" id="inputDosagem" formControlName="dosagem" style="width: 100%; padding: 8px;">
       </div>
 
+      <div style="flex: 1; min-width: 200px;">
+        <label for="inputDataPrevista">Data Prevista (Próxima Dose)</label><br>
+        <input type="date" id="inputDataPrevista" formControlName="dataPrevista" style="width: 100%; padding: 8px;"
+               [class.campo-invalido]="tratamentoForm.get('dataPrevista')?.hasError('anterior')">
+        <span *ngIf="tratamentoForm.get('dataPrevista')?.hasError('anterior')" style="color: #dc3545; font-size: 12px;">
+          Não pode ser anterior à data do tratamento
+        </span>
+      </div>
+
     </div>
 
     <div style="margin-bottom: 15px;">
@@ -241,15 +250,17 @@
       <th>Motivo</th>
       <th>Dosagem</th>
       <th>Observações</th>
+      <th>Próxima Dose / Previsto</th>
     </tr>
     </thead>
     <tbody>
     <tr *ngFor="let t of historicoTratamentos">
-      <td>{{ t.data }}</td>
+      <td>{{ t.data | date:'dd/MM/yyyy' }}</td>
       <td>{{ t.medicamento }}</td>
       <td>{{ t.motivo }}</td>
       <td>{{ t.dosagem || '-' }}</td>
       <td>{{ t.observacoes || '-' }}</td>
+      <td>{{ t.dataPrevista ? (t.dataPrevista | date:'dd/MM/yyyy') : '-' }}</td>
     </tr>
     </tbody>
   </table>
@@ -400,4 +411,3 @@
     </div>
   </div>
 </section>
-

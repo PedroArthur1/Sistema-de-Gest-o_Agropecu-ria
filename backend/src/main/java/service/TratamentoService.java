@@ -6,7 +6,9 @@ import model.Animal;
 import model.Tratamento;
 import repository.TratamentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,13 +25,21 @@ public class TratamentoService {
     public TratamentoResponseDTO registrarTratamento(TratamentoRequestDTO dto) {
         Animal animal = animalService.buscarDoUsuario(dto.animalId());
 
+        if (dto.dataPrevista() != null && dto.dataPrevista().isBefore(dto.data())) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Data prevista para a próxima dose não pode ser anterior à data do tratamento"
+            );
+        }
+
         Tratamento tratamento = new Tratamento(
                 animal,
                 dto.medicamento(),
                 dto.data(),
                 dto.motivo(),
                 dto.dosagem(),
-                dto.observacoes()
+                dto.observacoes(),
+                dto.dataPrevista()
         );
 
         Tratamento salvo = tratamentoRepository.save(tratamento);
@@ -53,6 +63,7 @@ public class TratamentoService {
                 t.getMotivo(),
                 t.getDosagem(),
                 t.getObservacoes(),
+                t.getDataPrevista(),
                 t.getConsulta() != null ? t.getConsulta().getId() : null
         );
     }

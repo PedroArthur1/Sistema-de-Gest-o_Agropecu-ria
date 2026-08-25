@@ -27,6 +27,9 @@ public class Tratamento {
     private String dosagem;
     private String observacoes;
 
+    @Column(name = "data_prevista")
+    private LocalDate dataPrevista;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "consulta_id")
     private Consulta consulta;
@@ -40,6 +43,16 @@ public class Tratamento {
         this.motivo = motivo;
         this.dosagem = dosagem;
         this.observacoes = observacoes;
+    }
+
+    public Tratamento(Animal animal, String medicamento, LocalDate data, String motivo, String dosagem, String observacoes, LocalDate dataPrevista) {
+        this.animal = animal;
+        this.medicamento = medicamento;
+        this.data = data;
+        this.motivo = motivo;
+        this.dosagem = dosagem;
+        this.observacoes = observacoes;
+        this.dataPrevista = dataPrevista;
     }
 
     public Long getId() { return id; }
@@ -56,6 +69,8 @@ public class Tratamento {
     public void setDosagem(String dosagem) { this.dosagem = dosagem; }
     public String getObservacoes() { return observacoes; }
     public void setObservacoes(String observacoes) { this.observacoes = observacoes; }
+    public LocalDate getDataPrevista() { return dataPrevista; }
+    public void setDataPrevista(LocalDate dataPrevista) { this.dataPrevista = dataPrevista; }
     public Consulta getConsulta() { return consulta; }
     public void setConsulta(Consulta consulta) { this.consulta = consulta; }
 }

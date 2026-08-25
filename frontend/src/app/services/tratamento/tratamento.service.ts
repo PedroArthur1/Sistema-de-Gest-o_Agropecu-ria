@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { environment } from "../../../environments/environment";
 
 export interface Tratamento {
   id?: number;
@@ -11,10 +11,11 @@ export interface Tratamento {
   motivo: string;
   dosagem?: string;
   observacoes?: string;
+  dataPrevista?: string;
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class TratamentoService {
 
