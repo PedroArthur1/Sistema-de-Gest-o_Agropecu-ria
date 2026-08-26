@@ -44,7 +44,7 @@ export class AnimalEdicao implements OnInit {
       const idParam = params.get('id');
       const id = Number(idParam);
 
-      if (!idParam || isNaN(id) || id <= 0) {
+      if (!idParam || Number.isNaN(id) || id <= 0) {
         this.errorMessage = 'Identificador de animal inválido.';
         this.isLoading = false;
         this.cdr.detectChanges();

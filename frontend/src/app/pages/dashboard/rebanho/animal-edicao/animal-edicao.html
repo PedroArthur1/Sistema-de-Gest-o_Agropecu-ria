@@ -38,14 +38,14 @@
       
       <div class="form-grid">
         <div class="form-group">
-          <label>Código de Identificação (Inalterável)</label>
-          <input type="text" formControlName="codigoIdentificacao" class="input-readonly" readonly title="O código de identificação não pode ser alterado" />
+          <label for="inputCodigoIdentificacao">Código de Identificação (Inalterável)</label>
+          <input type="text" id="inputCodigoIdentificacao" formControlName="codigoIdentificacao" class="input-readonly" readonly title="O código de identificação não pode ser alterado" />
           <small class="help-text">Código imutável</small>
         </div>
 
         <div class="form-group">
-          <label>Espécie *</label>
-          <select formControlName="especie">
+          <label for="selectEspecie">Espécie *</label>
+          <select id="selectEspecie" formControlName="especie">
             <option value="">Selecione...</option>
             <option value="Bovino">Bovino</option>
             <option value="Suíno">Suíno</option>
@@ -59,16 +59,16 @@
         </div>
 
         <div class="form-group">
-          <label>Raça *</label>
-          <input type="text" formControlName="raca" placeholder="Ex: Nelore" />
+          <label for="inputRaca">Raça *</label>
+          <input type="text" id="inputRaca" formControlName="raca" placeholder="Ex: Nelore" />
           <span class="error-text" *ngIf="animalForm.get('raca')?.touched && animalForm.get('raca')?.invalid">
             Obrigatória
           </span>
         </div>
 
         <div class="form-group">
-          <label>Sexo *</label>
-          <select formControlName="sexo">
+          <label for="selectSexo">Sexo *</label>
+          <select id="selectSexo" formControlName="sexo">
             <option value="">Selecione...</option>
             <option value="MACHO">Macho</option>
             <option value="FEMEA">Fêmea</option>
@@ -79,24 +79,24 @@
         </div>
 
         <div class="form-group">
-          <label>Data de Nascimento / Idade *</label>
-          <input type="text" formControlName="dataNascimentoOuIdade" placeholder="Ex: 2 anos ou AAAA-MM-DD" />
+          <label for="inputDataNascimentoOuIdade">Data de Nascimento / Idade *</label>
+          <input type="text" id="inputDataNascimentoOuIdade" formControlName="dataNascimentoOuIdade" placeholder="Ex: 2 anos ou AAAA-MM-DD" />
           <span class="error-text" *ngIf="animalForm.get('dataNascimentoOuIdade')?.touched && animalForm.get('dataNascimentoOuIdade')?.invalid">
             Obrigatória
           </span>
         </div>
 
         <div class="form-group">
-          <label>Peso (kg) *</label>
-          <input type="number" formControlName="peso" placeholder="Ex: 450" />
+          <label for="inputPeso">Peso (kg) *</label>
+          <input type="number" id="inputPeso" formControlName="peso" placeholder="Ex: 450" />
           <span class="error-text" *ngIf="animalForm.get('peso')?.touched && animalForm.get('peso')?.invalid">
             Obrigatório e não negativo
           </span>
         </div>
 
         <div class="form-group">
-          <label>Condição de Saúde *</label>
-          <select formControlName="condicaoSaude">
+          <label for="selectCondicaoSaude">Condição de Saúde *</label>
+          <select id="selectCondicaoSaude" formControlName="condicaoSaude">
             <option value="">Selecione...</option>
             <option value="Saudável">Saudável</option>
             <option value="Em Observação">Em Observação</option>
@@ -108,8 +108,8 @@
         </div>
 
         <div class="form-group full-width">
-          <label>Observações Adicionais (Opcional)</label>
-          <input type="text" formControlName="observacoes" placeholder="Insira detalhes extras..." />
+          <label for="inputObservacoes">Observações Adicionais (Opcional)</label>
+          <input type="text" id="inputObservacoes" formControlName="observacoes" placeholder="Insira detalhes extras..." />
         </div>
       </div>
 
