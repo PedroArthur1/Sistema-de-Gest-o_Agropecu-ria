@@ -5,7 +5,7 @@
   </div>
 
   <div class="list-container">
-    <ng-container *ngIf="lembretes$ | async as lembretes">
+    <ng-container *ngIf="lembretes !== null">
       <div class="empty-state" *ngIf="lembretes.length === 0">
         <h3>Tudo em dia!</h3>
         <p>Não há lembretes de vacinação ou tratamento pendentes ou futuros no momento.</p>
