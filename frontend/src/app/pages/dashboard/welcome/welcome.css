@@ -24,6 +24,12 @@
   color: white;
   box-shadow: 0 10px 25px rgba(22, 163, 74, 0.2);
   margin-bottom: 40px;
+  transition: all 0.3s ease;
+}
+
+.hero-card.danger {
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+  box-shadow: 0 10px 25px rgba(220, 38, 38, 0.2);
 }
 
 .hero-content {
