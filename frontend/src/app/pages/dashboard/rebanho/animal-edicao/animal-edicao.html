@@ -1,0 +1,125 @@
+<div class="cadastro-container">
+  
+  <!-- Breadcrumbs -->
+  <nav class="breadcrumbs">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+    <span class="separator">></span>
+    <span class="crumb" (click)="voltar()">Rebanho</span>
+    <span class="separator">></span>
+    <span class="crumb active">Editar Animal</span>
+  </nav>
+
+  <!-- Cabeçalho Principal -->
+  <div class="page-header">
+    <div class="title-row">
+      <button class="btn-back-icon" (click)="voltar()" title="Voltar">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      </button>
+      <h2>Editar Animal {{ animalForm.get('codigoIdentificacao')?.value }}</h2>
+    </div>
+    <p class="subtitle">Atualize as informações do animal mantendo seu histórico e código de identificação preservados.</p>
+  </div>
+
+  <!-- Alertas -->
+  <div class="alert alert-success" *ngIf="successMessage">
+    {{ successMessage }}
+  </div>
+  <div class="alert alert-error" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <div class="carregando" *ngIf="isLoading">
+    <p>Carregando dados do animal...</p>
+  </div>
+
+  <div class="cadastro-card" *ngIf="!isLoading && !errorMessage">
+    <!-- Formulário -->
+    <form [formGroup]="animalForm" (ngSubmit)="onSubmit()" class="form-container">
+      
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="inputCodigoIdentificacao">Código de Identificação (Inalterável)</label>
+          <input type="text" id="inputCodigoIdentificacao" formControlName="codigoIdentificacao" class="input-readonly" readonly title="O código de identificação não pode ser alterado" />
+          <small class="help-text">Código imutável</small>
+        </div>
+
+        <div class="form-group">
+          <label for="selectEspecie">Espécie *</label>
+          <select id="selectEspecie" formControlName="especie">
+            <option value="">Selecione...</option>
+            <option value="Bovino">Bovino</option>
+            <option value="Suíno">Suíno</option>
+            <option value="Equino">Equino</option>
+            <option value="Ovino">Ovino</option>
+            <option value="Outro">Outro</option>
+          </select>
+          <span class="error-text" *ngIf="animalForm.get('especie')?.touched && animalForm.get('especie')?.invalid">
+            Obrigatória
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="inputRaca">Raça *</label>
+          <input type="text" id="inputRaca" formControlName="raca" placeholder="Ex: Nelore" />
+          <span class="error-text" *ngIf="animalForm.get('raca')?.touched && animalForm.get('raca')?.invalid">
+            Obrigatória
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="selectSexo">Sexo *</label>
+          <select id="selectSexo" formControlName="sexo">
+            <option value="">Selecione...</option>
+            <option value="MACHO">Macho</option>
+            <option value="FEMEA">Fêmea</option>
+          </select>
+          <span class="error-text" *ngIf="animalForm.get('sexo')?.touched && animalForm.get('sexo')?.invalid">
+            Obrigatório
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="inputDataNascimentoOuIdade">Data de Nascimento / Idade *</label>
+          <input type="text" id="inputDataNascimentoOuIdade" formControlName="dataNascimentoOuIdade" placeholder="Ex: 2 anos ou AAAA-MM-DD" />
+          <span class="error-text" *ngIf="animalForm.get('dataNascimentoOuIdade')?.touched && animalForm.get('dataNascimentoOuIdade')?.invalid">
+            Obrigatória
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="inputPeso">Peso (kg) *</label>
+          <input type="number" id="inputPeso" formControlName="peso" placeholder="Ex: 450" />
+          <span class="error-text" *ngIf="animalForm.get('peso')?.touched && animalForm.get('peso')?.invalid">
+            Obrigatório e não negativo
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="selectCondicaoSaude">Condição de Saúde *</label>
+          <select id="selectCondicaoSaude" formControlName="condicaoSaude">
+            <option value="">Selecione...</option>
+            <option value="Saudável">Saudável</option>
+            <option value="Em Observação">Em Observação</option>
+            <option value="Em Tratamento">Em Tratamento</option>
+          </select>
+          <span class="error-text" *ngIf="animalForm.get('condicaoSaude')?.touched && animalForm.get('condicaoSaude')?.invalid">
+            Obrigatória
+          </span>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="inputObservacoes">Observações Adicionais (Opcional)</label>
+          <input type="text" id="inputObservacoes" formControlName="observacoes" placeholder="Insira detalhes extras..." />
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="voltar()">Cancelar</button>
+        <button type="submit" class="btn-primary" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Salvando...' : 'Salvar Alterações' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

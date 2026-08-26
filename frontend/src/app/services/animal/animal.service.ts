@@ -23,4 +23,8 @@ export class AnimalService {
   buscarAnimalPorId(id: number): Observable<Animal> {
     return this.http.get<Animal>(`${this.apiUrl}/${id}`);
   }
+
+  atualizarAnimal(id: number, animal: Animal): Observable<Animal> {
+    return this.http.put<Animal>(`${this.apiUrl}/${id}`, animal);
+  }
 }
