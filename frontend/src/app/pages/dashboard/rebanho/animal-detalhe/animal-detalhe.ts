@@ -13,6 +13,8 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from "@angula
 import { TratamentoService, Tratamento } from "../../../../services/tratamento/tratamento.service";
 import { ConsultaService } from "../../../../services/consulta/consulta.service";
 import { Consulta } from "../../../../models/consulta.model";
+import { CampoFormularioComponent } from '../../../../components/campo-formulario/campo-formulario.component';
+import { BotaoAcaoComponent } from '../../../../components/botao-acao/botao-acao.component';
 
 @Component({
   selector: "app-animal-detalhe",
@@ -22,7 +24,10 @@ import { Consulta } from "../../../../models/consulta.model";
     RouterLink,
     CabecalhoPaginaComponent,
     AlertaMensagemComponent,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    CampoFormularioComponent,
+    BotaoAcaoComponent,
+    AlertaMensagemComponent
   ],
   templateUrl: "./animal-detalhe.html",
   styleUrl: "./animal-detalhe.css"
@@ -51,7 +56,8 @@ export class AnimalDetalhe implements OnInit {
     private fb: FormBuilder,
     private tratamentoService: TratamentoService,
     private consultaService: ConsultaService,
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -75,7 +81,7 @@ export class AnimalDetalhe implements OnInit {
       observacoes: [""],
       dataPrevista: [""]
     }, { validators: this.validarDataPrevista });
-    
+
     this.consultaForm = this.fb.group({
       dataConsulta: ["", Validators.required],
       motivo: ["", Validators.required],
@@ -84,6 +90,14 @@ export class AnimalDetalhe implements OnInit {
       observacoes: [""],
       tratamentoIds: [[]]
     });
+    const animalIdStr = this.route.snapshot.paramMap.get('id');
+    if (animalIdStr) {
+      const animalId = Number(animalIdStr);
+      this.tratamentoService.listarPorAnimal(animalId).subscribe({
+        next: (dados: any) => this.historicoTratamentos = dados,
+        error: (err: any) => console.error('Erro ao buscar histórico de tratamentos', err)
+      });
+    }
   }
 
   validarDataPrevista(group: FormGroup) {
@@ -143,26 +157,12 @@ export class AnimalDetalhe implements OnInit {
   }
 
   registrarNovoTratamento(): void {
-    if (this.tratamentoForm.valid) {
-      const id = Number(this.route.snapshot.paramMap.get("id"));
-      const formValue = this.tratamentoForm.value;
-      const novo: Tratamento = {
-        animalId: id,
-        medicamento: formValue.medicamento,
-        data: formValue.data,
-        motivo: formValue.motivo,
-        dosagem: formValue.dosagem || undefined,
-        observacoes: formValue.observacoes || undefined,
-        dataPrevista: formValue.dataPrevista || undefined
-      };
+    if (this.animal && this.animal.id) {
+      this.animal.condicaoSaude = 'Em Tratamento';
 
-      this.tratamentoService.registrarTratamento(novo).subscribe({
-        next: (res: Tratamento) => {
-          this.historicoTratamentos.push(res);
-          this.tratamentoForm.reset();
-          this.mensagemSucessoTratamento = "Tratamento salvo!";
-          setTimeout(() => this.mensagemSucessoTratamento = "", 3000);
-        }
+      this.animalService.atualizarAnimal(this.animal.id, this.animal).subscribe({
+        next: () => console.log('Touchdown! O banco confirmou o novo status do animal!'),
+        error: (err: any) => console.error('Fumble ao atualizar status no banco', err)
       });
     }
   }

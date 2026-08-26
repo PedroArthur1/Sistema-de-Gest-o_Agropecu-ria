@@ -97,4 +97,11 @@ public class AnimalService {
                 animal.getObservacoes()
         );
     }
+
+    public Animal atualizar(Long id, Animal animalRecebido) {
+        Animal animalExistente = animalRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Animal não encontrado com ID: " + id));
+        animalExistente.setCondicaoSaude(animalRecebido.getCondicaoSaude());
+        return animalRepository.save(animalExistente);
+    }
 }

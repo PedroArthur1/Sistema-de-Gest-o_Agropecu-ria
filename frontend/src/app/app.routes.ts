@@ -8,7 +8,7 @@ import { AnimalCadastro } from './pages/dashboard/rebanho/animal-cadastro/animal
 import { AnimalDetalhe } from './pages/dashboard/rebanho/animal-detalhe/animal-detalhe';
 import { VacinacaoPage } from './pages/dashboard/vacinacao/vacinacao';
 import { authGuard } from './guards/auth-guard';
-
+import { AlimentacaoComponent } from './pages/dashboard/alimentacao/alimentacao';
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
     { path: 'login', component: LoginComponent },
@@ -24,6 +24,8 @@ export const routes: Routes = [
             { path: 'rebanho/:id', component: AnimalDetalhe },
             { path: 'pastagem', component: Welcome },
             { path: 'vacinacao', component: VacinacaoPage },
+            { path: 'alimentacao', component: AlimentacaoComponent },
+            { path: '', redirectTo: 'welcome', pathMatch: 'full' },
             { path: 'reproducao', component: Welcome },
             { path: 'financas', component: Welcome },
             { path: 'configuracoes', component: Welcome }

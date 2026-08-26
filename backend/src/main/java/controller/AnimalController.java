@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import service.AnimalService;
+import model.Animal;
 
 import java.util.List;
 
@@ -19,6 +20,12 @@ public class AnimalController {
     @PostMapping
     public ResponseEntity<AnimalDTO> cadastrar(@RequestBody AnimalDTO animalDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(animalService.cadastrar(animalDTO));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Animal> atualizarAnimal(@PathVariable Long id, @RequestBody Animal animal) {
+        Animal atualizado = animalService.atualizar(id, animal);
+        return ResponseEntity.ok(atualizado);
     }
 
     @GetMapping
