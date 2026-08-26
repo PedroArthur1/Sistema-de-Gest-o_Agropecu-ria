@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/auth/auth.service';
 import { AnimalService } from '../../../services/animal/animal.service';
@@ -24,7 +24,8 @@ export class Welcome implements OnInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private animalService: AnimalService,
-    private notificacaoService: NotificacaoService
+    private notificacaoService: NotificacaoService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -33,8 +34,16 @@ export class Welcome implements OnInit, OnDestroy {
     
     // Buscar total de animais reais
     this.sub.add(
-      this.animalService.listarAnimais().subscribe(animais => {
-        this.totalAnimais = animais ? animais.length : 0;
+      this.animalService.listarAnimais().subscribe({
+        next: (animais) => {
+          this.totalAnimais = animais ? animais.length : 0;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Erro ao buscar animais na tela inicial:', err);
+          this.totalAnimais = 0;
+          this.cdr.detectChanges();
+        }
       })
     );
     
@@ -42,6 +51,7 @@ export class Welcome implements OnInit, OnDestroy {
     this.sub.add(
       this.notificacaoService.estado$.subscribe(estado => {
         this.vacinasAtrasadas = estado.totalAtrasadas;
+        this.cdr.detectChanges();
       })
     );
   }
