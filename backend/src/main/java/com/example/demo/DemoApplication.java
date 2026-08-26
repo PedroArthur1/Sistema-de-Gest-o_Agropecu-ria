@@ -2,19 +2,12 @@ package com.example.demo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.persistence.autoconfigure.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@SpringBootApplication(scanBasePackages = {
-		"com.example.demo",
-		"controller",
-		"security",
-		"model",
-		"dto",
-		"repository",
-		"service",
-		"config"
-})
-@EnableJpaRepositories(basePackages = "repository")
+@SpringBootApplication
+@EntityScan(basePackages = {"com.example.demo.model", "model"})
+@EnableJpaRepositories(basePackages = {"repository", "repository"})
 public class DemoApplication {
 
 	public static void main(String[] args) {
@@ -22,3 +15,4 @@ public class DemoApplication {
 	}
 
 }
+
