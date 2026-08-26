@@ -63,6 +63,30 @@ public class AnimalService {
                 ));
     }
 
+    @Transactional
+    public AnimalDTO atualizar(Long id, AnimalDTO dto) {
+        if (dto == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dados do animal são obrigatórios");
+        }
+        Animal animal = buscarDoUsuario(id);
+
+        if (dto.codigoIdentificacao() != null && !dto.codigoIdentificacao().trim().equals(animal.getCodigoIdentificacao())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O código de identificação não pode ser alterado");
+        }
+
+        validarCadastro(dto);
+
+        animal.setEspecie(dto.especie().trim());
+        animal.setRaca(dto.raca().trim());
+        animal.setSexo(dto.sexo().trim());
+        animal.setDataNascimentoOuIdade(dto.dataNascimentoOuIdade().trim());
+        animal.setPeso(dto.peso());
+        animal.setCondicaoSaude(dto.condicaoSaude().trim());
+        animal.setObservacoes(dto.observacoes() != null ? dto.observacoes().trim() : null);
+
+        return toDTO(animalRepository.save(animal));
+    }
+
     private void validarCadastro(AnimalDTO dto) {
         if (dto == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dados do animal são obrigatórios");

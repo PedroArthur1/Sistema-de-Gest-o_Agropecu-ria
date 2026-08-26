@@ -37,4 +37,9 @@ public class AnimalController {
     public ResponseEntity<AnimalDTO> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(animalService.buscarDoUsuarioComoDTO(id));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<AnimalDTO> atualizar(@PathVariable Long id, @RequestBody AnimalDTO animalDTO) {
+        return ResponseEntity.ok(animalService.atualizar(id, animalDTO));
+    }
 }

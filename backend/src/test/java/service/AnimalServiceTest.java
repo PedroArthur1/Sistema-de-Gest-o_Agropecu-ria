@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import repository.AnimalRepository;
 
@@ -197,5 +198,62 @@ class AnimalServiceTest {
         AnimalDTO resultado = animalService.cadastrar(dto);
 
         assertEquals("Animal gestante", resultado.observacoes());
+    }
+
+    @Test
+    void deveAtualizarAnimalComSucesso() {
+        AnimalDTO dtoAtualizacao = new AnimalDTO(1L, "BOV-001", "Bovino", "Angus", "MACHO",
+                "3 anos", 500.0, "Em Tratamento", "Tratamento de casco");
+
+        when(usuarioAutenticadoService.obterUsuario()).thenReturn(usuario);
+        when(animalRepository.findByIdAndProprietario(1L, usuario)).thenReturn(Optional.of(animal));
+        when(animalRepository.save(any(Animal.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        AnimalDTO resultado = animalService.atualizar(1L, dtoAtualizacao);
+
+        assertNotNull(resultado);
+        assertEquals("BOV-001", resultado.codigoIdentificacao());
+        assertEquals("Angus", resultado.raca());
+        assertEquals(500.0, resultado.peso());
+        assertEquals("Em Tratamento", resultado.condicaoSaude());
+        assertEquals("Tratamento de casco", resultado.observacoes());
+        verify(animalRepository).save(animal);
+    }
+
+    @Test
+    void deveLancarExcecaoAoTentarAlterarCodigoIdentificacao() {
+        AnimalDTO dtoAtualizacao = new AnimalDTO(1L, "BOV-999", "Bovino", "Nelore", "MACHO",
+                "2 anos", 450.0, "Saudável", null);
+
+        when(usuarioAutenticadoService.obterUsuario()).thenReturn(usuario);
+        when(animalRepository.findByIdAndProprietario(1L, usuario)).thenReturn(Optional.of(animal));
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> animalService.atualizar(1L, dtoAtualizacao));
+
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
+        assertTrue(ex.getReason().contains("código de identificação não pode ser alterado"));
+    }
+
+    @Test
+    void deveLancarExcecaoAoEditarAnimalDeOutroUsuario() {
+        AnimalDTO dtoAtualizacao = new AnimalDTO(99L, "BOV-001", "Bovino", "Nelore", "MACHO",
+                "2 anos", 450.0, "Saudável", null);
+
+        when(usuarioAutenticadoService.obterUsuario()).thenReturn(usuario);
+        when(animalRepository.findByIdAndProprietario(99L, usuario)).thenReturn(Optional.empty());
+
+        assertThrows(ResponseStatusException.class, () -> animalService.atualizar(99L, dtoAtualizacao));
+    }
+
+    @Test
+    void deveLancarExcecaoAoEditarComDadosInvalidos() {
+        AnimalDTO dtoInvalido = new AnimalDTO(1L, "BOV-001", "Bovino", "", "MACHO",
+                "2 anos", -50.0, "Saudável", null);
+
+        when(usuarioAutenticadoService.obterUsuario()).thenReturn(usuario);
+        when(animalRepository.findByIdAndProprietario(1L, usuario)).thenReturn(Optional.of(animal));
+
+        assertThrows(ResponseStatusException.class, () -> animalService.atualizar(1L, dtoInvalido));
     }
 }

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
+import { HttpClient, provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { VacinacaoService } from './vacinacao.service';
 import { Vacinacao, VacinacaoRequest } from '../../models/vacinacao.model';
@@ -12,12 +12,12 @@ describe('VacinacaoService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        VacinacaoService,
         provideHttpClient(),
         provideHttpClientTesting()
       ]
     });
-    servico = TestBed.inject(VacinacaoService);
+    const http = TestBed.inject(HttpClient);
+    servico = new VacinacaoService(http);
     simuladorHttp = TestBed.inject(HttpTestingController);
   });
 

@@ -19,6 +19,7 @@ import java.util.UUID;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -120,6 +121,84 @@ class AnimalControllerTest {
     void naoDevePermitirConsultaSemAutenticacao() throws Exception {
         mockMvc.perform(get("/animais/{id}", 1))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void deveAtualizarAnimalComSucesso() throws Exception {
+        Long animalId = cadastrarAnimal(token);
+
+        AnimalDTO dtoAtualizado = new AnimalDTO(
+                animalId,
+                "BOV-001",
+                "Bovino",
+                "Angus",
+                "MACHO",
+                "3 anos",
+                520.0,
+                "Em Tratamento",
+                "Observação atualizada"
+        );
+
+        mockMvc.perform(put("/animais/{id}", animalId)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dtoAtualizado)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(animalId))
+                .andExpect(jsonPath("$.raca").value("Angus"))
+                .andExpect(jsonPath("$.peso").value(520.0))
+                .andExpect(jsonPath("$.condicaoSaude").value("Em Tratamento"))
+                .andExpect(jsonPath("$.observacoes").value("Observação atualizada"));
+    }
+
+    @Test
+    void deveRetornar400AoTentarAlterarCodigoIdentificacao() throws Exception {
+        Long animalId = cadastrarAnimal(token);
+
+        AnimalDTO dtoComCodigoDiferente = new AnimalDTO(
+                animalId,
+                "BOV-999",
+                "Bovino",
+                "Nelore",
+                "MACHO",
+                "2 anos",
+                450.0,
+                "Saudável",
+                null
+        );
+
+        mockMvc.perform(put("/animais/{id}", animalId)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dtoComCodigoDiferente)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void deveRetornar404AoTentarAtualizarAnimalDeOutroAgricultor() throws Exception {
+        Long animalId = cadastrarAnimal(token);
+
+        String outroEmail = "outro-" + UUID.randomUUID() + "@fazenda.com";
+        cadastrarUsuario(outroEmail, senha);
+        String tokenOutro = autenticar(outroEmail, senha);
+
+        AnimalDTO dtoAtualizado = new AnimalDTO(
+                animalId,
+                "BOV-001",
+                "Bovino",
+                "Nelore",
+                "MACHO",
+                "2 anos",
+                480.0,
+                "Saudável",
+                null
+        );
+
+        mockMvc.perform(put("/animais/{id}", animalId)
+                        .header("Authorization", "Bearer " + tokenOutro)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dtoAtualizado)))
+                .andExpect(status().isNotFound());
     }
 
     // ---- Métodos auxiliares ----
