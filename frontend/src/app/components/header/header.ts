@@ -17,6 +17,7 @@ export class Header {
   userName: string | null;
   pageTitle = 'Painel de Controle';
   notificacoes$: Observable<EstadoNotificacao>;
+  isTelaInicial = false;
 
   constructor(
     private authService: AuthService,
@@ -33,6 +34,9 @@ export class Header {
   }
 
   private atualizarTitulo(url: string): void {
+    const segments = url.split('?')[0].split('/').filter(s => s.length > 0);
+    this.isTelaInicial = (segments.length === 1 && segments[0] === 'dashboard') || 
+                         (segments.length === 2 && segments[0] === 'dashboard' && segments[1] === 'welcome');
     if (url.includes('/vacinacao')) {
       this.pageTitle = 'Vacinação';
     } else if (url.includes('/rebanho/novo')) {
@@ -46,6 +50,7 @@ export class Header {
 
   onLogout(): void {
     this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }
 
