@@ -13,6 +13,7 @@ public class UsuarioAutenticadoService {
     public User obterUsuario() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.getPrincipal() instanceof User usuario)) {
+            System.out.println("UsuarioAutenticadoService: authentication is " + authentication + " principal is " + (authentication != null ? authentication.getPrincipal() : "null"));
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuário não autenticado");
         }
         return usuario;

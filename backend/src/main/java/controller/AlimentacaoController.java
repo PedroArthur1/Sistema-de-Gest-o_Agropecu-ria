@@ -18,6 +18,11 @@ public class AlimentacaoController {
     @Autowired
     private AlimentacaoService alimentacaoService;
 
+    @GetMapping("/ping")
+    public ResponseEntity<String> ping() {
+        return ResponseEntity.ok("AlimentacaoController OK");
+    }
+
     @PostMapping
     public ResponseEntity<AlimentacaoResponseDTO> registrarAlimentacao(@RequestBody @Valid AlimentacaoRequestDTO dto) {
         AlimentacaoResponseDTO salvo = alimentacaoService.registrarAlimentacao(dto);
