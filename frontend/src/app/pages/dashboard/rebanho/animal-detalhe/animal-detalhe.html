@@ -190,87 +190,38 @@
     </section>
   </div>
 </div>
-<hr style="margin: 40px 0; border-top: 1px dashed #ccc;">
-<h2 style="margin-bottom: 20px;">Saúde e Histórico de Tratamentos</h2>
 
-<div *ngIf="mensagemSucessoTratamento" style="color: #155724; background-color: #d4edda; border-color: #c3e6cb; padding: 12px; border-radius: 4px; margin-bottom: 20px;">
-  {{ mensagemSucessoTratamento }}
-</div>
+<!-- MÓDULO DE TRATAMENTOS (US08)               -->
+<!-- ========================================== -->
 
-<div class="card-formulario">
-  <h3>Registrar Novo Tratamento</h3>
-  <form [formGroup]="tratamentoForm" (ngSubmit)="registrarNovoTratamento()">
-    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
+<section class="cadastro-card">
+  <h3 class="card-titulo">Registrar Tratamento</h3>
+  <p class="card-descricao">Informe os dados e medicamentos aplicados a este animal.</p>
 
-      <div style="flex: 1;">
-        <label for="inputMedicamento">Medicamento *</label><br>
-        <input type="text" id="inputMedicamento" formControlName="medicamento" style="width: 100%; padding: 8px;">
-      </div>
+  <app-alerta-mensagem *ngIf="mensagemSucessoTratamento" [mensagem]="mensagemSucessoTratamento" tipo="sucesso"></app-alerta-mensagem>
 
-      <div style="flex: 1;">
-        <label for="inputData">Data *</label><br>
-        <input type="date" id="inputData" formControlName="data" style="width: 100%; padding: 8px;">
-      </div>
+  <form [formGroup]="tratamentoForm" (ngSubmit)="registrarNovoTratamento()" class="form-container">
+    <div class="form-grid">
+      <app-campo-formulario label="Medicamento" campoId="inputMedicamento" formControlName="medicamento" [obrigatorio]="true"></app-campo-formulario>
 
-      <div style="flex: 1;">
-        <label for="inputMotivo">Motivo *</label><br>
-        <input type="text" id="inputMotivo" formControlName="motivo" style="width: 100%; padding: 8px;">
-      </div>
+      <app-campo-formulario label="Data" campoId="inputDataTratamento" tipo="date" formControlName="data" [obrigatorio]="true"></app-campo-formulario>
 
-      <div style="flex: 1;">
-        <label for="inputDosagem">Dosagem</label><br>
-        <input type="text" id="inputDosagem" formControlName="dosagem" style="width: 100%; padding: 8px;">
-      </div>
+      <app-campo-formulario label="Motivo" campoId="inputMotivo" formControlName="motivo" [obrigatorio]="true"></app-campo-formulario>
 
-      <div style="flex: 1; min-width: 200px;">
-        <label for="inputDataPrevista">Data Prevista (Próxima Dose)</label><br>
-        <input type="date" id="inputDataPrevista" formControlName="dataPrevista" style="width: 100%; padding: 8px;"
-               [class.campo-invalido]="tratamentoForm.get('dataPrevista')?.hasError('anterior')">
-        <span *ngIf="tratamentoForm.get('dataPrevista')?.hasError('anterior')" style="color: #dc3545; font-size: 12px;">
-          Não pode ser anterior à data do tratamento
-        </span>
-      </div>
-
+      <app-campo-formulario label="Dosagem" campoId="inputDosagem" formControlName="dosagem" [obrigatorio]="false"></app-campo-formulario>
     </div>
 
-    <div style="margin-bottom: 15px;">
-      <label for="inputObservacoes">Observações</label><br>
-      <textarea id="inputObservacoes" formControlName="observacoes" rows="2" style="width: 100%; padding: 8px;"></textarea>
+    <div class="form-group full-width">
+      <label for="inputObs" style="display: block; font-weight: 500; margin-bottom: 8px;">Observações (Opcional)</label>
+      <input type="text" id="inputObs" formControlName="observacoes" placeholder="Insira quaisquer detalhes extras aqui..." style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
     </div>
 
-    <button type="submit" [disabled]="tratamentoForm.invalid" style="padding: 10px 20px; cursor: pointer;">
-      Salvar Tratamento
-    </button>
+    <div class="form-actions" style="margin-top: 20px;">
+      <app-botao-acao texto="Registrar Tratamento" [tipoSubmit]="true" [desabilitado]="tratamentoForm.invalid"></app-botao-acao>
+    </div>
   </form>
-</div>
+</section>
 
-<div class="card-historico" style="margin-top: 30px;">
-  <h3 style="margin-top: 0;">Histórico Registrado</h3>
-  <p *ngIf="historicoTratamentos.length === 0" style="color: #6c757d;">Nenhum tratamento registrado para este animal.</p>
-
-  <table class="tabela-tratamentos" *ngIf="historicoTratamentos.length > 0">
-    <thead>
-    <tr>
-      <th>Data</th>
-      <th>Medicamento</th>
-      <th>Motivo</th>
-      <th>Dosagem</th>
-      <th>Observações</th>
-      <th>Próxima Dose / Previsto</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let t of historicoTratamentos">
-      <td>{{ t.data | date:'dd/MM/yyyy' }}</td>
-      <td>{{ t.medicamento }}</td>
-      <td>{{ t.motivo }}</td>
-      <td>{{ t.dosagem || '-' }}</td>
-      <td>{{ t.observacoes || '-' }}</td>
-      <td>{{ t.dataPrevista ? (t.dataPrevista | date:'dd/MM/yyyy') : '-' }}</td>
-    </tr>
-    </tbody>
-  </table>
-</div>
 
 <!-- ===== CONSULTAS VETERINÁRIAS ===== -->
 <hr class="section-divider">

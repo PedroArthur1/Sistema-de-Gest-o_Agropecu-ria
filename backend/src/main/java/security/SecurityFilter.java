@@ -25,7 +25,12 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return "OPTIONS".equalsIgnoreCase(request.getMethod());
+        String path = request.getRequestURI();
+        // Não aplicar o filtro para endpoints de autenticação e health
+        return "OPTIONS".equalsIgnoreCase(request.getMethod()) ||
+                path.startsWith("/auth/") ||
+                path.equals("/auth") ||
+                path.equals("/health");
     }
 
     @SuppressWarnings("null")
