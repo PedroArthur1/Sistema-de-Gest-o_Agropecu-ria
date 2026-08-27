@@ -22,12 +22,6 @@ public class AnimalController {
         return ResponseEntity.status(HttpStatus.CREATED).body(animalService.cadastrar(animalDTO));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Animal> atualizarAnimal(@PathVariable Long id, @RequestBody Animal animal) {
-        Animal atualizado = animalService.atualizar(id, animal);
-        return ResponseEntity.ok(atualizado);
-    }
-
     @GetMapping
     public ResponseEntity<List<AnimalDTO>> listar() {
         return ResponseEntity.ok(animalService.listarDoUsuario());
