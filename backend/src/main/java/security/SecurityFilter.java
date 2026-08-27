@@ -37,22 +37,19 @@ public class SecurityFilter extends OncePerRequestFilter {
     @SuppressWarnings("null")
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        var token = this.recoverToken(request);
-        if (token != null) {
-            var login = tokenService.validateToken(token);
-            if (login == null || login.isEmpty()) {
-                System.out.println("SecurityFilter: validateToken returned empty for token: " + token);
-            } else {
-                UserDetails user = userRepository.findByEmail(login);
-                if (user != null) {
-                    var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                } else {
-                    System.out.println("SecurityFilter: user not found in DB for email: " + login);
+        try {
+            var token = this.recoverToken(request);
+            if (token != null) {
+                var login = tokenService.validateToken(token);
+                if (login != null && !login.isEmpty()) {
+                    UserDetails user = userRepository.findByEmail(login);
+                    if (user != null) {
+                        var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
                 }
             }
-        } else {
-            System.out.println("SecurityFilter: no token found for URI: " + request.getRequestURI());
+        } catch (Exception ignored) {
         }
         filterChain.doFilter(request, response);
     }

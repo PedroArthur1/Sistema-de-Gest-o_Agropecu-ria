@@ -18,11 +18,6 @@ public class AlimentacaoController {
     @Autowired
     private AlimentacaoService alimentacaoService;
 
-    @GetMapping("/ping")
-    public ResponseEntity<String> ping() {
-        return ResponseEntity.ok("AlimentacaoController OK");
-    }
-
     @PostMapping
     public ResponseEntity<AlimentacaoResponseDTO> registrarAlimentacao(@RequestBody @Valid AlimentacaoRequestDTO dto) {
         AlimentacaoResponseDTO salvo = alimentacaoService.registrarAlimentacao(dto);
@@ -30,26 +25,14 @@ public class AlimentacaoController {
     }
 
     @GetMapping("/animal/{animalId}")
-    public ResponseEntity<?> listarPorAnimal(@PathVariable Long animalId) {
-        try {
-            List<AlimentacaoResponseDTO> historico = alimentacaoService.listarPorAnimal(animalId);
-            return ResponseEntity.ok(historico);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(java.util.Map.of("error", e.getMessage() != null ? e.getMessage() : e.toString()));
-        }
+    public ResponseEntity<List<AlimentacaoResponseDTO>> listarPorAnimal(@PathVariable Long animalId) {
+        List<AlimentacaoResponseDTO> historico = alimentacaoService.listarPorAnimal(animalId);
+        return ResponseEntity.ok(historico);
     }
 
     @GetMapping
-    public ResponseEntity<?> listarTodas() {
-        try {
-            List<AlimentacaoResponseDTO> todas = alimentacaoService.listarTodas();
-            return ResponseEntity.ok(todas);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(java.util.Map.of("error", e.getMessage() != null ? e.getMessage() : e.toString()));
-        }
+    public ResponseEntity<List<AlimentacaoResponseDTO>> listarTodas() {
+        List<AlimentacaoResponseDTO> todas = alimentacaoService.listarTodas();
+        return ResponseEntity.ok(todas);
     }
 }
