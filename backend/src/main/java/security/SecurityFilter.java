@@ -40,12 +40,19 @@ public class SecurityFilter extends OncePerRequestFilter {
         var token = this.recoverToken(request);
         if (token != null) {
             var login = tokenService.validateToken(token);
-            UserDetails user = userRepository.findByEmail(login);
-
-            if (user != null) {
-                var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+            if (login == null || login.isEmpty()) {
+                System.out.println("SecurityFilter: validateToken returned empty for token: " + token);
+            } else {
+                UserDetails user = userRepository.findByEmail(login);
+                if (user != null) {
+                    var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                } else {
+                    System.out.println("SecurityFilter: user not found in DB for email: " + login);
+                }
             }
+        } else {
+            System.out.println("SecurityFilter: no token found for URI: " + request.getRequestURI());
         }
         filterChain.doFilter(request, response);
     }

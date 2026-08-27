@@ -25,14 +25,26 @@ public class AlimentacaoController {
     }
 
     @GetMapping("/animal/{animalId}")
-    public ResponseEntity<List<AlimentacaoResponseDTO>> listarPorAnimal(@PathVariable Long animalId) {
-        List<AlimentacaoResponseDTO> historico = alimentacaoService.listarPorAnimal(animalId);
-        return ResponseEntity.ok(historico);
+    public ResponseEntity<?> listarPorAnimal(@PathVariable Long animalId) {
+        try {
+            List<AlimentacaoResponseDTO> historico = alimentacaoService.listarPorAnimal(animalId);
+            return ResponseEntity.ok(historico);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(java.util.Map.of("error", e.getMessage() != null ? e.getMessage() : e.toString()));
+        }
     }
 
     @GetMapping
-    public ResponseEntity<List<AlimentacaoResponseDTO>> listarTodas() {
-        List<AlimentacaoResponseDTO> todas = alimentacaoService.listarTodas();
-        return ResponseEntity.ok(todas);
+    public ResponseEntity<?> listarTodas() {
+        try {
+            List<AlimentacaoResponseDTO> todas = alimentacaoService.listarTodas();
+            return ResponseEntity.ok(todas);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(java.util.Map.of("error", e.getMessage() != null ? e.getMessage() : e.toString()));
+        }
     }
 }
