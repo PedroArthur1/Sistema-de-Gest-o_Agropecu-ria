@@ -6,6 +6,7 @@ import model.Alimentacao;
 import model.Animal;
 import repository.AlimentacaoRepository;
 import repository.AnimalRepository;
+import model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,9 @@ public class AlimentacaoService {
 
     @Autowired
     private AnimalRepository animalRepository;
+
+    @Autowired
+    private UsuarioAutenticadoService usuarioAutenticadoService;
 
     public AlimentacaoResponseDTO registrarAlimentacao(AlimentacaoRequestDTO dto) {
         // 1. Busca todos os animais usando a lista de IDs que veio no DTO
@@ -50,9 +54,9 @@ public class AlimentacaoService {
                 .collect(Collectors.toList());
     }
 
-    // Novo método: vai servir para popular a nova tela geral que vamos criar
     public List<AlimentacaoResponseDTO> listarTodas() {
-        return alimentacaoRepository.findAll()
+        User proprietario = usuarioAutenticadoService.obterUsuario();
+        return alimentacaoRepository.findDistinctByAnimaisProprietario(proprietario)
                 .stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());

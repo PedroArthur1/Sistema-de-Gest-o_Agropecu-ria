@@ -46,7 +46,6 @@ public class TokenService {
     }
 
     private Instant genExpirationDate() {
-        // Define que o token expira em 2 horas usando o fuso horário de Brasília
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
+        return Instant.now().plus(java.time.Duration.ofHours(2));
     }
 }
