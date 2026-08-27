@@ -30,21 +30,26 @@ public class SecurityFilter extends OncePerRequestFilter {
         return "OPTIONS".equalsIgnoreCase(request.getMethod()) ||
                 path.startsWith("/auth/") ||
                 path.equals("/auth") ||
-                path.equals("/health");
+                path.equals("/health") ||
+                path.equals("/error");
     }
 
     @SuppressWarnings("null")
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        var token = this.recoverToken(request);
-        if (token != null) {
-            var login = tokenService.validateToken(token);
-            UserDetails user = userRepository.findByEmail(login);
-
-            if (user != null) {
-                var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            var token = this.recoverToken(request);
+            if (token != null) {
+                var login = tokenService.validateToken(token);
+                if (login != null && !login.isEmpty()) {
+                    UserDetails user = userRepository.findByEmail(login);
+                    if (user != null) {
+                        var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
+                }
             }
+        } catch (Exception ignored) {
         }
         filterChain.doFilter(request, response);
     }
