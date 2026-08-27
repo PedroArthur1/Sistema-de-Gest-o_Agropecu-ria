@@ -15,6 +15,6 @@ public interface AlimentacaoRepository extends JpaRepository<Alimentacao, Long> 
     List<Alimentacao> findByAnimaisId(Long animalId);
 
     @EntityGraph(attributePaths = {"animais"})
-    @Query("SELECT DISTINCT a FROM Alimentacao a JOIN a.animais an WHERE an.proprietario = :proprietario")
-    List<Alimentacao> findDistinctByAnimaisProprietario(@Param("proprietario") User proprietario);
+    @Query("SELECT DISTINCT a FROM Alimentacao a JOIN a.animais an WHERE an.proprietario.id = :usuarioId")
+    List<Alimentacao> findDistinctByAnimaisProprietarioId(@Param("usuarioId") Long usuarioId);
 }

@@ -60,7 +60,7 @@ public class AlimentacaoService {
     @Transactional(readOnly = true)
     public List<AlimentacaoResponseDTO> listarTodas() {
         User proprietario = usuarioAutenticadoService.obterUsuario();
-        return alimentacaoRepository.findDistinctByAnimaisProprietario(proprietario)
+        return alimentacaoRepository.findDistinctByAnimaisProprietarioId(proprietario.getId())
                 .stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
