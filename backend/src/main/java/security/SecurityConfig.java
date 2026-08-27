@@ -45,6 +45,7 @@ public class SecurityConfig {
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/animais/**", "/alimentacoes/**", "/consultas/**", "/tratamentos/**", "/vacinacoes/**").hasAnyRole("ADMIN", "USER")
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint((request, response, authException) -> {
