@@ -24,12 +24,9 @@ export const routes: Routes = [
             { path: 'rebanho/novo', component: AnimalCadastro },
             { path: 'rebanho/:id', component: AnimalDetalhe },
             { path: 'rebanho/:id/editar', component: AnimalEdicao },
-            { path: 'pastagem', component: Welcome },
             { path: 'vacinacao', component: VacinacaoPage },
             { path: 'alimentacao', component: AlimentacaoComponent },
             { path: '', redirectTo: 'welcome', pathMatch: 'full' },
-            { path: 'reproducao', component: Welcome },
-            { path: 'financas', component: Welcome },
             { path: 'configuracoes', component: Welcome }
         ]
     },

@@ -1,5 +1,4 @@
 <div class="vacinacao-container">
-<div class="cadastro-container">
   <app-cabecalho-pagina
     titulo="Manejo Alimentar"
     subtitulo="Registre a alimentação fornecida em lote e acompanhe o histórico nutricional do rebanho.">
@@ -23,9 +22,9 @@
         <div class="form-grid">
 
           <!-- Select Múltiplo para os Animais -->
-          <div class="form-group" style="grid-column: 1 / -1;">
+          <div class="form-group">
             <label for="animalIds">Animais que receberam o alimento *</label>
-            <select id="animalIds" formControlName="animalIds" multiple size="4" [class.campo-invalido]="campoInvalido('animalIds')" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+            <select id="animalIds" formControlName="animalIds" multiple size="4" [class.campo-invalido]="campoInvalido('animalIds')">
               <option *ngFor="let animal of animais" [value]="animal.id">
                 {{ animal.codigoIdentificacao }} — {{ animal.especie }} / {{ animal.raca }}
               </option>
@@ -41,20 +40,17 @@
 
           <app-campo-formulario label="Data do Fornecimento" campoId="data" tipo="date" formControlName="data" [obrigatorio]="true" [invalido]="campoInvalido('data')" mensagemErro="Obrigatória"></app-campo-formulario>
 
-          <div class="form-group full-width" style="margin-top: 15px;">
-            <label for="observacoes">Observações (Opcional)</label>
-            <input type="text" id="observacoes" formControlName="observacoes" placeholder="Insira quaisquer detalhes extras aqui..." style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
-          </div>
+          <app-campo-formulario label="Observações (Opcional)" campoId="observacoes" formControlName="observacoes" placeholder="Insira quaisquer detalhes extras aqui..."></app-campo-formulario>
         </div>
 
-        <div class="form-actions" style="margin-top: 20px;">
+        <div class="form-actions">
           <app-botao-acao [texto]="isSubmitting ? 'Salvando...' : 'Registrar Alimentação'" [tipoSubmit]="true" [desabilitado]="isSubmitting || alimentacaoForm.invalid"></app-botao-acao>
         </div>
       </form>
     </section>
 
     <!-- Lista de Histórico -->
-    <section class="list-container" style="margin-top: 30px;">
+    <section class="list-container">
       <div class="historico-header">
         <h3>Histórico Geral de Alimentação</h3>
         <p>Registros de fornecimento de todas as dietas aplicadas no rebanho.</p>
