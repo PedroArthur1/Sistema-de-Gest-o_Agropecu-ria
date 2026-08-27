@@ -12,7 +12,7 @@ public class Alimentacao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "alimentacao_animal",
             joinColumns = @JoinColumn(name = "alimentacao_id"),
