@@ -6,6 +6,7 @@
   </app-cabecalho-pagina>
 
   <app-alerta-mensagem *ngIf="mensagemSucesso" [mensagem]="mensagemSucesso" tipo="sucesso"></app-alerta-mensagem>
+  <app-alerta-mensagem *ngIf="mensagemErro" [mensagem]="mensagemErro" tipo="erro"></app-alerta-mensagem>
 
   <div class="aviso-rebanho" *ngIf="animais.length === 0">
     <p>Você precisa ter animais cadastrados para registrar a alimentação.</p>
