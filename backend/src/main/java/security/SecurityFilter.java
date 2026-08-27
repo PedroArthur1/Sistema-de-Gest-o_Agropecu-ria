@@ -30,7 +30,8 @@ public class SecurityFilter extends OncePerRequestFilter {
         return "OPTIONS".equalsIgnoreCase(request.getMethod()) ||
                 path.startsWith("/auth/") ||
                 path.equals("/auth") ||
-                path.equals("/health");
+                path.equals("/health") ||
+                path.equals("/error");
     }
 
     @SuppressWarnings("null")
