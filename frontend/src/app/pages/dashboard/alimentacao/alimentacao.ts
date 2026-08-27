@@ -32,6 +32,7 @@ export class AlimentacaoComponent implements OnInit {
   historico: Alimentacao[] = [];
   animais: Animal[] = [];
   mensagemSucesso: string = '';
+  mensagemErro: string = '';
   isSubmitting: boolean = false;
 
   constructor(
@@ -56,14 +57,24 @@ export class AlimentacaoComponent implements OnInit {
   carregarAnimais(): void {
     this.animalService.listarAnimais().subscribe({
       next: (dados: Animal[]) => this.animais = dados,
-      error: (err: any) => console.error('Erro ao buscar lista de animais', err)
+      error: (err: any) => {
+        console.error('Erro ao buscar lista de animais', err);
+        if (err.status !== 401) {
+          this.mensagemErro = 'Erro ao carregar a lista de animais.';
+        }
+      }
     });
   }
 
   carregarHistorico(): void {
     this.alimentacaoService.listarTodas().subscribe({
       next: (dados: Alimentacao[]) => this.historico = dados,
-      error: (err: any) => console.error('Erro ao carregar histórico geral', err)
+      error: (err: any) => {
+        console.error('Erro ao carregar histórico geral', err);
+        if (err.status !== 401) {
+          this.mensagemErro = 'Erro ao carregar histórico de alimentação.';
+        }
+      }
     });
   }
 
