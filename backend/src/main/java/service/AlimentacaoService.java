@@ -9,6 +9,7 @@ import repository.AnimalRepository;
 import model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +26,7 @@ public class AlimentacaoService {
     @Autowired
     private UsuarioAutenticadoService usuarioAutenticadoService;
 
+    @Transactional
     public AlimentacaoResponseDTO registrarAlimentacao(AlimentacaoRequestDTO dto) {
         // 1. Busca todos os animais usando a lista de IDs que veio no DTO
         List<Animal> animais = animalRepository.findAllById(dto.animalIds());
@@ -47,6 +49,7 @@ public class AlimentacaoService {
         return mapToDTO(salva);
     }
 
+    @Transactional(readOnly = true)
     public List<AlimentacaoResponseDTO> listarPorAnimal(Long animalId) {
         return alimentacaoRepository.findByAnimaisId(animalId)
                 .stream()
@@ -54,6 +57,7 @@ public class AlimentacaoService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<AlimentacaoResponseDTO> listarTodas() {
         User proprietario = usuarioAutenticadoService.obterUsuario();
         return alimentacaoRepository.findDistinctByAnimaisProprietario(proprietario)
