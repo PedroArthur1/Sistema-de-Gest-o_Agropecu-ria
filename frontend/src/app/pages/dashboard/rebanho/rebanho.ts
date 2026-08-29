@@ -92,5 +92,37 @@ export class Rebanho implements OnInit {
              dataFormatada.includes(termo);
     });
   }
+
+  // --- Lógica do Modal de Exclusão ---
+  exibirModalExclusao: boolean = false;
+  animalParaExclusao: Animal | null = null;
+
+  abrirModalExclusao(animal: Animal): void {
+    this.animalParaExclusao = animal;
+    this.exibirModalExclusao = true;
+  }
+
+  fecharModalExclusao(): void {
+    this.exibirModalExclusao = false;
+    this.animalParaExclusao = null;
+  }
+
+  confirmarExclusao(): void {
+    if (this.animalParaExclusao && this.animalParaExclusao.id) {
+      this.animalService.excluirAnimal(this.animalParaExclusao.id).subscribe({
+        next: () => {
+          // Remove localmente sem precisar recarregar a lista toda
+          this.animais = this.animais.filter(a => a.id !== this.animalParaExclusao?.id);
+          this.fecharModalExclusao();
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Erro ao excluir animal:', err);
+          this.fecharModalExclusao();
+          this.cdr.detectChanges();
+        }
+      });
+    }
+  }
 }
 

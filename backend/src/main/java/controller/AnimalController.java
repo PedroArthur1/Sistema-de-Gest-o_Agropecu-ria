@@ -36,4 +36,10 @@ public class AnimalController {
     public ResponseEntity<AnimalDTO> atualizar(@PathVariable Long id, @RequestBody AnimalDTO animalDTO) {
         return ResponseEntity.ok(animalService.atualizar(id, animalDTO));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        animalService.deletar(id);
+        return ResponseEntity.noContent().build();
+    }
 }

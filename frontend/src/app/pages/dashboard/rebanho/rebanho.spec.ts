@@ -126,5 +126,24 @@ describe('Rebanho', () => {
     expect(component.termoPesquisa).toBe('');
     expect(component.animaisFiltrados.length).toBe(3);
   });
+
+  // --- Testes do Modal de Exclusão ---
+  it('deve abrir o modal de exclusão e definir o animalParaExclusao', () => {
+    const animal = animaisMock[0];
+    component.abrirModalExclusao(animal);
+    
+    expect(component.exibirModalExclusao).toBe(true);
+    expect(component.animalParaExclusao).toEqual(animal);
+  });
+
+  it('deve fechar o modal de exclusão e limpar o animalParaExclusao', () => {
+    component.exibirModalExclusao = true;
+    component.animalParaExclusao = animaisMock[0];
+    
+    component.fecharModalExclusao();
+    
+    expect(component.exibirModalExclusao).toBe(false);
+    expect(component.animalParaExclusao).toBeNull();
+  });
 });
 
