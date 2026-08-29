@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import repository.AnimalRepository;
 
+import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.*;
@@ -76,13 +77,24 @@ public class IndicadoresService {
     }
 
     /**
-     * Conta animais pelo sexo (case-insensitive).
+     * Conta animais pelo sexo (case-insensitive e sem acentos).
+     * Ex: "Fêmea" == "FEMEA" == "femea" == "Femea".
      */
     long contarPorSexo(List<Animal> animais, String sexo) {
+        String sexoNorm = normalizarTexto(sexo);
         return animais.stream()
-                .filter(a -> sexo.equalsIgnoreCase(
-                        a.getSexo() != null ? a.getSexo().trim() : ""))
+                .filter(a -> sexoNorm.equalsIgnoreCase(
+                        normalizarTexto(a.getSexo() != null ? a.getSexo().trim() : "")))
                 .count();
+    }
+
+    /**
+     * Remove acentos e converte para ASCII puro via NFD + regex.
+     */
+    private String normalizarTexto(String texto) {
+        if (texto == null) return "";
+        return Normalizer.normalize(texto, Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
     }
 
     /**
