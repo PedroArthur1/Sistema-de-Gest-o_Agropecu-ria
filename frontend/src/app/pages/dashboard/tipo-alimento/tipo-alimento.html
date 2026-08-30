@@ -1,0 +1,66 @@
+<div class="page-container">
+  <div class="header-action" style="margin-bottom: 16px;">
+    <a routerLink="/dashboard/alimentacao" class="btn-link" style="display: flex; align-items: center; gap: 4px;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      Voltar para Alimentação
+    </a>
+  </div>
+  <app-cabecalho-pagina
+    titulo="Tipos de Alimento"
+    subtitulo="Cadastre as opções de alimentos disponíveis na sua propriedade.">
+  </app-cabecalho-pagina>
+
+  <div class="page-content">
+    
+    <!-- Formulário para Cadastrar Novo -->
+    <section class="cadastro-card">
+      <h3 class="card-titulo">Cadastrar Novo Alimento</h3>
+      
+      <form [formGroup]="tipoAlimentoForm" (ngSubmit)="salvarTipoAlimento()" class="form-container">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nome do Alimento *</label>
+            <input type="text" formControlName="nome" class="form-control" placeholder="Ex: Silagem de Milho">
+          </div>
+          <div class="form-group">
+            <label>Descrição (Opcional)</label>
+            <input type="text" formControlName="descricao" class="form-control" placeholder="Detalhes adicionais...">
+          </div>
+        </div>
+        <div class="form-actions">
+          <app-botao-acao [texto]="isSubmitting ? 'Salvando...' : 'Salvar Alimento'" [tipoSubmit]="true" [desabilitado]="isSubmitting || tipoAlimentoForm.invalid"></app-botao-acao>
+        </div>
+      </form>
+    </section>
+
+    <!-- Lista Atual -->
+    <section class="list-container">
+      <div class="list-header">
+        <h3>Alimentos Cadastrados</h3>
+      </div>
+
+      <div class="empty-state" *ngIf="tiposAlimento.length === 0">
+        <h3>Nenhum tipo cadastrado</h3>
+        <p>Utilize o formulário acima para registrar um alimento.</p>
+      </div>
+
+      <div class="list-content" *ngIf="tiposAlimento.length > 0">
+        <div class="list-header-row">
+          <div class="col">NOME</div>
+          <div class="col">DESCRIÇÃO</div>
+          <div class="col" style="width: 80px; text-align: center;">AÇÕES</div>
+        </div>
+        <div class="list-item" *ngFor="let tipo of tiposAlimento">
+          <div class="col font-semibold">{{ tipo.nome }}</div>
+          <div class="col text-secondary">{{ tipo.descricao || '-' }}</div>
+          <div class="col" style="width: 80px; text-align: center;">
+            <button type="button" class="btn-icon delete" title="Excluir" (click)="excluirTipoAlimento(tipo.id!)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
