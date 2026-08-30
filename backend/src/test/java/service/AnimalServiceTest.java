@@ -256,4 +256,23 @@ class AnimalServiceTest {
 
         assertThrows(ResponseStatusException.class, () -> animalService.atualizar(1L, dtoInvalido));
     }
+
+    @Test
+    void deveDeletarAnimalComSucesso() {
+        when(usuarioAutenticadoService.obterUsuario()).thenReturn(usuario);
+        when(animalRepository.findByIdAndProprietario(1L, usuario)).thenReturn(Optional.of(animal));
+
+        animalService.deletar(1L);
+
+        verify(animalRepository).delete(animal);
+    }
+
+    @Test
+    void deveLancarExcecaoAoDeletarAnimalDeOutroUsuario() {
+        when(usuarioAutenticadoService.obterUsuario()).thenReturn(usuario);
+        when(animalRepository.findByIdAndProprietario(99L, usuario)).thenReturn(Optional.empty());
+
+        assertThrows(ResponseStatusException.class, () -> animalService.deletar(99L));
+        verify(animalRepository, never()).delete(any());
+    }
 }

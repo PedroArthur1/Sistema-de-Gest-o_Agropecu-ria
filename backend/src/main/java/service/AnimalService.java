@@ -87,6 +87,12 @@ public class AnimalService {
         return toDTO(animalRepository.save(animal));
     }
 
+    @Transactional
+    public void deletar(Long id) {
+        Animal animal = buscarDoUsuario(id); // garante que o animal pertence ao usuário autenticado
+        animalRepository.delete(animal);
+    }
+
     private void validarCadastro(AnimalDTO dto) {
         if (dto == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dados do animal são obrigatórios");

@@ -27,4 +27,8 @@ export class AnimalService {
   atualizarAnimal(id: number, animal: Animal): Observable<Animal> {
     return this.http.put<Animal>(`${this.apiUrl}/${id}`, animal);
   }
+
+  excluirAnimal(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 }

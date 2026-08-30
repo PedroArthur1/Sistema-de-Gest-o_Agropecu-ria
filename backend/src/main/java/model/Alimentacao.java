@@ -20,8 +20,9 @@ public class Alimentacao {
     )
     private List<Animal> animais;
 
-    @Column(nullable = false)
-    private String tipoAlimento;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tipo_alimento_id", nullable = false)
+    private TipoAlimento tipoAlimento;
 
     @Column(nullable = false)
     private String quantidade;
@@ -33,7 +34,7 @@ public class Alimentacao {
 
     public Alimentacao() {}
 
-    public Alimentacao(List<Animal> animais, String tipoAlimento, String quantidade, LocalDate data, String observacoes) {
+    public Alimentacao(List<Animal> animais, TipoAlimento tipoAlimento, String quantidade, LocalDate data, String observacoes) {
         this.animais = animais;
         this.tipoAlimento = tipoAlimento;
         this.quantidade = quantidade;
@@ -45,8 +46,8 @@ public class Alimentacao {
     public void setId(Long id) { this.id = id; }
     public List<Animal> getAnimais() { return animais; }
     public void setAnimais(List<Animal> animais) { this.animais = animais; }
-    public String getTipoAlimento() { return tipoAlimento; }
-    public void setTipoAlimento(String tipoAlimento) { this.tipoAlimento = tipoAlimento; }
+    public TipoAlimento getTipoAlimento() { return tipoAlimento; }
+    public void setTipoAlimento(TipoAlimento tipoAlimento) { this.tipoAlimento = tipoAlimento; }
     public String getQuantidade() { return quantidade; }
     public void setQuantidade(String quantidade) { this.quantidade = quantidade; }
     public LocalDate getData() { return data; }

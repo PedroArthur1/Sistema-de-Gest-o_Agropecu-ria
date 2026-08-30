@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import dto.TipoAlimentoDTO;
+import service.TipoAlimentoService;
 
 @Service
 public class AlimentacaoService {
@@ -25,6 +27,9 @@ public class AlimentacaoService {
 
     @Autowired
     private UsuarioAutenticadoService usuarioAutenticadoService;
+    
+    @Autowired
+    private TipoAlimentoService tipoAlimentoService;
 
     @Transactional
     public AlimentacaoResponseDTO registrarAlimentacao(AlimentacaoRequestDTO dto) {
@@ -35,10 +40,13 @@ public class AlimentacaoService {
             throw new RuntimeException("Nenhum animal válido encontrado para os IDs informados.");
         }
 
-        // 2. Monta a entidade passando a LISTA de animais
+        // 2. Busca o Tipo de Alimento
+        model.TipoAlimento tipoAlimento = tipoAlimentoService.buscarDoUsuario(dto.tipoAlimentoId());
+
+        // 3. Monta a entidade passando a LISTA de animais
         Alimentacao alimentacao = new Alimentacao(
                 animais,
-                dto.tipoAlimento(),
+                tipoAlimento,
                 dto.quantidade(),
                 dto.data(),
                 dto.observacoes()
@@ -76,7 +84,7 @@ public class AlimentacaoService {
         return new AlimentacaoResponseDTO(
                 a.getId(),
                 ids,
-                a.getTipoAlimento(),
+                new TipoAlimentoDTO(a.getTipoAlimento().getId(), a.getTipoAlimento().getNome(), a.getTipoAlimento().getDescricao()),
                 a.getQuantidade(),
                 a.getData(),
                 a.getObservacoes()

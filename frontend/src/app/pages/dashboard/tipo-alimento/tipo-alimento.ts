@@ -1,0 +1,84 @@
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { TipoAlimentoService } from '../../../services/alimentacao/tipo-alimento.service';
+import { TipoAlimento } from '../../../models/tipo-alimento.model';
+import { BotaoAcaoComponent } from '../../../components/botao-acao/botao-acao.component';
+
+@Component({
+  selector: 'app-tipo-alimento',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    BotaoAcaoComponent
+  ],
+  templateUrl: './tipo-alimento.html',
+  styleUrls: ['./tipo-alimento.css']
+})
+export class TipoAlimentoComponent implements OnInit {
+  tipoAlimentoForm!: FormGroup;
+  tiposAlimento: TipoAlimento[] = [];
+  isSubmitting = false;
+
+  constructor(
+    private fb: FormBuilder,
+    private tipoAlimentoService: TipoAlimentoService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit(): void {
+    this.tipoAlimentoForm = this.fb.group({
+      nome: ['', Validators.required],
+      descricao: ['']
+    });
+
+    this.carregarTipos();
+  }
+
+  carregarTipos(): void {
+    this.tipoAlimentoService.listarTiposAlimento().subscribe({
+      next: (dados) => {
+        this.tiposAlimento = dados;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erro ao carregar tipos de alimento', err);
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  salvarTipoAlimento(): void {
+    if (this.tipoAlimentoForm.valid) {
+      this.isSubmitting = true;
+      this.tipoAlimentoService.criarTipoAlimento(this.tipoAlimentoForm.value).subscribe({
+        next: (novoTipo) => {
+          this.tiposAlimento.push(novoTipo);
+          this.tipoAlimentoForm.reset();
+          this.isSubmitting = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Erro ao salvar tipo de alimento', err);
+          this.isSubmitting = false;
+          this.cdr.detectChanges();
+        }
+      });
+    }
+  }
+
+  excluirTipoAlimento(id: number): void {
+    this.tipoAlimentoService.excluirTipoAlimento(id).subscribe({
+      next: () => {
+        this.tiposAlimento = this.tiposAlimento.filter(t => t.id !== id);
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erro ao deletar tipo de alimento', err);
+        alert('Não foi possível excluir. É provável que este alimento já esteja sendo usado no histórico.');
+        this.cdr.detectChanges();
+      }
+    });
+  }
+}

@@ -2,6 +2,9 @@
   <app-cabecalho-pagina
     titulo="Manejo Alimentar"
     subtitulo="Registre a alimentação fornecida em lote e acompanhe o histórico nutricional do rebanho.">
+    <button class="btn-primary" (click)="trocarAba('tipos')" *ngIf="abaAtiva === 'fornecimento'">
+      Gerenciar Alimentos
+    </button>
   </app-cabecalho-pagina>
 
   <app-alerta-mensagem *ngIf="mensagemSucesso" [mensagem]="mensagemSucesso" tipo="sucesso"></app-alerta-mensagem>
@@ -12,7 +15,12 @@
     <a routerLink="/dashboard/rebanho/novo">Cadastrar animal</a>
   </div>
 
-  <div class="vacinacao-conteudo">
+  <div class="tabs">
+    <button class="tab-btn" [class.active]="abaAtiva === 'fornecimento'" (click)="trocarAba('fornecimento')">Fornecer Refeição</button>
+    <button class="tab-btn" [class.active]="abaAtiva === 'tipos'" (click)="trocarAba('tipos')">Tipos de Alimento</button>
+  </div>
+
+  <div class="vacinacao-conteudo" *ngIf="abaAtiva === 'fornecimento'">
     <!-- Formulário -->
     <section class="cadastro-card">
       <h3 class="card-titulo">Fornecer Refeição</h3>
@@ -34,7 +42,19 @@
             </span>
           </div>
 
-          <app-campo-formulario label="Tipo de Alimento" campoId="tipoAlimento" formControlName="tipoAlimento" [obrigatorio]="true" placeholder="Ex: Ração, Silagem..." [invalido]="campoInvalido('tipoAlimento')" mensagemErro="Obrigatório"></app-campo-formulario>
+          <!-- Select do Tipo de Alimento -->
+          <div class="form-group">
+            <label for="tipoAlimentoId">Tipo de Alimento *</label>
+            <select id="tipoAlimentoId" formControlName="tipoAlimentoId" class="form-control" [class.campo-invalido]="campoInvalido('tipoAlimentoId')">
+              <option value="" disabled selected>Selecione o alimento</option>
+              <option *ngFor="let tipo of tiposAlimento" [value]="tipo.id">
+                {{ tipo.nome }}
+              </option>
+            </select>
+            <span class="error-text" *ngIf="campoInvalido('tipoAlimentoId')">
+              Obrigatório
+            </span>
+          </div>
 
           <app-campo-formulario label="Quantidade Total" campoId="quantidade" formControlName="quantidade" [obrigatorio]="true" placeholder="Ex: 50 kg" [invalido]="campoInvalido('quantidade')" mensagemErro="Obrigatória"></app-campo-formulario>
 
@@ -71,7 +91,7 @@
         </div>
         <div class="list-item" *ngFor="let registro of historico">
           <div class="col">{{ registro.data | date:'dd/MM/yyyy' }}</div>
-          <div class="col font-semibold text-primary">{{ registro.tipoAlimento }}</div>
+          <div class="col font-semibold text-primary">{{ registro.tipoAlimento?.nome }}</div>
           <div class="col">{{ registro.quantidade }}</div>
           <div class="col">{{ registro.animalIds.length }} animais</div>
           <div class="col">{{ registro.observacoes || '-' }}</div>
@@ -79,4 +99,9 @@
       </div>
     </section>
   </div>
+
+  <div *ngIf="abaAtiva === 'tipos'">
+    <app-tipo-alimento></app-tipo-alimento>
+  </div>
+
 </div>
