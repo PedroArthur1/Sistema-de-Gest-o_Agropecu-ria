@@ -29,16 +29,42 @@
       <form [formGroup]="alimentacaoForm" (ngSubmit)="onSubmit()" class="form-container">
         <div class="form-grid">
 
+          <!-- Toggle Animais / Lotes -->
+          <div class="form-group full-width" style="margin-bottom: 1rem;">
+            <label style="font-weight: 600; margin-bottom: 8px; display: block;">Modo de Fornecimento:</label>
+            <div style="display: flex; gap: 1rem;">
+              <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                <input type="radio" name="tipoSelecao" value="animais" [(ngModel)]="tipoSelecao" [ngModelOptions]="{standalone: true}">
+                Animais Individuais
+              </label>
+              <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                <input type="radio" name="tipoSelecao" value="lotes" [(ngModel)]="tipoSelecao" [ngModelOptions]="{standalone: true}">
+                Lotes / Grupos
+              </label>
+            </div>
+          </div>
+
           <!-- Select Múltiplo para os Animais -->
-          <div class="form-group">
+          <div class="form-group" *ngIf="tipoSelecao === 'animais'">
             <label for="animalIds">Animais que receberam o alimento *</label>
-            <select id="animalIds" formControlName="animalIds" multiple size="4" [class.campo-invalido]="campoInvalido('animalIds')">
+            <select id="animalIds" formControlName="animalIds" multiple size="4" [class.campo-invalido]="tipoSelecao === 'animais' && campoInvalido('animalIds')">
               <option *ngFor="let animal of animais" [value]="animal.id">
                 {{ animal.codigoIdentificacao }} — {{ animal.especie }} / {{ animal.raca }}
               </option>
             </select>
-            <span class="error-text" *ngIf="campoInvalido('animalIds')">
-              Selecione pelo menos um animal no lote
+          </div>
+
+          <!-- Select Lotes -->
+          <div class="form-group" *ngIf="tipoSelecao === 'lotes'">
+            <label for="grupoId">Lote de Animais *</label>
+            <select id="grupoId" formControlName="grupoId" class="form-control">
+              <option [ngValue]="null" disabled selected>Selecione um lote</option>
+              <option *ngFor="let lote of lotes" [value]="lote.id">
+                {{ lote.nome }} ({{ lote.quantidadeAnimais }} animais)
+              </option>
+            </select>
+            <span class="error-text" *ngIf="lotes.length === 0" style="margin-top: 4px; display: block; color: var(--text-secondary);">
+              Nenhum lote cadastrado. Acesse a área de Rebanho para criar.
             </span>
           </div>
 

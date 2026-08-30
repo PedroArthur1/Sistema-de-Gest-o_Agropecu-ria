@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AnimalService } from '../../../../services/animal/animal.service';
+import { GrupoRebanhoService } from '../../../../services/rebanho/grupo-rebanho.service';
+import { GrupoRebanho } from '../../../../models/grupo-rebanho.model';
 import { getBrowserStorage } from '../../../../utils/browser-storage';
 
 @Component({
@@ -18,11 +20,13 @@ export class AnimalCadastro implements OnInit {
   successMessage = '';
   errorMessage = '';
   animaisExistentes: any[] = [];
+  lotes: GrupoRebanho[] = [];
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private animalService: AnimalService
+    private animalService: AnimalService,
+    private grupoRebanhoService: GrupoRebanhoService
   ) {}
 
   ngOnInit(): void {
@@ -34,11 +38,13 @@ export class AnimalCadastro implements OnInit {
       dataNascimentoOuIdade: ['', Validators.required],
       peso: ['', [Validators.required, Validators.min(0)]],
       condicaoSaude: ['', Validators.required],
-      observacoes: ['']
+      observacoes: [''],
+      grupoId: [null]
     });
 
     // Carrega a lista de animais para evitar códigos duplicados
     this.carregarAnimaisExistentes();
+    this.carregarLotes();
 
     // Gera código automático ao mudar a espécie
     this.animalForm.get('especie')?.valueChanges.subscribe(especie => {
@@ -60,6 +66,13 @@ export class AnimalCadastro implements OnInit {
       error: () => {
         this.animaisExistentes = [];
       }
+    });
+  }
+
+  private carregarLotes(): void {
+    this.grupoRebanhoService.listarGrupos().subscribe({
+      next: (grupos) => this.lotes = grupos || [],
+      error: (err) => console.error('Erro ao carregar lotes:', err)
     });
   }
 

@@ -127,17 +127,7 @@ class AnimalControllerTest {
     void deveAtualizarAnimalComSucesso() throws Exception {
         Long animalId = cadastrarAnimal(token);
 
-        AnimalDTO dtoAtualizado = new AnimalDTO(
-                animalId,
-                "BOV-001",
-                "Bovino",
-                "Angus",
-                "MACHO",
-                "3 anos",
-                520.0,
-                "Em Tratamento",
-                "Observação atualizada"
-        );
+        AnimalDTO dtoAtualizado = new AnimalDTO(animalId, "BOV-001", "Bovino", "Angus", "MACHO", "3 anos", 520.0, "Em Tratamento", "Observação atualizada", null, null);
 
         mockMvc.perform(put("/animais/{id}", animalId)
                         .header("Authorization", "Bearer " + token)
@@ -155,17 +145,7 @@ class AnimalControllerTest {
     void deveRetornar400AoTentarAlterarCodigoIdentificacao() throws Exception {
         Long animalId = cadastrarAnimal(token);
 
-        AnimalDTO dtoComCodigoDiferente = new AnimalDTO(
-                animalId,
-                "BOV-999",
-                "Bovino",
-                "Nelore",
-                "MACHO",
-                "2 anos",
-                450.0,
-                "Saudável",
-                null
-        );
+        AnimalDTO dtoComCodigoDiferente = new AnimalDTO(animalId, "BOV-999", "Bovino", "Nelore", "MACHO", "2 anos", 450.0, "Saudável", null, null, null);
 
         mockMvc.perform(put("/animais/{id}", animalId)
                         .header("Authorization", "Bearer " + token)
@@ -182,17 +162,7 @@ class AnimalControllerTest {
         cadastrarUsuario(outroEmail, senha);
         String tokenOutro = autenticar(outroEmail, senha);
 
-        AnimalDTO dtoAtualizado = new AnimalDTO(
-                animalId,
-                "BOV-001",
-                "Bovino",
-                "Nelore",
-                "MACHO",
-                "2 anos",
-                480.0,
-                "Saudável",
-                null
-        );
+        AnimalDTO dtoAtualizado = new AnimalDTO(animalId, "BOV-001", "Bovino", "Nelore", "MACHO", "2 anos", 480.0, "Saudável", null, null, null);
 
         mockMvc.perform(put("/animais/{id}", animalId)
                         .header("Authorization", "Bearer " + tokenOutro)
@@ -226,17 +196,7 @@ class AnimalControllerTest {
     }
 
     private Long cadastrarAnimal(String tokenUsuario) throws Exception {
-        AnimalDTO animalDTO = new AnimalDTO(
-                null,
-                "BOV-001",
-                "Bovino",
-                "Nelore",
-                "MACHO",
-                "2 anos",
-                450.0,
-                "Saudável",
-                null
-        );
+        AnimalDTO animalDTO = new AnimalDTO(null, "BOV-001", "Bovino", "Nelore", "MACHO", "2 anos", 450.0, "Saudável", null, null, null);
 
         String resposta = mockMvc.perform(post("/animais")
                         .header("Authorization", "Bearer " + tokenUsuario)

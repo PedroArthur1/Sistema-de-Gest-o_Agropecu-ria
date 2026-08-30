@@ -40,6 +40,10 @@ public class Animal {
     @JoinColumn(name = "proprietario_id", nullable = false)
     private User proprietario;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "grupo_id")
+    private GrupoRebanho grupoRebanho;
+
     public Animal() {}
 
     public Long getId() {
@@ -120,5 +124,13 @@ public class Animal {
 
     public void setProprietario(User proprietario) {
         this.proprietario = proprietario;
+    }
+
+    public GrupoRebanho getGrupoRebanho() {
+        return grupoRebanho;
+    }
+
+    public void setGrupoRebanho(GrupoRebanho grupoRebanho) {
+        this.grupoRebanho = grupoRebanho;
     }
 }

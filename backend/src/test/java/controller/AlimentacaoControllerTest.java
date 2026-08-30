@@ -125,7 +125,7 @@ class AlimentacaoControllerTest {
     private Long cadastrarAnimal(String tokenUsuario) throws Exception {
         AnimalDTO animalDTO = new AnimalDTO(
                 null, "ALIM-" + UUID.randomUUID().toString().substring(0, 5), "Bovino", "Nelore", "MACHO",
-                "2 anos", 450.0, "Excelente", null
+                "2 anos", 450.0, "Excelente", null, null, null
         );
 
         String resposta = mockMvc.perform(post("/animais")

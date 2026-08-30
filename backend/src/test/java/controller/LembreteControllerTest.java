@@ -94,10 +94,7 @@ class LembreteControllerTest {
     }
 
     private Long cadastrarAnimal(String tokenUsuario) throws Exception {
-        AnimalDTO animalDTO = new AnimalDTO(
-                null, "ANM-99", "Bovino", "Nelore", "MACHO",
-                "1 ano", 200.0, "Saudável", null
-        );
+        AnimalDTO animalDTO = new AnimalDTO(null, "ANM-99", "Bovino", "Nelore", "MACHO", "1 ano", 200.0, "Saudável", null, null, null);
 
         String resposta = mockMvc.perform(post("/animais")
                         .header("Authorization", "Bearer " + tokenUsuario)

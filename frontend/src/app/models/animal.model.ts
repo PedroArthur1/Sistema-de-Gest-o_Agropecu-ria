@@ -8,4 +8,6 @@ export interface Animal {
   peso: number;
   condicaoSaude: string;
   observacoes?: string;
+  grupoId?: number;
+  grupoNome?: string;
 }

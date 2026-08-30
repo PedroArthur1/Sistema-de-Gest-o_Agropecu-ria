@@ -30,6 +30,25 @@
     </div>
   </header>
 
+  <!-- Abas Principais: Animais vs Lotes -->
+  <div class="tabs-container main-tabs" style="margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 0;">
+    <div 
+      class="tab-item" 
+      [class.active]="visaoAtiva === 'animais'"
+      (click)="visaoAtiva = 'animais'"
+      style="font-size: 1.1rem; padding: 10px 20px;">
+      Animais Individuais
+    </div>
+    <div 
+      class="tab-item" 
+      [class.active]="visaoAtiva === 'lotes'"
+      (click)="visaoAtiva = 'lotes'"
+      style="font-size: 1.1rem; padding: 10px 20px;">
+      Grupos de Rebanho (Lotes)
+    </div>
+  </div>
+
+<ng-container *ngIf="visaoAtiva === 'animais'">
   <!-- Abas de Filtro -->
   <div class="tabs-container">
     <div 
@@ -119,7 +138,11 @@
       Registros exibidos: <strong>{{ animaisFiltrados.length }}</strong> de <strong>{{ animais.length }}</strong>
     </div>
   </div>
-</div>
+</ng-container>
+
+<ng-container *ngIf="visaoAtiva === 'lotes'">
+  <app-grupos-rebanho></app-grupos-rebanho>
+</ng-container>
 
 <!-- Modal de Confirmação de Exclusão -->
 <div class="modal-overlay" *ngIf="exibirModalExclusao">

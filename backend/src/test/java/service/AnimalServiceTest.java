@@ -9,9 +9,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 import repository.AnimalRepository;
+import repository.GrupoRebanhoRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,9 @@ class AnimalServiceTest {
 
     @Mock
     private AnimalRepository animalRepository;
+
+    @Mock
+    private GrupoRebanhoRepository grupoRebanhoRepository;
 
     @Mock
     private UsuarioAutenticadoService usuarioAutenticadoService;
@@ -53,7 +57,7 @@ class AnimalServiceTest {
     @Test
     void deveCadastrarAnimalComSucesso() {
         AnimalDTO dto = new AnimalDTO(null, "BOV-001", "Bovino", "Nelore", "MACHO",
-                "2 anos", 450.0, "Saudável", null);
+                "2 anos", 450.0, "Saudável", null, null, null);
 
         when(usuarioAutenticadoService.obterUsuario()).thenReturn(usuario);
         when(animalRepository.save(any(Animal.class))).thenReturn(animal);
@@ -69,7 +73,7 @@ class AnimalServiceTest {
     @Test
     void deveLancarExcecaoQuandoCodigoIdentificacaoJaExiste() {
         AnimalDTO dto = new AnimalDTO(null, "BOV-001", "Bovino", "Nelore", "MACHO",
-                "2 anos", 450.0, "Saudável", null);
+                "2 anos", 450.0, "Saudável", null, null, null);
 
         when(usuarioAutenticadoService.obterUsuario()).thenReturn(usuario);
         when(animalRepository.existsByCodigoIdentificacaoAndProprietario("BOV-001", usuario)).thenReturn(true);
@@ -87,7 +91,7 @@ class AnimalServiceTest {
     @Test
     void deveLancarExcecaoParaCodigoVazio() {
         AnimalDTO dto = new AnimalDTO(null, "", "Bovino", "Nelore", "MACHO",
-                "2 anos", 450.0, "Saudável", null);
+                "2 anos", 450.0, "Saudável", null, null, null);
 
         assertThrows(ResponseStatusException.class, () -> animalService.cadastrar(dto));
     }
@@ -95,7 +99,7 @@ class AnimalServiceTest {
     @Test
     void deveLancarExcecaoParaEspecieVazia() {
         AnimalDTO dto = new AnimalDTO(null, "BOV-001", "", "Nelore", "MACHO",
-                "2 anos", 450.0, "Saudável", null);
+                "2 anos", 450.0, "Saudável", null, null, null);
 
         assertThrows(ResponseStatusException.class, () -> animalService.cadastrar(dto));
     }
@@ -103,7 +107,7 @@ class AnimalServiceTest {
     @Test
     void deveLancarExcecaoParaRacaVazia() {
         AnimalDTO dto = new AnimalDTO(null, "BOV-001", "Bovino", "", "MACHO",
-                "2 anos", 450.0, "Saudável", null);
+                "2 anos", 450.0, "Saudável", null, null, null);
 
         assertThrows(ResponseStatusException.class, () -> animalService.cadastrar(dto));
     }
@@ -111,7 +115,7 @@ class AnimalServiceTest {
     @Test
     void deveLancarExcecaoParaSexoNulo() {
         AnimalDTO dto = new AnimalDTO(null, "BOV-001", "Bovino", "Nelore", null,
-                "2 anos", 450.0, "Saudável", null);
+                "2 anos", 450.0, "Saudável", null, null, null);
 
         assertThrows(ResponseStatusException.class, () -> animalService.cadastrar(dto));
     }
@@ -119,7 +123,7 @@ class AnimalServiceTest {
     @Test
     void deveLancarExcecaoParaDataNascimentoVazia() {
         AnimalDTO dto = new AnimalDTO(null, "BOV-001", "Bovino", "Nelore", "MACHO",
-                "  ", 450.0, "Saudável", null);
+                "  ", 450.0, "Saudável", null, null, null);
 
         assertThrows(ResponseStatusException.class, () -> animalService.cadastrar(dto));
     }
@@ -127,7 +131,7 @@ class AnimalServiceTest {
     @Test
     void deveLancarExcecaoParaPesoNulo() {
         AnimalDTO dto = new AnimalDTO(null, "BOV-001", "Bovino", "Nelore", "MACHO",
-                "2 anos", null, "Saudável", null);
+                "2 anos", null, "Saudável", null, null, null);
 
         assertThrows(ResponseStatusException.class, () -> animalService.cadastrar(dto));
     }
@@ -135,7 +139,7 @@ class AnimalServiceTest {
     @Test
     void deveLancarExcecaoParaPesoNegativo() {
         AnimalDTO dto = new AnimalDTO(null, "BOV-001", "Bovino", "Nelore", "MACHO",
-                "2 anos", -10.0, "Saudável", null);
+                "2 anos", -10.0, "Saudável", null, null, null);
 
         assertThrows(ResponseStatusException.class, () -> animalService.cadastrar(dto));
     }
@@ -143,7 +147,7 @@ class AnimalServiceTest {
     @Test
     void deveLancarExcecaoParaCondicaoSaudeVazia() {
         AnimalDTO dto = new AnimalDTO(null, "BOV-001", "Bovino", "Nelore", "MACHO",
-                "2 anos", 450.0, "", null);
+                "2 anos", 450.0, "", null, null, null);
 
         assertThrows(ResponseStatusException.class, () -> animalService.cadastrar(dto));
     }
@@ -190,8 +194,7 @@ class AnimalServiceTest {
 
     @Test
     void deveCadastrarAnimalComObservacoes() {
-        AnimalDTO dto = new AnimalDTO(null, "BOV-002", "Bovino", "Gir", "FEMEA",
-                "3 anos", 380.0, "Em Observação", "Animal gestante");
+        AnimalDTO dto = new AnimalDTO(null, "BOV-002", "Bovino", "Gir", "FEMEA", "3 anos", 380.0, "Em Observação", "Animal gestante", null, null);
 
         when(usuarioAutenticadoService.obterUsuario()).thenReturn(usuario);
 
@@ -215,8 +218,7 @@ class AnimalServiceTest {
 
     @Test
     void deveAtualizarAnimalComSucesso() {
-        AnimalDTO dtoAtualizacao = new AnimalDTO(1L, "BOV-001", "Bovino", "Angus", "MACHO",
-                "3 anos", 500.0, "Em Tratamento", "Tratamento de casco");
+        AnimalDTO dtoAtualizacao = new AnimalDTO(1L, "BOV-001", "Bovino", "Angus", "MACHO", "3 anos", 500.0, "Em Tratamento", "Tratamento de casco", null, null);
 
         when(usuarioAutenticadoService.obterUsuario()).thenReturn(usuario);
         when(animalRepository.findByIdAndProprietario(1L, usuario)).thenReturn(Optional.of(animal));
@@ -236,7 +238,7 @@ class AnimalServiceTest {
     @Test
     void deveLancarExcecaoAoTentarAlterarCodigoIdentificacao() {
         AnimalDTO dtoAtualizacao = new AnimalDTO(1L, "BOV-999", "Bovino", "Nelore", "MACHO",
-                "2 anos", 450.0, "Saudável", null);
+                "2 anos", 450.0, "Saudável", null, null, null);
 
         when(usuarioAutenticadoService.obterUsuario()).thenReturn(usuario);
         when(animalRepository.findByIdAndProprietario(1L, usuario)).thenReturn(Optional.of(animal));
@@ -251,7 +253,7 @@ class AnimalServiceTest {
     @Test
     void deveLancarExcecaoAoEditarAnimalDeOutroUsuario() {
         AnimalDTO dtoAtualizacao = new AnimalDTO(99L, "BOV-001", "Bovino", "Nelore", "MACHO",
-                "2 anos", 450.0, "Saudável", null);
+                "2 anos", 450.0, "Saudável", null, null, null);
 
         when(usuarioAutenticadoService.obterUsuario()).thenReturn(usuario);
         when(animalRepository.findByIdAndProprietario(99L, usuario)).thenReturn(Optional.empty());
@@ -262,7 +264,7 @@ class AnimalServiceTest {
     @Test
     void deveLancarExcecaoAoEditarComDadosInvalidos() {
         AnimalDTO dtoInvalido = new AnimalDTO(1L, "BOV-001", "Bovino", "", "MACHO",
-                "2 anos", -50.0, "Saudável", null);
+                "2 anos", -50.0, "Saudável", null, null, null);
 
         when(usuarioAutenticadoService.obterUsuario()).thenReturn(usuario);
         when(animalRepository.findByIdAndProprietario(1L, usuario)).thenReturn(Optional.of(animal));

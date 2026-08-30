@@ -201,17 +201,7 @@ class VacinacaoControllerTest {
     }
 
     private Long cadastrarAnimal(String tokenUsuario) throws Exception {
-        AnimalDTO animalDTO = new AnimalDTO(
-                null,
-                "BOV-001",
-                "Bovino",
-                "Nelore",
-                "MACHO",
-                "2 anos",
-                450.0,
-                "Saudável",
-                null
-        );
+        AnimalDTO animalDTO = new AnimalDTO(null, "BOV-001", "Bovino", "Nelore", "MACHO", "2 anos", 450.0, "Saudável", null, null, null);
 
         String resposta = mockMvc.perform(post("/animais")
                         .header("Authorization", "Bearer " + tokenUsuario)

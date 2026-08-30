@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AnimalService } from '../../../../services/animal/animal.service';
+import { GrupoRebanhoService } from '../../../../services/rebanho/grupo-rebanho.service';
 import { Animal } from '../../../../models/animal.model';
+import { GrupoRebanho } from '../../../../models/grupo-rebanho.model';
 
 @Component({
   selector: 'app-animal-edicao',
@@ -19,12 +21,14 @@ export class AnimalEdicao implements OnInit {
   isSubmitting = false;
   successMessage = '';
   errorMessage = '';
+  lotes: GrupoRebanho[] = [];
 
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
     private animalService: AnimalService,
+    private grupoRebanhoService: GrupoRebanhoService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -37,8 +41,11 @@ export class AnimalEdicao implements OnInit {
       dataNascimentoOuIdade: ['', Validators.required],
       peso: ['', [Validators.required, Validators.min(0)]],
       condicaoSaude: ['', Validators.required],
-      observacoes: ['']
+      observacoes: [''],
+      grupoId: [null]
     });
+
+    this.carregarLotes();
 
     this.route.paramMap.subscribe(params => {
       const idParam = params.get('id');
@@ -56,6 +63,16 @@ export class AnimalEdicao implements OnInit {
     });
   }
 
+  carregarLotes(): void {
+    this.grupoRebanhoService.listarGrupos().subscribe({
+      next: (grupos) => {
+        this.lotes = grupos || [];
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Erro ao carregar lotes:', err)
+    });
+  }
+
   carregarAnimal(id: number): void {
     this.isLoading = true;
     this.errorMessage = '';
@@ -69,7 +86,8 @@ export class AnimalEdicao implements OnInit {
           dataNascimentoOuIdade: animal.dataNascimentoOuIdade,
           peso: animal.peso,
           condicaoSaude: animal.condicaoSaude,
-          observacoes: animal.observacoes || ''
+          observacoes: animal.observacoes || '',
+          grupoId: animal.grupoId || null
         });
         this.isLoading = false;
         this.cdr.detectChanges();
@@ -112,7 +130,8 @@ export class AnimalEdicao implements OnInit {
       dataNascimentoOuIdade: rawValues.dataNascimentoOuIdade,
       peso: Number(rawValues.peso),
       condicaoSaude: rawValues.condicaoSaude,
-      observacoes: rawValues.observacoes ? rawValues.observacoes.trim() : undefined
+      observacoes: rawValues.observacoes ? rawValues.observacoes.trim() : undefined,
+      grupoId: rawValues.grupoId || null
     };
 
     this.animalService.atualizarAnimal(this.animalId, animalPayload).subscribe({

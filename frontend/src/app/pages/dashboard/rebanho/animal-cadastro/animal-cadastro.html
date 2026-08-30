@@ -105,6 +105,14 @@
           </span>
         </div>
 
+        <div class="form-group">
+          <label>Lote / Grupo de Rebanho (Opcional)</label>
+          <select formControlName="grupoId">
+            <option [ngValue]="null">Nenhum (Animal Individual)</option>
+            <option *ngFor="let lote of lotes" [ngValue]="lote.id">{{ lote.nome }}</option>
+          </select>
+        </div>
+
         <div class="form-group full-width">
           <label>Observações Adicionais (Opcional)</label>
           <input type="text" formControlName="observacoes" placeholder="Insira quaisquer detalhes extras aqui..." />
