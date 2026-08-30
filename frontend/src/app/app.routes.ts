@@ -10,7 +10,6 @@ import { AnimalEdicao } from './pages/dashboard/rebanho/animal-edicao/animal-edi
 import { VacinacaoPage } from './pages/dashboard/vacinacao/vacinacao';
 import { authGuard } from './guards/auth-guard';
 import { AlimentacaoComponent } from './pages/dashboard/alimentacao/alimentacao';
-import { TipoAlimentoComponent } from './pages/dashboard/tipo-alimento/tipo-alimento';
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
     { path: 'login', component: LoginComponent },
@@ -27,7 +26,6 @@ export const routes: Routes = [
             { path: 'rebanho/:id/editar', component: AnimalEdicao },
             { path: 'vacinacao', component: VacinacaoPage },
             { path: 'alimentacao', component: AlimentacaoComponent },
-            { path: 'alimentacao/tipos', component: TipoAlimentoComponent },
             { path: '', redirectTo: 'welcome', pathMatch: 'full' },
             { path: 'configuracoes', component: Welcome }
         ]

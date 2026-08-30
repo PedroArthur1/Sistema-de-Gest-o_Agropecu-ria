@@ -4,6 +4,34 @@
   margin: 0 auto;
 }
 
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary, #64748b);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  color: var(--text-primary, #1e293b);
+}
+
+.tab-btn.active {
+  color: var(--primary-color, #16a34a);
+  border-bottom-color: var(--primary-color, #16a34a);
+}
+
 .aviso-rebanho {
   display: flex;
   align-items: center;

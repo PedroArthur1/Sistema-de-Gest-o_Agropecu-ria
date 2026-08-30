@@ -12,7 +12,12 @@
     <a routerLink="/dashboard/rebanho/novo">Cadastrar animal</a>
   </div>
 
-  <div class="vacinacao-conteudo">
+  <div class="tabs">
+    <button class="tab-btn" [class.active]="abaAtiva === 'fornecimento'" (click)="trocarAba('fornecimento')">Fornecer Refeição</button>
+    <button class="tab-btn" [class.active]="abaAtiva === 'tipos'" (click)="trocarAba('tipos')">Tipos de Alimento</button>
+  </div>
+
+  <div class="vacinacao-conteudo" *ngIf="abaAtiva === 'fornecimento'">
     <!-- Formulário -->
     <section class="cadastro-card">
       <h3 class="card-titulo">Fornecer Refeição</h3>
@@ -38,7 +43,7 @@
           <div class="form-group">
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <label for="tipoAlimentoId">Tipo de Alimento *</label>
-              <a routerLink="/dashboard/alimentacao/tipos" class="btn-link">Gerenciar Tipos</a>
+              <button type="button" class="btn-link" (click)="trocarAba('tipos')">Gerenciar Tipos</button>
             </div>
             <select id="tipoAlimentoId" formControlName="tipoAlimentoId" class="form-control" [class.campo-invalido]="campoInvalido('tipoAlimentoId')">
               <option value="" disabled selected>Selecione o alimento</option>
@@ -94,4 +99,9 @@
       </div>
     </section>
   </div>
+
+  <div *ngIf="abaAtiva === 'tipos'">
+    <app-tipo-alimento></app-tipo-alimento>
+  </div>
+
 </div>

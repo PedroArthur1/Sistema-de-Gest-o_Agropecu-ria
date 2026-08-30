@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TipoAlimentoService } from '../../../services/alimentacao/tipo-alimento.service';
 import { TipoAlimento } from '../../../models/tipo-alimento.model';
-import { RouterLink } from '@angular/router';
-import { CabecalhoPaginaComponent } from '../../../components/cabecalho-pagina/cabecalho-pagina.component';
 import { BotaoAcaoComponent } from '../../../components/botao-acao/botao-acao.component';
 
 @Component({
@@ -13,8 +11,6 @@ import { BotaoAcaoComponent } from '../../../components/botao-acao/botao-acao.co
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterLink,
-    CabecalhoPaginaComponent,
     BotaoAcaoComponent
   ],
   templateUrl: './tipo-alimento.html',

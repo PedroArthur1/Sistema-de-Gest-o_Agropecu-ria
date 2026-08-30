@@ -13,6 +13,7 @@ import { CabecalhoPaginaComponent } from '../../../components/cabecalho-pagina/c
 import { CampoFormularioComponent } from '../../../components/campo-formulario/campo-formulario.component';
 import { BotaoAcaoComponent } from '../../../components/botao-acao/botao-acao.component';
 import { AlertaMensagemComponent } from '../../../components/alerta-mensagem/alerta-mensagem.component';
+import { TipoAlimentoComponent } from '../tipo-alimento/tipo-alimento';
 
 @Component({
   selector: 'app-alimentacao',
@@ -24,7 +25,8 @@ import { AlertaMensagemComponent } from '../../../components/alerta-mensagem/ale
     CabecalhoPaginaComponent,
     CampoFormularioComponent,
     BotaoAcaoComponent,
-    AlertaMensagemComponent
+    AlertaMensagemComponent,
+    TipoAlimentoComponent
   ],
   templateUrl: './alimentacao.html',
   styleUrls: ['./alimentacao.css']
@@ -37,6 +39,7 @@ export class AlimentacaoComponent implements OnInit {
   mensagemSucesso: string = '';
   mensagemErro: string = '';
   isSubmitting: boolean = false;
+  abaAtiva: 'fornecimento' | 'tipos' = 'fornecimento';
 
   constructor(
     private fb: FormBuilder,
@@ -113,6 +116,14 @@ export class AlimentacaoComponent implements OnInit {
       });
     } else {
       this.alimentacaoForm.markAllAsTouched();
+    }
+  }
+
+  trocarAba(aba: 'fornecimento' | 'tipos') {
+    this.abaAtiva = aba;
+    if (aba === 'fornecimento') {
+      // recarrega os tipos de alimento caso tenham sido criados novos
+      this.carregarTiposAlimento();
     }
   }
 }
