@@ -9,6 +9,8 @@ public record AnimalDTO(
         String dataNascimentoOuIdade,
         Double peso,
         String condicaoSaude,
-        String observacoes
+        String observacoes,
+        Long grupoId,
+        String grupoNome
 ) {
 }

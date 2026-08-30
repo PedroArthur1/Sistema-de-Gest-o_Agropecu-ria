@@ -4,15 +4,18 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AnimalService } from '../../../services/animal/animal.service';
 import { Animal } from '../../../models/animal.model';
+import { GruposRebanhoComponent } from './grupos-rebanho/grupos-rebanho';
 
 @Component({
   selector: 'app-rebanho',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, GruposRebanhoComponent],
   templateUrl: './rebanho.html',
   styleUrl: './rebanho.css',
 })
 export class Rebanho implements OnInit {
+  visaoAtiva: 'animais' | 'lotes' = 'animais';
+
   animais: Animal[] = []; 
   termoPesquisa: string = '';
   

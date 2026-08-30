@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import repository.AnimalRepository;
+import repository.GrupoRebanhoRepository;
+import model.GrupoRebanho;
 
 import java.util.List;
 
@@ -17,6 +19,9 @@ public class AnimalService {
 
     @Autowired
     private AnimalRepository animalRepository;
+
+    @Autowired
+    private GrupoRebanhoRepository grupoRebanhoRepository;
 
     @Autowired
     private UsuarioAutenticadoService usuarioAutenticadoService;
@@ -40,6 +45,12 @@ public class AnimalService {
         animal.setCondicaoSaude(dto.condicaoSaude().trim());
         animal.setObservacoes(dto.observacoes() != null ? dto.observacoes().trim() : null);
         animal.setProprietario(proprietario);
+
+        if (dto.grupoId() != null) {
+            GrupoRebanho grupo = grupoRebanhoRepository.findByIdAndProprietario(dto.grupoId(), proprietario)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lote não encontrado."));
+            animal.setGrupoRebanho(grupo);
+        }
 
         return toDTO(animalRepository.save(animal));
     }
@@ -87,6 +98,14 @@ public class AnimalService {
         animal.setPeso(dto.peso());
         animal.setCondicaoSaude(dto.condicaoSaude().trim());
         animal.setObservacoes(dto.observacoes() != null ? dto.observacoes().trim() : null);
+        
+        if (dto.grupoId() != null) {
+            GrupoRebanho grupo = grupoRebanhoRepository.findByIdAndProprietario(dto.grupoId(), animal.getProprietario())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lote não encontrado."));
+            animal.setGrupoRebanho(grupo);
+        } else {
+            animal.setGrupoRebanho(null);
+        }
 
         return toDTO(animalRepository.save(animal));
     }
@@ -119,6 +138,8 @@ public class AnimalService {
     }
 
     private AnimalDTO toDTO(Animal animal) {
+        Long grupoId = animal.getGrupoRebanho() != null ? animal.getGrupoRebanho().getId() : null;
+        String grupoNome = animal.getGrupoRebanho() != null ? animal.getGrupoRebanho().getNome() : null;
         return new AnimalDTO(
                 animal.getId(),
                 animal.getCodigoIdentificacao(),
@@ -128,7 +149,9 @@ public class AnimalService {
                 animal.getDataNascimentoOuIdade(),
                 animal.getPeso(),
                 animal.getCondicaoSaude(),
-                animal.getObservacoes()
+                animal.getObservacoes(),
+                grupoId,
+                grupoNome
         );
     }
 

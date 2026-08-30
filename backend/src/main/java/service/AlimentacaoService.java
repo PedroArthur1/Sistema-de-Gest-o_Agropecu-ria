@@ -10,6 +10,7 @@ import model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,11 +34,21 @@ public class AlimentacaoService {
 
     @Transactional
     public AlimentacaoResponseDTO registrarAlimentacao(AlimentacaoRequestDTO dto) {
-        // 1. Busca todos os animais usando a lista de IDs que veio no DTO
-        List<Animal> animais = animalRepository.findAllById(dto.animalIds());
+        List<Animal> animais;
+        User proprietario = usuarioAutenticadoService.obterUsuario();
+
+        if (dto.grupoId() != null) {
+            animais = animalRepository.findByGrupoRebanhoId(dto.grupoId()).stream()
+                    .filter(a -> a.getProprietario().getId().equals(proprietario.getId()))
+                    .collect(Collectors.toList());
+        } else if (dto.animalIds() != null && !dto.animalIds().isEmpty()) {
+            animais = animalRepository.findAllById(dto.animalIds());
+        } else {
+            throw new ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "Deve ser selecionado pelo menos um animal ou um lote.");
+        }
 
         if (animais.isEmpty()) {
-            throw new RuntimeException("Nenhum animal válido encontrado para os IDs informados.");
+            throw new ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "Nenhum animal válido encontrado.");
         }
 
         // 2. Busca o Tipo de Alimento

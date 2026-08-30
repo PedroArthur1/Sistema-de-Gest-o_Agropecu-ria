@@ -200,10 +200,7 @@ class ConsultaControllerTest {
     }
 
     private Long cadastrarAnimal(String tokenUsuario) throws Exception {
-        AnimalDTO animalDTO = new AnimalDTO(
-                null, "CONSUL-001", "Bovino", "Nelore", "MACHO",
-                "3 anos", 500.0, "Saudável", null
-        );
+        AnimalDTO animalDTO = new AnimalDTO(null, "CONSUL-001", "Bovino", "Nelore", "MACHO", "3 anos", 500.0, "Saudável", null, null, null);
 
         String resposta = mockMvc.perform(post("/animais")
                         .header("Authorization", "Bearer " + tokenUsuario)

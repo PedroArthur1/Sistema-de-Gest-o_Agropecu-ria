@@ -16,4 +16,6 @@ public interface AnimalRepository extends JpaRepository<Animal, Long> {
     Optional<Animal> findByIdAndProprietario(Long id, User proprietario);
 
     boolean existsByCodigoIdentificacaoAndProprietario(String codigoIdentificacao, User proprietario);
+
+    List<Animal> findByGrupoRebanhoId(Long grupoId);
 }

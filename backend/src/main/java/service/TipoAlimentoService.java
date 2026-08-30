@@ -74,8 +74,8 @@ public class TipoAlimentoService {
         try {
             tipoAlimentoRepository.delete(tipoAlimento);
             tipoAlimentoRepository.flush();
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível excluir um tipo de alimento que já foi utilizado em um registro de alimentação.");
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível excluir um tipo de alimento que já foi utilizado em um registro de alimentação.", e);
         }
     }
 

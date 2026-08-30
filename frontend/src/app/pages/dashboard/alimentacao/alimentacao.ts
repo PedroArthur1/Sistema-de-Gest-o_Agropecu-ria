@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 import { AlimentacaoService, Alimentacao } from '../../../services/alimentacao/alimentacao.service';
@@ -8,6 +8,8 @@ import { AnimalService } from '../../../services/animal/animal.service';
 import { Animal } from '../../../models/animal.model';
 import { TipoAlimentoService } from '../../../services/alimentacao/tipo-alimento.service';
 import { TipoAlimento } from '../../../models/tipo-alimento.model';
+import { GrupoRebanhoService } from '../../../services/rebanho/grupo-rebanho.service';
+import { GrupoRebanho } from '../../../models/grupo-rebanho.model';
 
 import { CabecalhoPaginaComponent } from '../../../components/cabecalho-pagina/cabecalho-pagina.component';
 import { CampoFormularioComponent } from '../../../components/campo-formulario/campo-formulario.component';
@@ -21,6 +23,7 @@ import { TipoAlimentoComponent } from '../tipo-alimento/tipo-alimento';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     RouterLink,
     CabecalhoPaginaComponent,
     CampoFormularioComponent,
@@ -36,22 +39,26 @@ export class AlimentacaoComponent implements OnInit {
   historico: Alimentacao[] = [];
   animais: Animal[] = [];
   tiposAlimento: TipoAlimento[] = [];
+  lotes: GrupoRebanho[] = [];
   mensagemSucesso: string = '';
   mensagemErro: string = '';
   isSubmitting: boolean = false;
   abaAtiva: 'fornecimento' | 'tipos' = 'fornecimento';
+  tipoSelecao: 'animais' | 'lotes' = 'animais';
 
   constructor(
     private fb: FormBuilder,
     private alimentacaoService: AlimentacaoService,
     private animalService: AnimalService,
     private tipoAlimentoService: TipoAlimentoService,
+    private grupoRebanhoService: GrupoRebanhoService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.alimentacaoForm = this.fb.group({
-      animalIds: [[], Validators.required],
+      animalIds: [[]],
+      grupoId: [null],
       tipoAlimentoId: ['', Validators.required],
       quantidade: ['', Validators.required],
       data: ['', Validators.required],
@@ -59,6 +66,7 @@ export class AlimentacaoComponent implements OnInit {
     });
 
     this.carregarAnimais();
+    this.carregarLotes();
     this.carregarHistorico();
     this.carregarTiposAlimento();
   }
@@ -73,6 +81,16 @@ export class AlimentacaoComponent implements OnInit {
         console.error('Erro ao carregar tipos de alimento', err);
         this.cdr.detectChanges();
       }
+    });
+  }
+
+  carregarLotes(): void {
+    this.grupoRebanhoService.listarGrupos().subscribe({
+      next: (dados) => {
+        this.lotes = dados;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Erro ao carregar lotes', err)
     });
   }
 
@@ -114,13 +132,35 @@ export class AlimentacaoComponent implements OnInit {
   }
 
   onSubmit(): void {
+    const isAnimais = this.tipoSelecao === 'animais';
+    const hasAnimalIds = this.alimentacaoForm.value.animalIds?.length > 0;
+    const hasGrupoId = !!this.alimentacaoForm.value.grupoId;
+
+    if (isAnimais && !hasAnimalIds) {
+      this.mensagemErro = 'Selecione pelo menos um animal.';
+      return;
+    }
+    if (!isAnimais && !hasGrupoId) {
+      this.mensagemErro = 'Selecione um lote.';
+      return;
+    }
+
     if (this.alimentacaoForm.valid) {
       this.isSubmitting = true;
-      this.alimentacaoService.registrarAlimentacao(this.alimentacaoForm.value).subscribe({
+      this.mensagemErro = '';
+      
+      const payload = { ...this.alimentacaoForm.value };
+      if (isAnimais) {
+        payload.grupoId = null;
+      } else {
+        payload.animalIds = [];
+      }
+
+      this.alimentacaoService.registrarAlimentacao(payload).subscribe({
         next: (res: Alimentacao) => {
           this.historico.unshift(res);
-          this.alimentacaoForm.reset({ animalIds: [] });
-          this.mensagemSucesso = 'Alimentação registrada no lote com sucesso!';
+          this.alimentacaoForm.patchValue({ animalIds: [], grupoId: null });
+          this.mensagemSucesso = 'Alimentação registrada com sucesso!';
           this.isSubmitting = false;
           this.cdr.detectChanges();
           setTimeout(() => {
@@ -130,6 +170,7 @@ export class AlimentacaoComponent implements OnInit {
         },
         error: (err: any) => {
           console.error('Erro ao salvar alimentação', err);
+          this.mensagemErro = err.error?.message || 'Erro ao registrar alimentação.';
           this.isSubmitting = false;
           this.cdr.detectChanges();
         }

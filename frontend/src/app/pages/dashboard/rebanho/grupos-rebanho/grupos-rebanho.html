@@ -1,0 +1,105 @@
+<div class="grupos-container">
+  
+  <div class="header-actions">
+    <div class="info-text">
+      <p>Organize seus animais em lotes para facilitar o manejo coletivo (ex: alimentação no cocho).</p>
+    </div>
+    <button class="btn-primary" (click)="abrirModalNovo()">
+      + Novo Lote
+    </button>
+  </div>
+
+  <div class="list-container mt-4">
+    <div class="list-header">
+      <div class="col font-bold">NOME DO LOTE</div>
+      <div class="col font-bold">DESCRIÇÃO</div>
+      <div class="col font-bold text-center">ANIMAIS VINCULADOS</div>
+      <div class="col action-col font-bold">AÇÕES</div>
+    </div>
+
+    <div class="empty-state" *ngIf="grupos.length === 0">
+      <div class="empty-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <path d="M2 15h10"></path>
+          <path d="M5 12l-3 3 3 3"></path>
+        </svg>
+      </div>
+      <h3>Nenhum lote criado</h3>
+      <p>Crie um grupo para manejar vários animais ao mesmo tempo.</p>
+      <button class="btn-primary" (click)="abrirModalNovo()">
+        + Criar Primeiro Lote
+      </button>
+    </div>
+
+    <div class="list-content" *ngIf="grupos.length > 0">
+      <div class="list-item" *ngFor="let grupo of grupos">
+        <div class="col font-semibold text-primary">{{ grupo.nome }}</div>
+        <div class="col text-gray">{{ grupo.descricao || '-' }}</div>
+        <div class="col text-center">
+          <span class="badge" [class.badge-success]="grupo.quantidadeAnimais > 0" [class.badge-warning]="grupo.quantidadeAnimais === 0">
+            {{ grupo.quantidadeAnimais }} animal(is)
+          </span>
+        </div>
+        <div class="col action-col">
+          <button class="btn-icon edit" title="Editar lote" (click)="abrirModalEditar(grupo)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+          </button>
+          <button class="btn-icon delete" title="Excluir lote" (click)="abrirModalExclusao(grupo)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Form -->
+<div class="modal-overlay" *ngIf="exibirModal">
+  <div class="modal-content fade-in">
+    <div class="modal-header">
+      <h3>{{ isEditando ? 'Editar Lote' : 'Novo Lote' }}</h3>
+      <button class="btn-close" (click)="fecharModal()">✕</button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="error-message" *ngIf="erroMensagem">
+        {{ erroMensagem }}
+      </div>
+
+      <div class="form-group">
+        <label>Nome do Lote *</label>
+        <input type="text" class="form-control" [(ngModel)]="grupoForm.nome" placeholder="Ex: Lote Engorda 01" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Descrição (Opcional)</label>
+        <textarea class="form-control" [(ngModel)]="grupoForm.descricao" placeholder="Detalhes sobre este grupo" rows="3"></textarea>
+      </div>
+    </div>
+    
+    <div class="modal-actions">
+      <button class="btn-secondary" (click)="fecharModal()">Cancelar</button>
+      <button class="btn-primary" (click)="salvarGrupo()">{{ isEditando ? 'Salvar Alterações' : 'Criar Lote' }}</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Confirmação Exclusão -->
+<div class="modal-overlay" *ngIf="exibirModalExclusao">
+  <div class="modal-content fade-in">
+    <div class="modal-header">
+      <h3>Confirmar Exclusão</h3>
+      <button class="btn-close" (click)="fecharModalExclusao()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p>Tem certeza que deseja excluir o lote <strong>{{ grupoParaExclusao?.nome }}</strong>?</p>
+      <p class="text-warning text-sm">Os animais vinculados a este lote não serão excluídos, mas perderão a associação com este grupo.</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" (click)="fecharModalExclusao()">Cancelar</button>
+      <button class="btn-primary btn-danger-bg" (click)="confirmarExclusao()">Sim, Excluir</button>
+    </div>
+  </div>
+</div>
