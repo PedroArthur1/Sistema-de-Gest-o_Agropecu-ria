@@ -6,7 +6,7 @@ import java.util.List;
 public record AlimentacaoResponseDTO(
         Long id,
         List<Long> animalIds,
-        String tipoAlimento,
+        TipoAlimentoDTO tipoAlimento,
         String quantidade,
         LocalDate data,
         String observacoes

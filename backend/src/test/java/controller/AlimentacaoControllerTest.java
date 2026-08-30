@@ -48,6 +48,7 @@ class AlimentacaoControllerTest {
     @Test
     void deveRegistrarAlimentacaoComSucesso() throws Exception {
         Long animalId = cadastrarAnimal(token);
+        Long tipoAlimentoId = cadastrarTipoAlimento(token, "Silagem de Milho");
 
         mockMvc.perform(post("/alimentacoes")
                         .header("Authorization", "Bearer " + token)
@@ -55,36 +56,38 @@ class AlimentacaoControllerTest {
                         .content("""
                                 {
                                   "animalIds": [%d],
-                                  "tipoAlimento": "Silagem de Milho",
+                                  "tipoAlimentoId": %d,
                                   "quantidade": "20 kg",
                                   "data": "2026-08-26",
                                   "observacoes": "Trato da manhã"
                                 }
-                                """.formatted(animalId)))
+                                """.formatted(animalId, tipoAlimentoId)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").isNumber())
-                .andExpect(jsonPath("$.tipoAlimento").value("Silagem de Milho"))
+                .andExpect(jsonPath("$.tipoAlimento.nome").value("Silagem de Milho"))
                 .andExpect(jsonPath("$.quantidade").value("20 kg"));
     }
 
     @Test
     void deveListarTodasAsAlimentacoesDoUsuario() throws Exception {
         Long animalId = cadastrarAnimal(token);
+        Long tipoAlimentoId = cadastrarTipoAlimento(token, "Ração Concentrada");
 
-        registrarAlimentacao(List.of(animalId), token, "Ração Concentrada", "5 kg");
+        registrarAlimentacao(List.of(animalId), tipoAlimentoId, token, "5 kg");
 
         mockMvc.perform(get("/alimentacoes")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].tipoAlimento").value("Ração Concentrada"));
+                .andExpect(jsonPath("$[0].tipoAlimento.nome").value("Ração Concentrada"));
     }
 
     @Test
     void deveListarAlimentacaoPorAnimal() throws Exception {
         Long animalId = cadastrarAnimal(token);
+        Long tipoAlimentoId = cadastrarTipoAlimento(token, "Feno");
 
-        registrarAlimentacao(List.of(animalId), token, "Feno", "10 kg");
+        registrarAlimentacao(List.of(animalId), tipoAlimentoId, token, "10 kg");
 
         mockMvc.perform(get("/alimentacoes/animal/{animalId}", animalId)
                         .header("Authorization", "Bearer " + token))
@@ -135,19 +138,34 @@ class AlimentacaoControllerTest {
         return objectMapper.readTree(resposta).get("id").asLong();
     }
 
-    private void registrarAlimentacao(List<Long> animalIds, String tokenUsuario, String tipo, String qtd) throws Exception {
+    private Long cadastrarTipoAlimento(String tokenUsuario, String nome) throws Exception {
+        String resposta = mockMvc.perform(post("/tipos-alimento")
+                        .header("Authorization", "Bearer " + tokenUsuario)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "nome": "%s"
+                                }
+                                """.formatted(nome)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+        
+        return objectMapper.readTree(resposta).get("id").asLong();
+    }
+
+    private void registrarAlimentacao(List<Long> animalIds, Long tipoAlimentoId, String tokenUsuario, String qtd) throws Exception {
         mockMvc.perform(post("/alimentacoes")
                         .header("Authorization", "Bearer " + tokenUsuario)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
                                   "animalIds": %s,
-                                  "tipoAlimento": "%s",
+                                  "tipoAlimentoId": %d,
                                   "quantidade": "%s",
                                   "data": "2026-08-26",
                                   "observacoes": null
                                 }
-                                """.formatted(animalIds.toString(), tipo, qtd)))
+                                """.formatted(animalIds.toString(), tipoAlimentoId, qtd)))
                 .andExpect(status().isCreated());
     }
 }

@@ -34,7 +34,22 @@
             </span>
           </div>
 
-          <app-campo-formulario label="Tipo de Alimento" campoId="tipoAlimento" formControlName="tipoAlimento" [obrigatorio]="true" placeholder="Ex: Ração, Silagem..." [invalido]="campoInvalido('tipoAlimento')" mensagemErro="Obrigatório"></app-campo-formulario>
+          <!-- Select do Tipo de Alimento -->
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <label for="tipoAlimentoId">Tipo de Alimento *</label>
+              <button type="button" class="btn-link" (click)="abrirModalTipos()">Gerenciar Tipos</button>
+            </div>
+            <select id="tipoAlimentoId" formControlName="tipoAlimentoId" class="form-control" [class.campo-invalido]="campoInvalido('tipoAlimentoId')">
+              <option value="" disabled selected>Selecione o alimento</option>
+              <option *ngFor="let tipo of tiposAlimento" [value]="tipo.id">
+                {{ tipo.nome }}
+              </option>
+            </select>
+            <span class="error-text" *ngIf="campoInvalido('tipoAlimentoId')">
+              Obrigatório
+            </span>
+          </div>
 
           <app-campo-formulario label="Quantidade Total" campoId="quantidade" formControlName="quantidade" [obrigatorio]="true" placeholder="Ex: 50 kg" [invalido]="campoInvalido('quantidade')" mensagemErro="Obrigatória"></app-campo-formulario>
 
@@ -71,12 +86,55 @@
         </div>
         <div class="list-item" *ngFor="let registro of historico">
           <div class="col">{{ registro.data | date:'dd/MM/yyyy' }}</div>
-          <div class="col font-semibold text-primary">{{ registro.tipoAlimento }}</div>
+          <div class="col font-semibold text-primary">{{ registro.tipoAlimento?.nome }}</div>
           <div class="col">{{ registro.quantidade }}</div>
           <div class="col">{{ registro.animalIds.length }} animais</div>
           <div class="col">{{ registro.observacoes || '-' }}</div>
         </div>
       </div>
     </section>
+  </div>
+</div>
+
+<!-- Modal Gerenciar Tipos de Alimento -->
+<div class="modal-overlay" *ngIf="exibirModalTipos">
+  <div class="modal-content fade-in" style="max-width: 500px;">
+    <div class="modal-header">
+      <h3>Tipos de Alimento</h3>
+      <button class="btn-close" (click)="fecharModalTipos()">✕</button>
+    </div>
+    <div class="modal-body">
+      
+      <!-- Formulário para Cadastrar Novo -->
+      <form [formGroup]="tipoAlimentoForm" (ngSubmit)="salvarTipoAlimento()" class="form-container" style="margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border-color);">
+        <h4>Cadastrar Novo</h4>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>Nome do Alimento *</label>
+          <input type="text" formControlName="nome" class="form-control" placeholder="Ex: Silagem de Milho">
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>Descrição (Opcional)</label>
+          <input type="text" formControlName="descricao" class="form-control" placeholder="Detalhes adicionais...">
+        </div>
+        <button type="submit" class="btn-primary" [disabled]="tipoAlimentoForm.invalid">Salvar Alimento</button>
+      </form>
+
+      <!-- Lista Atual -->
+      <h4>Tipos Cadastrados</h4>
+      <div class="empty-state" *ngIf="tiposAlimento.length === 0" style="padding: 16px;">
+        <p>Nenhum tipo cadastrado.</p>
+      </div>
+      <ul style="list-style: none; padding: 0; margin: 0; max-height: 250px; overflow-y: auto;">
+        <li *ngFor="let tipo of tiposAlimento" style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 8px;">
+          <div>
+            <strong>{{ tipo.nome }}</strong>
+            <div style="font-size: 12px; color: var(--text-secondary);" *ngIf="tipo.descricao">{{ tipo.descricao }}</div>
+          </div>
+          <button type="button" class="btn-icon delete" title="Excluir" (click)="excluirTipoAlimento(tipo.id!)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          </button>
+        </li>
+      </ul>
+    </div>
   </div>
 </div>

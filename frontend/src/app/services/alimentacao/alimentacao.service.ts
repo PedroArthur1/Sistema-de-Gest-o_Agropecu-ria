@@ -3,10 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
+import { TipoAlimento } from '../../models/tipo-alimento.model';
+
 export interface Alimentacao {
   id?: number;
   animalIds: number[];
-  tipoAlimento: string;
+  tipoAlimentoId?: number; // Para request
+  tipoAlimento?: TipoAlimento; // Para response
   quantidade: string;
   data: string;
   observacoes?: string;
