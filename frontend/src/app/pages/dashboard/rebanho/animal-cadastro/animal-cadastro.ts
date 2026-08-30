@@ -17,6 +17,7 @@ export class AnimalCadastro implements OnInit {
   isSubmitting = false;
   successMessage = '';
   errorMessage = '';
+  animaisExistentes: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -36,10 +37,28 @@ export class AnimalCadastro implements OnInit {
       observacoes: ['']
     });
 
+    // Carrega a lista de animais para evitar códigos duplicados
+    this.carregarAnimaisExistentes();
+
     // Gera código automático ao mudar a espécie
     this.animalForm.get('especie')?.valueChanges.subscribe(especie => {
       if (especie) {
         this.gerarCodigoAutomatico(especie);
+      }
+    });
+  }
+
+  private carregarAnimaisExistentes(): void {
+    this.animalService.listarAnimais().subscribe({
+      next: (animais) => {
+        this.animaisExistentes = animais || [];
+        const especieAtual = this.animalForm.get('especie')?.value;
+        if (especieAtual) {
+          this.gerarCodigoAutomatico(especieAtual);
+        }
+      },
+      error: () => {
+        this.animaisExistentes = [];
       }
     });
   }
@@ -55,12 +74,30 @@ export class AnimalCadastro implements OnInit {
     
     const prefixo = prefixos[especie] || 'ANI';
     
-    // Recupera o contador atual da espécie no LocalStorage (ou inicia em 1)
-    const storageKey = `contador_especie_${especie}`;
-    const contadorAtual = parseInt(getBrowserStorage().getItem(storageKey) || '1', 10);
-    
-    // Formata o número sequencial com zeros à esquerda (ex: 001)
-    const numeroFormatado = contadorAtual.toString().padStart(3, '0');
+    // Procura o maior número já existente para este prefixo
+    let maiorNumero = 0;
+    if (this.animaisExistentes && this.animaisExistentes.length > 0) {
+      this.animaisExistentes.forEach(a => {
+        const codigo = a.codigoIdentificacao || '';
+        if (codigo.startsWith(prefixo + '-')) {
+          const numStr = codigo.replace(prefixo + '-', '');
+          const num = parseInt(numStr, 10);
+          if (!isNaN(num) && num > maiorNumero) {
+            maiorNumero = num;
+          }
+        }
+      });
+    }
+
+    // Se não houver animais no backend para o prefixo, verifica localStorage como fallback
+    if (maiorNumero === 0) {
+      const storageKey = `contador_especie_${especie}`;
+      const contadorAtual = parseInt(getBrowserStorage().getItem(storageKey) || '1', 10);
+      maiorNumero = contadorAtual > 1 ? contadorAtual - 1 : 0;
+    }
+
+    const proximoNumero = maiorNumero + 1;
+    const numeroFormatado = proximoNumero.toString().padStart(3, '0');
     
     this.animalForm.patchValue({
       codigoIdentificacao: `${prefixo}-${numeroFormatado}`
@@ -79,7 +116,7 @@ export class AnimalCadastro implements OnInit {
       return;
     }
 
-    // Incrementa o contador para a próxima vez que a espécie for cadastrada
+    // Atualiza contador local
     const especie = this.animalForm.get('especie')?.value;
     const storageKey = `contador_especie_${especie}`;
     const storage = getBrowserStorage();
@@ -96,8 +133,8 @@ export class AnimalCadastro implements OnInit {
         // Retorna para a tela de rebanho após 2 segundos
         setTimeout(() => this.voltar(), 2000);
       },
-      error: () => {
-        this.errorMessage = 'Erro ao cadastrar animal. Tente novamente.';
+      error: (err: any) => {
+        this.errorMessage = err?.error?.error || err?.error?.message || 'Erro ao cadastrar animal. Tente novamente.';
         this.isSubmitting = false;
       }
     });

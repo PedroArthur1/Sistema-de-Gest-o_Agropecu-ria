@@ -67,6 +67,19 @@ class AnimalServiceTest {
     }
 
     @Test
+    void deveLancarExcecaoQuandoCodigoIdentificacaoJaExiste() {
+        AnimalDTO dto = new AnimalDTO(null, "BOV-001", "Bovino", "Nelore", "MACHO",
+                "2 anos", 450.0, "Saudável", null);
+
+        when(usuarioAutenticadoService.obterUsuario()).thenReturn(usuario);
+        when(animalRepository.existsByCodigoIdentificacaoAndProprietario("BOV-001", usuario)).thenReturn(true);
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> animalService.cadastrar(dto));
+        assertEquals(HttpStatus.CONFLICT, ex.getStatusCode());
+        assertTrue(ex.getReason().contains("Já existe um animal cadastrado com o código"));
+    }
+
+    @Test
     void deveLancarExcecaoParaDtoNulo() {
         assertThrows(ResponseStatusException.class, () -> animalService.cadastrar(null));
     }

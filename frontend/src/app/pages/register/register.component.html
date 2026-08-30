@@ -3,23 +3,32 @@
         <h2>Criar Nova Conta</h2>
         <p class="subtitle">Preencha os dados abaixo para se cadastrar</p>
 
-        <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+        <form (ngSubmit)="onSubmit(registerForm)" #registerForm="ngForm">
             <div class="form-group">
                 <label for="nome">Nome Completo</label>
-                <input type="text" id="nome" name="nome" [(ngModel)]="userData.nome" required
+                <input type="text" id="nome" name="nome" [(ngModel)]="userData.nome" required #nomeField="ngModel"
                     placeholder="Seu nome completo" />
+                <span class="field-error" *ngIf="(nomeField.touched || submitted) && nomeField.invalid">
+                    Por favor, informe seu nome completo.
+                </span>
             </div>
 
             <div class="form-group">
                 <label for="email">E-mail</label>
-                <input type="email" id="email" name="email" [(ngModel)]="userData.email" required
+                <input type="email" id="email" name="email" [(ngModel)]="userData.email" required #emailField="ngModel"
                     placeholder="seu@email.com" />
+                <span class="field-error" *ngIf="(emailField.touched || submitted) && emailField.invalid">
+                    Por favor, informe um e-mail válido.
+                </span>
             </div>
 
             <div class="form-group">
                 <label for="password">Senha</label>
-                <input type="password" id="password" name="password" [(ngModel)]="userData.password" required
+                <input type="password" id="password" name="password" [(ngModel)]="userData.password" required #passwordField="ngModel"
                     placeholder="••••••••" />
+                <span class="field-error" *ngIf="(passwordField.touched || submitted) && passwordField.invalid">
+                    Por favor, informe uma senha.
+                </span>
             </div>
 
             <div class="form-group">
@@ -34,8 +43,8 @@
                 {{ errorMessage }}
             </div>
 
-            <button type="submit" class="btn-primary" [disabled]="!registerForm.form.valid">
-                Cadastrar
+            <button type="submit" class="btn-primary" [disabled]="isSubmitting">
+                {{ isSubmitting ? 'Cadastrando...' : 'Cadastrar' }}
             </button>
         </form>
 

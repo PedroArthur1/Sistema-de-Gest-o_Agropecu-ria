@@ -30,6 +30,13 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getReason() != null ? ex.getReason() : ex.getMessage()));
     }
 
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, String>> handleDataIntegrityViolationException(org.springframework.dao.DataIntegrityViolationException ex) {
+        System.err.println("GlobalExceptionHandler caught DataIntegrityViolationException: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of("error", "Conflito: já existe um registro com esses dados no sistema (código ou identificador duplicado)."));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGenericException(Exception ex) {
         System.err.println("GlobalExceptionHandler caught Generic Exception: " + ex.getClass().getName() + " - " + ex.getMessage());

@@ -188,39 +188,130 @@
         Registros totais: <strong>{{ historico.length }}</strong>
       </div>
     </section>
-  </div>
-</div>
 
-<!-- MÓDULO DE TRATAMENTOS (US08)               -->
-<!-- ========================================== -->
+    <!-- Histórico de Tratamentos -->
+    <section class="list-container tratamentos-section">
+      <div class="section-header">
+        <div class="section-header-icon tratamentos">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"></path>
+            <path d="m8.5 8.5 7 7"></path>
+          </svg>
+        </div>
+        <div>
+          <h3>Histórico de Tratamentos</h3>
+          <p>Medicamentos, dosagens e procedimentos terapêuticos administrados ao animal.</p>
+        </div>
+        <button class="btn-novo-tratamento" (click)="toggleFormTratamento()" id="btn-toggle-tratamento">
+          <svg *ngIf="!mostrarFormTratamento" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <svg *ngIf="mostrarFormTratamento" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+          {{ mostrarFormTratamento ? 'Cancelar' : 'Registrar Tratamento' }}
+        </button>
+      </div>
 
-<section class="cadastro-card">
-  <h3 class="card-titulo">Registrar Tratamento</h3>
-  <p class="card-descricao">Informe os dados e medicamentos aplicados a este animal.</p>
+      <!-- Alerta de Sucesso -->
+      <div class="alerta-sucesso-tratamento" *ngIf="mensagemSucessoTratamento">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        {{ mensagemSucessoTratamento }}
+      </div>
 
-  <app-alerta-mensagem *ngIf="mensagemSucessoTratamento" [mensagem]="mensagemSucessoTratamento" tipo="sucesso"></app-alerta-mensagem>
+      <!-- Formulário de Novo Tratamento -->
+      <div class="card-formulario-tratamento" *ngIf="mostrarFormTratamento">
+        <h4>Registrar Novo Tratamento</h4>
+        <form [formGroup]="tratamentoForm" (ngSubmit)="registrarNovoTratamento()" id="form-novo-tratamento">
+          <div class="form-grid-tratamento">
+            <div class="grupo-campo-tratamento">
+              <label for="inputMedicamento">Medicamento *</label>
+              <input type="text" id="inputMedicamento" formControlName="medicamento" placeholder="Ex.: Terramicina, Ivermectina..." />
+            </div>
 
-  <form [formGroup]="tratamentoForm" (ngSubmit)="registrarNovoTratamento()" class="form-container">
-    <div class="form-grid">
-      <app-campo-formulario label="Medicamento" campoId="inputMedicamento" formControlName="medicamento" [obrigatorio]="true"></app-campo-formulario>
+            <div class="grupo-campo-tratamento">
+              <label for="inputDataTratamento">Data da Aplicação *</label>
+              <input type="date" id="inputDataTratamento" formControlName="data" />
+            </div>
 
-      <app-campo-formulario label="Data" campoId="inputDataTratamento" tipo="date" formControlName="data" [obrigatorio]="true"></app-campo-formulario>
+            <div class="grupo-campo-tratamento">
+              <label for="inputMotivo">Motivo *</label>
+              <input type="text" id="inputMotivo" formControlName="motivo" placeholder="Ex.: Infecção respiratória, carrapatos..." />
+            </div>
 
-      <app-campo-formulario label="Motivo" campoId="inputMotivo" formControlName="motivo" [obrigatorio]="true"></app-campo-formulario>
+            <div class="grupo-campo-tratamento">
+              <label for="inputDosagem">Dosagem (Opcional)</label>
+              <input type="text" id="inputDosagem" formControlName="dosagem" placeholder="Ex.: 10 mL via intramuscular" />
+            </div>
 
-      <app-campo-formulario label="Dosagem" campoId="inputDosagem" formControlName="dosagem" [obrigatorio]="false"></app-campo-formulario>
-    </div>
+            <div class="grupo-campo-tratamento">
+              <label for="inputDataPrevistaTratamento">Próxima Dose / Data Prevista (Opcional)</label>
+              <input type="date" id="inputDataPrevistaTratamento" formControlName="dataPrevista" />
+            </div>
+          </div>
 
-    <div class="form-group full-width">
-      <label for="inputObs" style="display: block; font-weight: 500; margin-bottom: 8px;">Observações (Opcional)</label>
-      <input type="text" id="inputObs" formControlName="observacoes" placeholder="Insira quaisquer detalhes extras aqui..." style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
-    </div>
+          <div class="grupo-campo-tratamento campo-full">
+            <label for="inputObs">Observações (Opcional)</label>
+            <textarea id="inputObs" formControlName="observacoes" rows="2" placeholder="Insira detalhes adicionais ou recomendações sobre o tratamento..."></textarea>
+          </div>
 
-    <div class="form-actions" style="margin-top: 20px;">
-      <app-botao-acao texto="Registrar Tratamento" [tipoSubmit]="true" [desabilitado]="tratamentoForm.invalid"></app-botao-acao>
-    </div>
-  </form>
-</section>
+          <div class="form-actions-tratamento">
+            <button type="button" class="btn-cancelar-tratamento" (click)="toggleFormTratamento()">Cancelar</button>
+            <button type="submit" class="btn-salvar-tratamento" [disabled]="tratamentoForm.invalid">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Salvar Tratamento
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Tabela / Lista de Tratamentos -->
+      <div class="empty-state" *ngIf="historicoTratamentos.length === 0">
+        <h4>Nenhum tratamento registrado</h4>
+        <p>Este animal ainda não possui histórico de tratamentos médicos ou medicamentos administrados.</p>
+        <button *ngIf="!mostrarFormTratamento" class="btn-novo-tratamento" (click)="toggleFormTratamento()">
+          + Registrar Primeiro Tratamento
+        </button>
+      </div>
+
+      <div class="list-content" *ngIf="historicoTratamentos.length > 0">
+        <div class="list-header">
+          <div class="col">MEDICAMENTO</div>
+          <div class="col">DATA APLICAÇÃO</div>
+          <div class="col">MOTIVO</div>
+          <div class="col">DOSAGEM</div>
+          <div class="col">PRÓXIMA DOSE</div>
+          <div class="col">OBSERVAÇÕES</div>
+        </div>
+        <div class="list-item" *ngFor="let t of historicoTratamentos">
+          <div class="col font-semibold text-primary">{{ t.medicamento }}</div>
+          <div class="col">{{ t.data | date:'dd/MM/yyyy' }}</div>
+          <div class="col">{{ t.motivo }}</div>
+          <div class="col">{{ t.dosagem || '—' }}</div>
+          <div class="col">
+            <span *ngIf="t.dataPrevista" class="badge-proxima-dose">{{ t.dataPrevista | date:'dd/MM/yyyy' }}</span>
+            <span *ngIf="!t.dataPrevista" class="text-muted">—</span>
+          </div>
+          <div class="col">{{ t.observacoes || '—' }}</div>
+        </div>
+      </div>
+
+      <div class="list-footer" *ngIf="historicoTratamentos.length > 0">
+        Registros de tratamentos: <strong>{{ historicoTratamentos.length }}</strong>
+      </div>
+    </section>
 
 
 <!-- ===== CONSULTAS VETERINÁRIAS ===== -->
@@ -368,3 +459,5 @@
     </div>
   </div>
 </section>
+  </div>
+</div>

@@ -92,6 +92,13 @@
     text-align: center;
 }
 
+.field-error {
+    color: #e53e3e;
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+}
+
 .auth-footer {
     margin-top: 24px;
     text-align: center;
