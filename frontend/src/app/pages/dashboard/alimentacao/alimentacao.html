@@ -2,6 +2,9 @@
   <app-cabecalho-pagina
     titulo="Manejo Alimentar"
     subtitulo="Registre a alimentação fornecida em lote e acompanhe o histórico nutricional do rebanho.">
+    <button class="btn-primary" (click)="trocarAba('tipos')" *ngIf="abaAtiva === 'fornecimento'">
+      Gerenciar Alimentos
+    </button>
   </app-cabecalho-pagina>
 
   <app-alerta-mensagem *ngIf="mensagemSucesso" [mensagem]="mensagemSucesso" tipo="sucesso"></app-alerta-mensagem>
@@ -41,10 +44,7 @@
 
           <!-- Select do Tipo de Alimento -->
           <div class="form-group">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <label for="tipoAlimentoId">Tipo de Alimento *</label>
-              <button type="button" class="btn-link" (click)="trocarAba('tipos')">Gerenciar Tipos</button>
-            </div>
+            <label for="tipoAlimentoId">Tipo de Alimento *</label>
             <select id="tipoAlimentoId" formControlName="tipoAlimentoId" class="form-control" [class.campo-invalido]="campoInvalido('tipoAlimentoId')">
               <option value="" disabled selected>Selecione o alimento</option>
               <option *ngFor="let tipo of tiposAlimento" [value]="tipo.id">
