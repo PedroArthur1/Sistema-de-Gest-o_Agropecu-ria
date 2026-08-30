@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TipoAlimentoService } from '../../../services/alimentacao/tipo-alimento.service';
@@ -23,7 +23,8 @@ export class TipoAlimentoComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private tipoAlimentoService: TipoAlimentoService
+    private tipoAlimentoService: TipoAlimentoService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -37,8 +38,14 @@ export class TipoAlimentoComponent implements OnInit {
 
   carregarTipos(): void {
     this.tipoAlimentoService.listarTiposAlimento().subscribe({
-      next: (dados) => this.tiposAlimento = dados,
-      error: (err) => console.error('Erro ao carregar tipos de alimento', err)
+      next: (dados) => {
+        this.tiposAlimento = dados;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erro ao carregar tipos de alimento', err);
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -50,10 +57,12 @@ export class TipoAlimentoComponent implements OnInit {
           this.tiposAlimento.push(novoTipo);
           this.tipoAlimentoForm.reset();
           this.isSubmitting = false;
+          this.cdr.detectChanges();
         },
         error: (err) => {
           console.error('Erro ao salvar tipo de alimento', err);
           this.isSubmitting = false;
+          this.cdr.detectChanges();
         }
       });
     }
@@ -63,10 +72,12 @@ export class TipoAlimentoComponent implements OnInit {
     this.tipoAlimentoService.excluirTipoAlimento(id).subscribe({
       next: () => {
         this.tiposAlimento = this.tiposAlimento.filter(t => t.id !== id);
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Erro ao deletar tipo de alimento', err);
         alert('Não foi possível excluir. É provável que este alimento já esteja sendo usado no histórico.');
+        this.cdr.detectChanges();
       }
     });
   }

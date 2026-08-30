@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -45,7 +45,8 @@ export class AlimentacaoComponent implements OnInit {
     private fb: FormBuilder,
     private alimentacaoService: AlimentacaoService,
     private animalService: AnimalService,
-    private tipoAlimentoService: TipoAlimentoService
+    private tipoAlimentoService: TipoAlimentoService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -64,31 +65,45 @@ export class AlimentacaoComponent implements OnInit {
 
   carregarTiposAlimento(): void {
     this.tipoAlimentoService.listarTiposAlimento().subscribe({
-      next: (dados) => this.tiposAlimento = dados,
-      error: (err) => console.error('Erro ao carregar tipos de alimento', err)
+      next: (dados) => {
+        this.tiposAlimento = dados;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erro ao carregar tipos de alimento', err);
+        this.cdr.detectChanges();
+      }
     });
   }
 
   carregarAnimais(): void {
     this.animalService.listarAnimais().subscribe({
-      next: (dados: Animal[]) => this.animais = dados,
+      next: (dados: Animal[]) => {
+        this.animais = dados;
+        this.cdr.detectChanges();
+      },
       error: (err: any) => {
         console.error('Erro ao buscar lista de animais', err);
         if (err.status !== 401) {
           this.mensagemErro = 'Erro ao carregar a lista de animais.';
         }
+        this.cdr.detectChanges();
       }
     });
   }
 
   carregarHistorico(): void {
     this.alimentacaoService.listarTodas().subscribe({
-      next: (dados: Alimentacao[]) => this.historico = dados,
+      next: (dados: Alimentacao[]) => {
+        this.historico = dados;
+        this.cdr.detectChanges();
+      },
       error: (err: any) => {
         console.error('Erro ao carregar histórico geral', err);
         if (err.status !== 401) {
           this.mensagemErro = 'Erro ao carregar histórico de alimentação.';
         }
+        this.cdr.detectChanges();
       }
     });
   }
@@ -107,11 +122,16 @@ export class AlimentacaoComponent implements OnInit {
           this.alimentacaoForm.reset({ animalIds: [] });
           this.mensagemSucesso = 'Alimentação registrada no lote com sucesso!';
           this.isSubmitting = false;
-          setTimeout(() => this.mensagemSucesso = '', 3000);
+          this.cdr.detectChanges();
+          setTimeout(() => {
+            this.mensagemSucesso = '';
+            this.cdr.detectChanges();
+          }, 3000);
         },
         error: (err: any) => {
           console.error('Erro ao salvar alimentação', err);
           this.isSubmitting = false;
+          this.cdr.detectChanges();
         }
       });
     } else {
