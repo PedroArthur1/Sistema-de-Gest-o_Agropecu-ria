@@ -29,14 +29,19 @@ public class GrupoRebanhoService {
 
     @Transactional
     public GrupoRebanhoDTO criar(GrupoRebanhoDTO dto) {
+        if (dto == null || dto.nome() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O nome do lote é obrigatório.");
+        }
+        
         User proprietario = usuarioAutenticadoService.obterUsuario();
+        String nomeTrim = dto.nome().trim();
 
-        if (grupoRebanhoRepository.existsByNomeAndProprietario(dto.nome().trim(), proprietario)) {
+        if (grupoRebanhoRepository.existsByNomeAndProprietario(nomeTrim, proprietario)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Já existe um lote com este nome.");
         }
 
         GrupoRebanho grupo = new GrupoRebanho();
-        grupo.setNome(dto.nome().trim());
+        grupo.setNome(nomeTrim);
         grupo.setDescricao(dto.descricao() != null ? dto.descricao().trim() : null);
         grupo.setProprietario(proprietario);
 
@@ -65,15 +70,20 @@ public class GrupoRebanhoService {
 
     @Transactional
     public GrupoRebanhoDTO atualizar(Long id, GrupoRebanhoDTO dto) {
+        if (dto == null || dto.nome() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O nome do lote é obrigatório.");
+        }
+        
         GrupoRebanho grupo = buscarDoUsuario(id);
         User proprietario = usuarioAutenticadoService.obterUsuario();
+        String nomeTrim = dto.nome().trim();
 
-        if (!grupo.getNome().equalsIgnoreCase(dto.nome().trim()) &&
-                grupoRebanhoRepository.existsByNomeAndProprietario(dto.nome().trim(), proprietario)) {
+        if (!grupo.getNome().equalsIgnoreCase(nomeTrim) &&
+                grupoRebanhoRepository.existsByNomeAndProprietario(nomeTrim, proprietario)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Já existe outro lote com este nome.");
         }
 
-        grupo.setNome(dto.nome().trim());
+        grupo.setNome(nomeTrim);
         grupo.setDescricao(dto.descricao() != null ? dto.descricao().trim() : null);
 
         return toDTO(grupoRebanhoRepository.save(grupo));
