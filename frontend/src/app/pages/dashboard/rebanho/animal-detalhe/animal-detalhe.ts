@@ -13,8 +13,6 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from "@angula
 import { TratamentoService, Tratamento } from "../../../../services/tratamento/tratamento.service";
 import { ConsultaService } from "../../../../services/consulta/consulta.service";
 import { Consulta } from "../../../../models/consulta.model";
-import { CampoFormularioComponent } from '../../../../components/campo-formulario/campo-formulario.component';
-import { BotaoAcaoComponent } from '../../../../components/botao-acao/botao-acao.component';
 
 @Component({
   selector: "app-animal-detalhe",
@@ -24,10 +22,7 @@ import { BotaoAcaoComponent } from '../../../../components/botao-acao/botao-acao
     RouterLink,
     CabecalhoPaginaComponent,
     AlertaMensagemComponent,
-    ReactiveFormsModule,
-    CampoFormularioComponent,
-    BotaoAcaoComponent,
-    AlertaMensagemComponent
+    ReactiveFormsModule
   ],
   templateUrl: "./animal-detalhe.html",
   styleUrl: "./animal-detalhe.css"
@@ -41,6 +36,7 @@ export class AnimalDetalhe implements OnInit {
   tratamentoForm!: FormGroup;
   historicoTratamentos: Tratamento[] = [];
   mensagemSucessoTratamento: string = "";
+  mostrarFormTratamento: boolean = false;
 
   // Consultas Veterinárias
   consultaForm!: FormGroup;
@@ -90,14 +86,6 @@ export class AnimalDetalhe implements OnInit {
       observacoes: [""],
       tratamentoIds: [[]]
     });
-    const animalIdStr = this.route.snapshot.paramMap.get('id');
-    if (animalIdStr) {
-      const animalId = Number(animalIdStr);
-      this.tratamentoService.listarPorAnimal(animalId).subscribe({
-        next: (dados: any) => this.historicoTratamentos = dados,
-        error: (err: any) => console.error('Erro ao buscar histórico de tratamentos', err)
-      });
-    }
   }
 
   validarDataPrevista(group: FormGroup) {
@@ -157,14 +145,57 @@ export class AnimalDetalhe implements OnInit {
   }
 
   registrarNovoTratamento(): void {
-    if (this.animal && this.animal.id) {
-      this.animal.condicaoSaude = 'Em Tratamento';
-
-      this.animalService.atualizarAnimal(this.animal.id, this.animal).subscribe({
-        next: () => console.log('Touchdown! O banco confirmou o novo status do animal!'),
-        error: (err: any) => console.error('Fumble ao atualizar status no banco', err)
-      });
+    if (!this.animal || !this.animal.id) {
+      return;
     }
+
+    if (this.tratamentoForm.invalid) {
+      this.tratamentoForm.markAllAsTouched();
+      return;
+    }
+
+    const formValue = this.tratamentoForm.value;
+    const novoTratamento: Tratamento = {
+      animalId: this.animal.id,
+      medicamento: formValue.medicamento,
+      data: formValue.data,
+      motivo: formValue.motivo,
+      dosagem: formValue.dosagem || undefined,
+      observacoes: formValue.observacoes || undefined,
+      dataPrevista: formValue.dataPrevista || undefined
+    };
+
+    this.tratamentoService.registrarTratamento(novoTratamento).subscribe({
+      next: (salvo: Tratamento) => {
+        this.historicoTratamentos.unshift(salvo);
+        this.tratamentoForm.reset();
+        this.mostrarFormTratamento = false;
+        this.mensagemSucessoTratamento = "Tratamento registrado com sucesso!";
+
+        if (this.animal) {
+          this.animal.condicaoSaude = "Em Tratamento";
+          this.animalService.atualizarAnimal(this.animal.id!, this.animal).subscribe({
+            next: () => {},
+            error: (err: any) => console.error("Erro ao atualizar status do animal", err)
+          });
+        }
+
+        this.cdr.detectChanges();
+        setTimeout(() => {
+          this.mensagemSucessoTratamento = "";
+          this.cdr.detectChanges();
+        }, 4000);
+      },
+      error: (err: any) => {
+        console.error("Erro ao salvar tratamento:", err);
+        this.errorMessage = "Erro ao registrar tratamento. Verifique os dados e tente novamente.";
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  toggleFormTratamento(): void {
+    this.mostrarFormTratamento = !this.mostrarFormTratamento;
   }
 
   // === Consultas Veterinárias ===

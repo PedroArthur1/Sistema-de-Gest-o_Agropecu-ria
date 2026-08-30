@@ -26,6 +26,10 @@ public class AnimalService {
         validarCadastro(dto);
         User proprietario = usuarioAutenticadoService.obterUsuario();
 
+        if (animalRepository.existsByCodigoIdentificacaoAndProprietario(dto.codigoIdentificacao().trim(), proprietario)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Já existe um animal cadastrado com o código " + dto.codigoIdentificacao().trim());
+        }
+
         Animal animal = new Animal();
         animal.setCodigoIdentificacao(dto.codigoIdentificacao().trim());
         animal.setEspecie(dto.especie().trim());
