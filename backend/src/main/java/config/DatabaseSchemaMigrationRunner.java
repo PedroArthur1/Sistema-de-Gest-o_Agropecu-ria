@@ -27,10 +27,24 @@ public class DatabaseSchemaMigrationRunner implements ApplicationRunner {
             log.info("Executando verificações de compatibilidade de schema no banco de dados...");
 
             try {
+                stmt.execute("ALTER TABLE alimentacoes ADD COLUMN IF NOT EXISTS tipo_alimento_id BIGINT");
+                log.info("Migração schema: coluna 'tipo_alimento_id' garantida na tabela 'alimentacoes'.");
+            } catch (Exception e) {
+                log.warn("Aviso ao adicionar coluna 'tipo_alimento_id': {}", e.getMessage());
+            }
+
+            try {
                 stmt.execute("ALTER TABLE alimentacoes DROP COLUMN IF EXISTS tipo_alimento");
                 log.info("Migração schema: coluna obsoleta 'tipo_alimento' em 'alimentacoes' removida com sucesso (se existia).");
             } catch (Exception e) {
                 log.warn("Aviso ao remover coluna 'tipo_alimento': {}", e.getMessage());
+            }
+
+            try {
+                stmt.execute("ALTER TABLE animais ADD COLUMN IF NOT EXISTS grupo_id BIGINT");
+                log.info("Migração schema: coluna 'grupo_id' garantida na tabela 'animais'.");
+            } catch (Exception e) {
+                log.warn("Aviso ao adicionar coluna 'grupo_id': {}", e.getMessage());
             }
 
         } catch (Exception e) {
