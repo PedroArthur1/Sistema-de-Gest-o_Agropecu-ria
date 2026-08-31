@@ -119,7 +119,7 @@ export class AlimentacaoComponent implements OnInit {
       error: (err: any) => {
         console.error('Erro ao carregar histórico geral', err);
         if (err.status !== 401) {
-          this.mensagemErro = 'Erro ao carregar histórico de alimentação.';
+          this.mensagemErro = err.error?.error || err.error?.message || 'Erro ao carregar histórico de alimentação.';
         }
         this.cdr.detectChanges();
       }
@@ -170,7 +170,7 @@ export class AlimentacaoComponent implements OnInit {
         },
         error: (err: any) => {
           console.error('Erro ao salvar alimentação', err);
-          this.mensagemErro = err.error?.message || 'Erro ao registrar alimentação.';
+          this.mensagemErro = err.error?.error || err.error?.message || 'Erro ao registrar alimentação.';
           this.isSubmitting = false;
           this.cdr.detectChanges();
         }

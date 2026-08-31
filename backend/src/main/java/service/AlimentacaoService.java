@@ -42,7 +42,9 @@ public class AlimentacaoService {
                     .filter(a -> a.getProprietario().getId().equals(proprietario.getId()))
                     .collect(Collectors.toList());
         } else if (dto.animalIds() != null && !dto.animalIds().isEmpty()) {
-            animais = animalRepository.findAllById(dto.animalIds());
+            animais = animalRepository.findAllById(dto.animalIds()).stream()
+                    .filter(a -> a.getProprietario().getId().equals(proprietario.getId()))
+                    .collect(Collectors.toList());
         } else {
             throw new ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "Deve ser selecionado pelo menos um animal ou um lote.");
         }
@@ -87,15 +89,18 @@ public class AlimentacaoService {
 
     // Método auxiliar para converter Entidade -> DTO
     private AlimentacaoResponseDTO mapToDTO(Alimentacao a) {
-        // Transforma a lista de Entidades em uma lista de IDs (Long)
-        List<Long> ids = a.getAnimais().stream()
+        List<Long> ids = a.getAnimais() != null ? a.getAnimais().stream()
                 .map(Animal::getId)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()) : List.of();
+
+        TipoAlimentoDTO tipoDTO = a.getTipoAlimento() != null
+                ? new TipoAlimentoDTO(a.getTipoAlimento().getId(), a.getTipoAlimento().getNome(), a.getTipoAlimento().getDescricao())
+                : null;
 
         return new AlimentacaoResponseDTO(
                 a.getId(),
                 ids,
-                new TipoAlimentoDTO(a.getTipoAlimento().getId(), a.getTipoAlimento().getNome(), a.getTipoAlimento().getDescricao()),
+                tipoDTO,
                 a.getQuantidade(),
                 a.getData(),
                 a.getObservacoes()
