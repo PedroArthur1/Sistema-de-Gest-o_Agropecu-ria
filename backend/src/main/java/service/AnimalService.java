@@ -74,7 +74,7 @@ public class AnimalService {
         return animalRepository.findByIdAndProprietario(animalId, proprietario)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        "Animal não encontrado. A vacinação só pode ser registrada para um animal previamente cadastrado."
+                        "Animal não encontrado ou não pertence ao usuário autenticado."
                 ));
     }
 
