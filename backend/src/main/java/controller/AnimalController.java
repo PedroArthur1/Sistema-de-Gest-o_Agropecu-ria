@@ -17,6 +17,9 @@ public class AnimalController {
     @Autowired
     private AnimalService animalService;
 
+    @Autowired
+    private service.HistoricoSaudeService historicoSaudeService;
+
     @PostMapping
     public ResponseEntity<AnimalDTO> cadastrar(@RequestBody AnimalDTO animalDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(animalService.cadastrar(animalDTO));
@@ -30,6 +33,11 @@ public class AnimalController {
     @GetMapping("/{id}")
     public ResponseEntity<AnimalDTO> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(animalService.buscarDoUsuarioComoDTO(id));
+    }
+
+    @GetMapping("/{id}/historico-saude")
+    public ResponseEntity<dto.HistoricoSaudeResumoDTO> buscarHistoricoSaude(@PathVariable Long id) {
+        return ResponseEntity.ok(historicoSaudeService.buscarHistoricoConsolidado(id));
     }
 
     @PutMapping("/{id}")
