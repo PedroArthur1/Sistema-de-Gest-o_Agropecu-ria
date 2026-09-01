@@ -137,7 +137,6 @@
 .btn-icon.delete { color: #dc2626; }
 .btn-icon.delete:hover { background-color: #fee2e2; }
 
-/* Modal Styles */
 .modal-overlay {
   position: fixed;
   top: 0;

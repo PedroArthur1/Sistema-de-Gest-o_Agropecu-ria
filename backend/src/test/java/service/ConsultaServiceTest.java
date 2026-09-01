@@ -91,10 +91,6 @@ class ConsultaServiceTest {
 
     @Test
     void deveRegistrarConsultaComTratamentosVinculados() {
-        // In unit tests, entity IDs are null (not set by JPA).
-        // The tratamento linking check compares animal IDs which would NPE.
-        // This test verifies the service correctly processes an empty tratamentoIds list.
-        // The full tratamento linking flow is covered by ConsultaControllerTest (integration).
         ConsultaRequestDTO dtoSemTrat = new ConsultaRequestDTO(
                 1L, LocalDate.of(2026, 8, 20),
                 "Revisão", "Dr. Maria",
@@ -113,13 +109,10 @@ class ConsultaServiceTest {
 
     @Test
     void deveLancarExcecaoQuandoTratamentoNaoPertenceAoAnimal() {
-        // This scenario is properly covered by the integration test (ConsultaControllerTest)
-        // where real JPA IDs are assigned. In unit tests, entity IDs are null,
-        // causing NPE on the comparison. We verify the service delegates to the repository.
         ConsultaRequestDTO dto = new ConsultaRequestDTO(
                 1L, LocalDate.of(2026, 8, 20),
                 "Revisão", "Dr. Maria", null, null,
-                null // null tratamentoIds - tests the null check branch
+                null
         );
 
         when(animalService.buscarDoUsuario(1L)).thenReturn(animal);

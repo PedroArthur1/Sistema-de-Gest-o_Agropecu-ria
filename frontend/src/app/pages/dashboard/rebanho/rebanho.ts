@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AnimalService } from '../../../services/animal/animal.service';
+import { LembreteVacinacaoService } from '../../../services/vacinacao/lembrete-vacinacao.service';
 import { Animal } from '../../../models/animal.model';
 import { GruposRebanhoComponent } from './grupos-rebanho/grupos-rebanho';
 
@@ -21,9 +22,11 @@ export class Rebanho implements OnInit {
   
   abas = ['Todos os Animais', 'Vacinados', 'Em Tratamento', 'Mães', 'Filhotes'];
   abaAtiva = 'Todos os Animais';
+  animaisVacinadosIds = new Set<number>();
 
   constructor(
     private animalService: AnimalService,
+    private lembreteVacinacaoService: LembreteVacinacaoService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -43,10 +46,59 @@ export class Rebanho implements OnInit {
         this.cdr.detectChanges();
       }
     });
+
+    this.lembreteVacinacaoService.getLembretes().subscribe({
+      next: (lembretes) => {
+        const ids = new Set<number>();
+        (lembretes || []).forEach(l => {
+          if (l.animalId) ids.add(l.animalId);
+        });
+        this.animaisVacinadosIds = ids;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        // Falha no carregamento de lembretes não impede exibição do rebanho
+      }
+    });
   }
 
   limparPesquisa(): void {
     this.termoPesquisa = '';
+  }
+
+  isFilhote(animal: Animal): boolean {
+    const str = (animal.dataNascimentoOuIdade || '').trim().toLowerCase();
+    if (!str) return false;
+
+    // Se for data no formato ISO
+    if (!isNaN(Date.parse(str))) {
+      const nascimento = new Date(str);
+      const hoje = new Date();
+      const diffTime = hoje.getTime() - nascimento.getTime();
+      const diffAnos = diffTime / (1000 * 60 * 60 * 24 * 365.25);
+      return diffAnos >= 0 && diffAnos < 1;
+    }
+
+    // Se for texto descritivo
+    const termosFilhote = ['mês', 'mes', 'meses', 'dia', 'dias', 'filhote', 'bezerro', 'bezerra', 'leitão', 'leitao', 'potro', 'cordeiro', 'borrego', 'cabrito', 'jovem', '< 1 ano', '<1 ano'];
+    return termosFilhote.some(termo => str.includes(termo));
+  }
+
+  isMae(animal: Animal): boolean {
+    const sexo = (animal.sexo || '').trim().toUpperCase();
+    const isFemea = sexo === 'FEMEA' || sexo === 'FÊMEA';
+    return isFemea && !this.isFilhote(animal);
+  }
+
+  isVacinado(animal: Animal): boolean {
+    const condicao = (animal.condicaoSaude || '').toLowerCase();
+    if (condicao.includes('vacinad') || condicao.includes('imunizad')) {
+      return true;
+    }
+    if (animal.id && this.animaisVacinadosIds.has(animal.id)) {
+      return true;
+    }
+    return false;
   }
 
   get animaisFiltrados(): Animal[] {
@@ -56,7 +108,11 @@ export class Rebanho implements OnInit {
     if (this.abaAtiva === 'Em Tratamento') {
       lista = lista.filter(a => (a.condicaoSaude || '').toLowerCase() === 'em tratamento');
     } else if (this.abaAtiva === 'Mães') {
-      lista = lista.filter(a => (a.sexo || '').toUpperCase() === 'FEMEA');
+      lista = lista.filter(a => this.isMae(a));
+    } else if (this.abaAtiva === 'Filhotes') {
+      lista = lista.filter(a => this.isFilhote(a));
+    } else if (this.abaAtiva === 'Vacinados') {
+      lista = lista.filter(a => this.isVacinado(a));
     }
 
     const termo = this.termoPesquisa.trim().toLowerCase();
@@ -128,4 +184,3 @@ export class Rebanho implements OnInit {
     }
   }
 }
-

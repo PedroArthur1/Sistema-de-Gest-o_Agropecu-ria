@@ -23,8 +23,7 @@
 }
 
 .logo svg {
-  color: #a3e635; /* light green accent */
-}
+  color: #a3e635; }
 
 .logo h2 {
   margin: 0;
@@ -60,8 +59,7 @@
 }
 
 .nav-item.active {
-  background-color: rgba(163, 230, 53, 0.1); /* light green tint */
-  color: #a3e635;
+  background-color: rgba(163, 230, 53, 0.1);   color: #a3e635;
   border-left-color: #a3e635;
 }
 

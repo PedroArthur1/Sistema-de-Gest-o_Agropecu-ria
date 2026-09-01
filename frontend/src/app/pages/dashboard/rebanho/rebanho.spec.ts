@@ -40,6 +40,16 @@ describe('Rebanho', () => {
       dataNascimentoOuIdade: '2 anos',
       peso: 380,
       condicaoSaude: 'Em Observação'
+    },
+    {
+      id: 4,
+      codigoIdentificacao: 'BOV-004',
+      especie: 'Bovino',
+      raca: 'Nelore',
+      sexo: 'MACHO',
+      dataNascimentoOuIdade: '6 meses',
+      peso: 120,
+      condicaoSaude: 'Vacinado'
     }
   ];
 
@@ -79,6 +89,39 @@ describe('Rebanho', () => {
     expect(component.abaAtiva).toBe('Vacinados');
   });
 
+  it('deve filtrar animais na aba Em Tratamento', () => {
+    component.animais = animaisMock;
+    component.abaAtiva = 'Em Tratamento';
+    
+    expect(component.animaisFiltrados.length).toBe(1);
+    expect(component.animaisFiltrados[0].codigoIdentificacao).toBe('EQU-002');
+  });
+
+  it('deve filtrar animais na aba Mães', () => {
+    component.animais = animaisMock;
+    component.abaAtiva = 'Mães';
+    
+    expect(component.animaisFiltrados.length).toBe(2);
+    expect(component.animaisFiltrados.map(a => a.codigoIdentificacao)).toEqual(['EQU-002', 'BOV-003']);
+  });
+
+  it('deve filtrar animais na aba Filhotes', () => {
+    component.animais = animaisMock;
+    component.abaAtiva = 'Filhotes';
+    
+    expect(component.animaisFiltrados.length).toBe(1);
+    expect(component.animaisFiltrados[0].codigoIdentificacao).toBe('BOV-004');
+  });
+
+  it('deve filtrar animais na aba Vacinados', () => {
+    component.animais = animaisMock;
+    component.abaAtiva = 'Vacinados';
+    component.animaisVacinadosIds = new Set([1]); // BOV-001 has reminder/vaccine ID 1, BOV-004 has condicao 'Vacinado'
+    
+    expect(component.animaisFiltrados.length).toBe(2);
+    expect(component.animaisFiltrados.map(a => a.codigoIdentificacao)).toEqual(['BOV-001', 'BOV-004']);
+  });
+
   it('deve filtrar animais pelo código de identificação', () => {
     component.animais = animaisMock;
     component.termoPesquisa = 'BOV-001';
@@ -99,8 +142,8 @@ describe('Rebanho', () => {
     component.animais = animaisMock;
     component.termoPesquisa = 'MACHO';
     
-    expect(component.animaisFiltrados.length).toBe(1);
-    expect(component.animaisFiltrados[0].codigoIdentificacao).toBe('BOV-001');
+    expect(component.animaisFiltrados.length).toBe(2);
+    expect(component.animaisFiltrados.map(a => a.codigoIdentificacao)).toEqual(['BOV-001', 'BOV-004']);
 
     component.termoPesquisa = 'fêmea';
     expect(component.animaisFiltrados.length).toBe(2);
@@ -120,11 +163,11 @@ describe('Rebanho', () => {
   it('deve limpar a pesquisa corretamente', () => {
     component.animais = animaisMock;
     component.termoPesquisa = 'Nelore';
-    expect(component.animaisFiltrados.length).toBe(1);
+    expect(component.animaisFiltrados.length).toBe(2);
 
     component.limparPesquisa();
     expect(component.termoPesquisa).toBe('');
-    expect(component.animaisFiltrados.length).toBe(3);
+    expect(component.animaisFiltrados.length).toBe(4);
   });
 
   // --- Testes do Modal de Exclusão ---
@@ -146,4 +189,3 @@ describe('Rebanho', () => {
     expect(component.animalParaExclusao).toBeNull();
   });
 });
-

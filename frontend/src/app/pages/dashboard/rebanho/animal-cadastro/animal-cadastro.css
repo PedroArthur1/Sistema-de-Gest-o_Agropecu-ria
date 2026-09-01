@@ -5,7 +5,6 @@
   box-sizing: border-box;
 }
 
-/* Breadcrumbs */
 .breadcrumbs {
   display: flex;
   align-items: center;
@@ -39,7 +38,6 @@
   cursor: default;
 }
 
-/* Page Header */
 .page-header {
   margin-bottom: 24px;
 }
@@ -82,7 +80,6 @@
   font-size: 14px;
 }
 
-/* Card and Form */
 .cadastro-card {
   background-color: var(--surface-color);
   border-radius: 8px;

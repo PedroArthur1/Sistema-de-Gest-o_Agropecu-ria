@@ -54,8 +54,6 @@ class TokenServiceTest {
         String token1 = tokenService.generateToken(user);
         String token2 = tokenService.generateToken(user);
 
-        // Tokens should technically be the same if generated at the same instant,
-        // but we just verify they're valid
         assertNotNull(token1);
         assertNotNull(token2);
         assertEquals("distinto@fazenda.com", tokenService.validateToken(token1));
