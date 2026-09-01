@@ -91,6 +91,127 @@
       </div>
     </section>
 
+    <!-- ===== TIMELINE INTEGRADA DE SAÚDE (US14) ===== -->
+    <section class="list-container timeline-section">
+      <div class="section-header">
+        <div class="section-header-icon saude-timeline-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+          </svg>
+        </div>
+        <div style="flex: 1;">
+          <h3 class="timeline-title">Histórico de Saúde Integrado</h3>
+          <p class="timeline-subtitle">Visão cronológica unificada de consultas, vacinações e tratamentos médicos deste animal.</p>
+        </div>
+      </div>
+
+      <!-- Resumo de Indicadores de Saúde -->
+      <div class="timeline-stats" *ngIf="historicoSaude">
+        <div class="stat-card">
+          <span class="stat-num">{{ historicoSaude.totalEventos }}</span>
+          <span class="stat-lbl">Total de Eventos</span>
+        </div>
+        <div class="stat-card stat-vacina">
+          <span class="stat-num">{{ historicoSaude.totalVacinas }}</span>
+          <span class="stat-lbl">Vacinações</span>
+        </div>
+        <div class="stat-card stat-tratamento">
+          <span class="stat-num">{{ historicoSaude.totalTratamentos }}</span>
+          <span class="stat-lbl">Tratamentos</span>
+        </div>
+        <div class="stat-card stat-consulta">
+          <span class="stat-num">{{ historicoSaude.totalConsultas }}</span>
+          <span class="stat-lbl">Consultas</span>
+        </div>
+      </div>
+
+      <!-- Filtros da Timeline -->
+      <div class="timeline-filtros" *ngIf="historicoSaude && historicoSaude.totalEventos > 0">
+        <button type="button" class="btn-filtro" [class.ativo]="filtroSelecionado === 'TODOS'" (click)="aplicarFiltro('TODOS')">
+          Todos ({{ historicoSaude.totalEventos }})
+        </button>
+        <button type="button" class="btn-filtro filtro-vacina" [class.ativo]="filtroSelecionado === 'VACINACAO'" (click)="aplicarFiltro('VACINACAO')">
+          Vacinações ({{ historicoSaude.totalVacinas }})
+        </button>
+        <button type="button" class="btn-filtro filtro-tratamento" [class.ativo]="filtroSelecionado === 'TRATAMENTO'" (click)="aplicarFiltro('TRATAMENTO')">
+          Tratamentos ({{ historicoSaude.totalTratamentos }})
+        </button>
+        <button type="button" class="btn-filtro filtro-consulta" [class.ativo]="filtroSelecionado === 'CONSULTA'" (click)="aplicarFiltro('CONSULTA')">
+          Consultas ({{ historicoSaude.totalConsultas }})
+        </button>
+      </div>
+
+      <!-- Estado Vazio da Timeline -->
+      <div class="empty-state" *ngIf="!historicoSaude || historicoSaude.totalEventos === 0">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: #94a3b8; margin-bottom: 12px;">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+        </svg>
+        <h4>Nenhum registro de saúde</h4>
+        <p>Este animal ainda não possui vacinações, tratamentos ou consultas registradas no histórico.</p>
+      </div>
+
+      <!-- Lista / Linha do Tempo Cronológica -->
+      <div class="timeline-container" *ngIf="eventosFiltrados.length > 0">
+        <div class="timeline-item" *ngFor="let ev of eventosFiltrados" [attr.data-tipo]="ev.tipo">
+          <div class="timeline-marker"
+            [class.marker-vacina]="ev.tipo === 'VACINACAO'"
+            [class.marker-tratamento]="ev.tipo === 'TRATAMENTO'"
+            [class.marker-consulta]="ev.tipo === 'CONSULTA'">
+            <!-- Ícone Vacinação -->
+            <svg *ngIf="ev.tipo === 'VACINACAO'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m18 2 4 4"></path><path d="m17 7 3-3"></path><path d="M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-4-4c-1-1-1-2.5 0-3.4L11.6 1.6"></path><path d="m9 11 4 4"></path><path d="m5 19-3 3"></path><path d="m14 4 6 6"></path>
+            </svg>
+            <!-- Ícone Tratamento -->
+            <svg *ngIf="ev.tipo === 'TRATAMENTO'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"></path><path d="m8.5 8.5 7 7"></path>
+            </svg>
+            <!-- Ícone Consulta -->
+            <svg *ngIf="ev.tipo === 'CONSULTA'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+            </svg>
+          </div>
+
+          <div class="timeline-body">
+            <div class="timeline-body-header">
+              <div class="timeline-badges-row">
+                <span class="timeline-tipo-badge"
+                  [class.badge-vacina]="ev.tipo === 'VACINACAO'"
+                  [class.badge-tratamento]="ev.tipo === 'TRATAMENTO'"
+                  [class.badge-consulta]="ev.tipo === 'CONSULTA'">
+                  {{ ev.tipo === 'VACINACAO' ? 'Vacinação' : (ev.tipo === 'TRATAMENTO' ? 'Tratamento' : 'Consulta') }}
+                </span>
+                <span class="timeline-data-badge">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                  {{ ev.data | date:'dd/MM/yyyy' }}
+                </span>
+              </div>
+              <h4 class="timeline-event-title">{{ ev.titulo }}</h4>
+              <p class="timeline-event-sub" *ngIf="ev.subtitulo">{{ ev.subtitulo }}</p>
+            </div>
+
+            <div class="timeline-body-content" *ngIf="ev.descricao">
+              <p>{{ ev.descricao }}</p>
+            </div>
+
+            <div class="timeline-body-footer">
+              <span class="timeline-resp" *ngIf="ev.responsavel">
+                <strong>Responsável / Profissional:</strong> {{ ev.responsavel }}
+              </span>
+              <span class="timeline-proxima" *ngIf="ev.dataProxima">
+                <strong>Próxima data / dose prevista:</strong> {{ ev.dataProxima | date:'dd/MM/yyyy' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="list-footer" *ngIf="eventosFiltrados.length > 0">
+        Exibindo <strong>{{ eventosFiltrados.length }}</strong> de <strong>{{ historicoSaude?.totalEventos }}</strong> eventos de saúde registrados.
+      </div>
+    </section>
+
     <!-- Próximas Doses Previstas -->
     <section class="list-container proximas-doses-section">
       <div class="section-header">

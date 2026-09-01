@@ -171,6 +171,81 @@ class AnimalControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    void deveRetornarHistoricoSaudeConsolidadoComSucesso() throws Exception {
+        Long animalId = cadastrarAnimal(token);
+
+        // Registra vacinação
+        registrarVacinacao(animalId, token, """
+                {
+                  "nomeVacina": "Febre Aftosa",
+                  "dataAplicacao": "2026-01-10",
+                  "dose": "5 mL",
+                  "responsavel": "Dr. João",
+                  "dataProximaDose": "2026-07-10"
+                }
+                """);
+
+        // Registra tratamento
+        mockMvc.perform(post("/tratamentos")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                        {
+                          "animalId": %d,
+                          "medicamento": "Vermífugo",
+                          "data": "2026-02-15",
+                          "motivo": "Controle parasitário",
+                          "dosagem": "10 mL",
+                          "observacoes": "Via oral"
+                        }
+                        """.formatted(animalId)))
+                .andExpect(status().isCreated());
+
+        // Registra consulta
+        mockMvc.perform(post("/consultas")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                        {
+                          "animalId": %d,
+                          "dataConsulta": "2026-03-01",
+                          "motivo": "Revisão periódica",
+                          "profissionalResponsavel": "Dra. Maria",
+                          "diagnostico": "Saudável",
+                          "observacoes": "Tudo normal"
+                        }
+                        """.formatted(animalId)))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(get("/animais/{id}/historico-saude", animalId)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.animalId").value(animalId))
+                .andExpect(jsonPath("$.codigoAnimal").value("BOV-001"))
+                .andExpect(jsonPath("$.totalEventos").value(3))
+                .andExpect(jsonPath("$.totalVacinas").value(1))
+                .andExpect(jsonPath("$.totalTratamentos").value(1))
+                .andExpect(jsonPath("$.totalConsultas").value(1))
+                .andExpect(jsonPath("$.eventos.length()").value(3))
+                .andExpect(jsonPath("$.eventos[0].tipo").value("CONSULTA"))
+                .andExpect(jsonPath("$.eventos[1].tipo").value("TRATAMENTO"))
+                .andExpect(jsonPath("$.eventos[2].tipo").value("VACINACAO"));
+    }
+
+    @Test
+    void deveRetornar404HistoricoSaudeParaOutroAgricultor() throws Exception {
+        Long animalId = cadastrarAnimal(token);
+
+        String outroEmail = "outro-" + UUID.randomUUID() + "@fazenda.com";
+        cadastrarUsuario(outroEmail, senha);
+        String tokenOutro = autenticar(outroEmail, senha);
+
+        mockMvc.perform(get("/animais/{id}/historico-saude", animalId)
+                        .header("Authorization", "Bearer " + tokenOutro))
+                .andExpect(status().isNotFound());
+    }
+
     // ---- Métodos auxiliares ----
 
     private void cadastrarUsuario(String emailUsuario, String senhaUsuario) throws Exception {

@@ -8,8 +8,10 @@ import { AnimalService } from '../../../../services/animal/animal.service';
 import { VacinacaoService } from '../../../../services/vacinacao/vacinacao.service';
 import { TratamentoService, Tratamento } from '../../../../services/tratamento/tratamento.service';
 import { ConsultaService } from '../../../../services/consulta/consulta.service';
+import { HistoricoSaudeService } from '../../../../services/historico-saude/historico-saude.service';
 import { Animal } from '../../../../models/animal.model';
 import { Vacinacao } from '../../../../models/vacinacao.model';
+import { HistoricoSaudeResumo } from '../../../../models/historico-saude.model';
 
 describe('AnimalDetalhe', () => {
   let component: AnimalDetalhe;
@@ -28,6 +30,10 @@ describe('AnimalDetalhe', () => {
   };
   let consultaService: {
     listarPorAnimal: ReturnType<typeof vi.fn>;
+    registrar: ReturnType<typeof vi.fn>;
+  };
+  let historicoSaudeService: {
+    buscarHistoricoConsolidado: ReturnType<typeof vi.fn>;
   };
 
   const animalMock: Animal = {
@@ -79,6 +85,33 @@ describe('AnimalDetalhe', () => {
     }
   ];
 
+  const historicoSaudeMock: HistoricoSaudeResumo = {
+    animalId: 1,
+    codigoAnimal: 'BOV-001',
+    totalEventos: 2,
+    totalVacinas: 1,
+    totalTratamentos: 1,
+    totalConsultas: 0,
+    eventos: [
+      {
+        idOrigem: 1,
+        tipo: 'TRATAMENTO',
+        data: '2026-08-15',
+        titulo: 'Ivermectina',
+        subtitulo: 'Motivo: Parasitas intestinais',
+        descricao: 'Dosagem: 10 mL'
+      },
+      {
+        idOrigem: 1,
+        tipo: 'VACINACAO',
+        data: '2026-08-12',
+        titulo: 'Febre Aftosa',
+        subtitulo: 'Dose: 5 mL',
+        responsavel: 'Dr. João Veterinário'
+      }
+    ]
+  };
+
   beforeEach(async () => {
     animalService = {
       buscarAnimalPorId: vi.fn().mockReturnValue(of(animalMock)),
@@ -93,7 +126,11 @@ describe('AnimalDetalhe', () => {
       registrarTratamento: vi.fn()
     };
     consultaService = {
-      listarPorAnimal: vi.fn().mockReturnValue(of([]))
+      listarPorAnimal: vi.fn().mockReturnValue(of([])),
+      registrar: vi.fn()
+    };
+    historicoSaudeService = {
+      buscarHistoricoConsolidado: vi.fn().mockReturnValue(of(historicoSaudeMock))
     };
 
     await TestBed.configureTestingModule({
@@ -103,6 +140,7 @@ describe('AnimalDetalhe', () => {
         { provide: VacinacaoService, useValue: vacinacaoService },
         { provide: TratamentoService, useValue: tratamentoService },
         { provide: ConsultaService, useValue: consultaService },
+        { provide: HistoricoSaudeService, useValue: historicoSaudeService },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -239,5 +277,67 @@ describe('AnimalDetalhe', () => {
     expect(component.mostrarFormTratamento).toBe(false);
     expect(animalService.atualizarAnimal).toHaveBeenCalled();
     expect(component.animal?.condicaoSaude).toBe('Em Tratamento');
+  });
+
+  it('deve carregar o histórico consolidado de saúde na timeline', () => {
+    expect(historicoSaudeService.buscarHistoricoConsolidado).toHaveBeenCalledWith(1);
+    expect(component.historicoSaude).toEqual(historicoSaudeMock);
+    expect(component.eventosFiltrados.length).toBe(2);
+  });
+
+  it('deve filtrar eventos da timeline por tipo corretamente', () => {
+    // Filtrar por VACINACAO
+    component.aplicarFiltro('VACINACAO');
+    expect(component.filtroSelecionado).toBe('VACINACAO');
+    expect(component.eventosFiltrados.length).toBe(1);
+    expect(component.eventosFiltrados[0].tipo).toBe('VACINACAO');
+
+    // Filtrar por TRATAMENTO
+    component.aplicarFiltro('TRATAMENTO');
+    expect(component.filtroSelecionado).toBe('TRATAMENTO');
+    expect(component.eventosFiltrados.length).toBe(1);
+    expect(component.eventosFiltrados[0].tipo).toBe('TRATAMENTO');
+
+    // Filtrar por CONSULTA (nenhuma no mock)
+    component.aplicarFiltro('CONSULTA');
+    expect(component.filtroSelecionado).toBe('CONSULTA');
+    expect(component.eventosFiltrados.length).toBe(0);
+
+    // Voltar para TODOS
+    component.aplicarFiltro('TODOS');
+    expect(component.filtroSelecionado).toBe('TODOS');
+    expect(component.eventosFiltrados.length).toBe(2);
+  });
+
+  it('deve registrar uma nova consulta e recarregar histórico de saúde', () => {
+    const novaConsultaMock = {
+      id: 5,
+      animalId: 1,
+      dataConsulta: '2026-08-28',
+      motivo: 'Exame clínico geral',
+      profissionalResponsavel: 'Dr. Roberto',
+      diagnostico: 'Apto',
+      observacoes: 'Tudo ok'
+    };
+
+    consultaService.registrar.mockReturnValue(of(novaConsultaMock));
+
+    component.consultaForm.setValue({
+      dataConsulta: '2026-08-28',
+      motivo: 'Exame clínico geral',
+      profissionalResponsavel: 'Dr. Roberto',
+      diagnostico: 'Apto',
+      observacoes: 'Tudo ok',
+      tratamentoIds: []
+    });
+
+    component.mostrarFormConsulta = true;
+    component.registrarNovaConsulta();
+
+    expect(consultaService.registrar).toHaveBeenCalled();
+    expect(component.historicoConsultas[0]).toEqual(novaConsultaMock);
+    expect(component.mensagemSucessoConsulta).toBe('Consulta registrada com sucesso!');
+    expect(component.mostrarFormConsulta).toBe(false);
+    expect(historicoSaudeService.buscarHistoricoConsolidado).toHaveBeenCalledWith(1);
   });
 });
