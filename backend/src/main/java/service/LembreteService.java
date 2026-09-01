@@ -84,7 +84,6 @@ public class LembreteService {
             }
         }
 
-        // Sort: Atrasada first, then by date ascending
         lembretes.sort((a, b) -> {
             if ("Atrasada".equals(a.status()) && !"Atrasada".equals(b.status())) return -1;
             if (!"Atrasada".equals(a.status()) && "Atrasada".equals(b.status())) return 1;

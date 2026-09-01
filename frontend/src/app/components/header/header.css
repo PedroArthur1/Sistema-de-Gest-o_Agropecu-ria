@@ -69,9 +69,7 @@
 }
 
 .role-badge {
-  background-color: #f0fdf4; /* light green background */
-  color: #166534; /* dark green text */
-  padding: 6px 12px;
+  background-color: #f0fdf4;   color: #166534;   padding: 6px 12px;
   border-radius: 20px;
   font-size: 13px;
   font-weight: 600;
@@ -94,8 +92,7 @@
 }
 
 .btn-logout:hover {
-  background-color: #fef2f2; /* light red hover */
-  color: #ef4444;
+  background-color: #fef2f2;   color: #ef4444;
   border-color: #fecaca;
 }
 

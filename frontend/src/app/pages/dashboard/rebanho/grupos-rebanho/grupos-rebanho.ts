@@ -14,7 +14,6 @@ import { GrupoRebanho } from '../../../../models/grupo-rebanho.model';
 export class GruposRebanhoComponent implements OnInit {
   grupos: GrupoRebanho[] = [];
   
-  // Modal State
   exibirModal: boolean = false;
   isEditando: boolean = false;
   

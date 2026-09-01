@@ -230,8 +230,7 @@
   font-size: 15px;
   cursor: pointer;
   transition: all 0.2s ease;
-  margin-bottom: -2px; /* Pull down to overlap the border */
-}
+  margin-bottom: -2px; }
 
 .tab-btn:hover {
   color: #16a34a;

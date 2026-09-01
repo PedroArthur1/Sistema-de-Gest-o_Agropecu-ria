@@ -132,7 +132,6 @@
   color: var(--text-secondary);
 }
 
-/* Empty State */
 .empty-state {
   padding: 48px 24px;
   text-align: center;
@@ -149,7 +148,6 @@
   font-size: 14px;
 }
 
-/* Delete Button */
 .btn-icon {
   background: none;
   border: none;

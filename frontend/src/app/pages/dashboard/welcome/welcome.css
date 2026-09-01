@@ -17,7 +17,6 @@
   margin: 0 0 32px 0;
 }
 
-/* ===== Hero Card ===== */
 
 .hero-card {
   background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
@@ -54,7 +53,6 @@
   max-width: 600px;
 }
 
-/* ===== Section Titles ===== */
 
 .section-title {
   font-size: 20px;
@@ -67,7 +65,6 @@
   margin-top: 40px;
 }
 
-/* ===== KPI Grid ===== */
 
 .kpi-grid {
   display: grid;
@@ -93,7 +90,6 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-/* ===== KPI Icons ===== */
 
 .kpi-icon {
   width: 56px;
@@ -126,7 +122,6 @@
   color: #7c3aed;
 }
 
-/* ===== KPI Content ===== */
 
 .kpi-content {
   display: flex;
@@ -157,7 +152,6 @@
   margin-top: 2px;
 }
 
-/* ===== Chart Grid ===== */
 
 .chart-grid {
   display: grid;
@@ -200,7 +194,6 @@
   gap: 14px;
 }
 
-/* ===== Bar Chart Rows ===== */
 
 .bar-row {
   display: grid;
@@ -260,7 +253,6 @@
   color: #94a3b8;
 }
 
-/* ===== Empty State ===== */
 
 .empty-state {
   display: flex;
@@ -296,7 +288,6 @@
   line-height: 1.5;
 }
 
-/* ===== Animations ===== */
 
 @keyframes barGrow {
   from {
@@ -321,7 +312,6 @@
   animation-delay: calc(var(--delay, 0) * 0.08s + 0.1s);
 }
 
-/* ===== Responsive ===== */
 
 @media (max-width: 1024px) {
   .kpi-grid {
