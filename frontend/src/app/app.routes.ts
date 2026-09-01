@@ -10,6 +10,7 @@ import { AnimalEdicao } from './pages/dashboard/rebanho/animal-edicao/animal-edi
 import { VacinacaoPage } from './pages/dashboard/vacinacao/vacinacao';
 import { authGuard } from './guards/auth-guard';
 import { AlimentacaoComponent } from './pages/dashboard/alimentacao/alimentacao';
+
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
     { path: 'login', component: LoginComponent },
@@ -20,13 +21,13 @@ export const routes: Routes = [
         canActivate: [authGuard],
         children: [
             { path: '', component: Welcome },
+            { path: 'welcome', redirectTo: '', pathMatch: 'full' },
             { path: 'rebanho', component: Rebanho },
             { path: 'rebanho/novo', component: AnimalCadastro },
             { path: 'rebanho/:id', component: AnimalDetalhe },
             { path: 'rebanho/:id/editar', component: AnimalEdicao },
             { path: 'vacinacao', component: VacinacaoPage },
             { path: 'alimentacao', component: AlimentacaoComponent },
-            { path: '', redirectTo: 'welcome', pathMatch: 'full' },
             { path: 'configuracoes', component: Welcome }
         ]
     },
