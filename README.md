@@ -9,7 +9,7 @@
 * **Pedro Arthur** - [GitHub](https://github.com/PedroArthur1)
 * **Thiago Mauricio** - [GitHub](https://github.com/teagomorrice)
 * **Miguel Antônio** - [GitHub](https://github.com/miguel-an34)
-* **Misael Marques** - - [GitHub](https://github.com/misaelmarques)
+* **Misael Marques** - [GitHub](https://github.com/misaelmarques)
 
 ---
 
@@ -74,6 +74,7 @@ O arquivo [`render.yaml`](render.yaml) na raiz do repositório descreve backend,
 ## 🚀 Como Executar o Projeto
 
 ### Pré-requisitos
+* **Docker** e **Docker Compose**
 * **Node.js** (versão LTS recomendada)
 * **Angular CLI** (`npm install -g @angular/cli`)
 * **Java JDK** (versão 17 ou superior)
@@ -81,8 +82,69 @@ O arquivo [`render.yaml`](render.yaml) na raiz do repositório descreve backend,
 
 ---
 
-### 1. Executando o Frontend (Angular)
+### 1. Executando com Docker (Local)
 
+#### Subindo o Banco de Dados (PostgreSQL)
+Na raiz do projeto, execute:
+```bash
+docker compose up -d
+```
+> O PostgreSQL será iniciado na porta **5433** (mapeada para a porta 5432 interna do contêiner).
+
+#### Executando o Backend via Docker
+```bash
+# Entre na pasta do backend
+cd backend
+
+# Construa a imagem
+docker build -t agrogestao-backend .
+
+# Execute o contêiner conectando ao PostgreSQL do Docker Compose
+docker run -d -p 8080:8080 \
+  --name agrogestao-backend \
+  -e SPRING_PROFILES_ACTIVE=prod \
+  -e DB_HOST=host.docker.internal \
+  -e DB_PORT=5433 \
+  -e DB_NAME=agrogestao \
+  -e DB_USER=agrogestao \
+  -e DB_PASS=senha123 \
+  -e JWT_SECRET=chave-secreta-local \
+  -e FRONTEND_URL=http://localhost:4200 \
+  agrogestao-backend
+```
+A API estará acessível em `http://localhost:8080`.
+
+#### Executando o Frontend via Docker
+```bash
+# Entre na pasta do frontend
+cd frontend
+
+# Construa a imagem
+docker build -t agrogestao-frontend --build-arg API_URL=http://localhost:8080 .
+
+# Execute o contêiner
+docker run -d -p 80:80 --name agrogestao-frontend agrogestao-frontend
+```
+Acesse em: `http://localhost:80` (ou `http://localhost`).
+
+---
+
+### 2. Executando Localmente (Sem Docker)
+
+#### Backend (Spring Boot)
+```bash
+# Entre na pasta do backend
+cd backend
+
+# Execute a aplicação (utiliza banco H2 em memória por padrão)
+./mvnw spring-boot:run
+
+# No Windows:
+.\mvnw.cmd spring-boot:run
+```
+A API estará acessível em `http://localhost:8080`.
+
+#### Frontend (Angular)
 ```bash
 # Entre na pasta do frontend
 cd frontend
@@ -92,3 +154,5 @@ npm install
 
 # Inicie o servidor de desenvolvimento
 ng serve
+```
+Acesse em: `http://localhost:4200`.
