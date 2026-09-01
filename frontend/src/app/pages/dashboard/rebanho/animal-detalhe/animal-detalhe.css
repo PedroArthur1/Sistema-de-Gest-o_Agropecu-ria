@@ -736,3 +736,301 @@
     margin-bottom: 2px;
   }
 }
+
+/* ==========================================================================
+   TIMELINE INTEGRADA DE SAÚDE (US14)
+   ========================================================================== */
+
+.saude-timeline-icon {
+  background-color: #ecfdf5;
+  color: #059669;
+}
+
+.timeline-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.timeline-subtitle {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* Stats Cards */
+.timeline-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  padding: 20px 24px 8px;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background-color: #f8fafc;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.stat-num {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.stat-lbl {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+}
+
+.stat-vacina .stat-num { color: #0284c7; }
+.stat-tratamento .stat-num { color: #059669; }
+.stat-consulta .stat-num { color: #7c3aed; }
+
+/* Filtros */
+.timeline-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.btn-filtro {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  background-color: #ffffff;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-filtro:hover {
+  background-color: #f1f5f9;
+  color: var(--text-primary);
+}
+
+.btn-filtro.ativo {
+  background-color: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.2);
+}
+
+.btn-filtro.filtro-vacina.ativo {
+  background-color: #0284c7;
+  border-color: #0284c7;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
+}
+
+.btn-filtro.filtro-tratamento.ativo {
+  background-color: #059669;
+  border-color: #059669;
+  box-shadow: 0 2px 6px rgba(5, 150, 105, 0.25);
+}
+
+.btn-filtro.filtro-consulta.ativo {
+  background-color: #7c3aed;
+  border-color: #7c3aed;
+  box-shadow: 0 2px 6px rgba(124, 58, 237, 0.25);
+}
+
+/* Container da Timeline */
+.timeline-container {
+  position: relative;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.timeline-container::before {
+  content: '';
+  position: absolute;
+  top: 32px;
+  bottom: 32px;
+  left: 44px;
+  width: 2px;
+  background-color: #e2e8f0;
+}
+
+.timeline-item {
+  position: relative;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.timeline-marker {
+  position: relative;
+  z-index: 2;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 4px #ffffff, 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.marker-vacina {
+  background: linear-gradient(135deg, #38bdf8, #0284c7);
+  color: #ffffff;
+}
+
+.marker-tratamento {
+  background: linear-gradient(135deg, #34d399, #059669);
+  color: #ffffff;
+}
+
+.marker-consulta {
+  background: linear-gradient(135deg, #a78bfa, #7c3aed);
+  color: #ffffff;
+}
+
+.timeline-body {
+  flex: 1;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.timeline-body:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.timeline-body-header {
+  margin-bottom: 8px;
+}
+
+.timeline-badges-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.timeline-tipo-badge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.badge-vacina {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.badge-tratamento {
+  background-color: #d1fae5;
+  color: #047857;
+}
+
+.badge-consulta {
+  background-color: #ede9fe;
+  color: #6d28d9;
+}
+
+.timeline-data-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.timeline-event-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.timeline-event-sub {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.timeline-body-content {
+  margin: 8px 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #334155;
+  background-color: #f8fafc;
+  padding: 10px 14px;
+  border-radius: 6px;
+  border-left: 3px solid #cbd5e1;
+}
+
+.timeline-body-content p {
+  margin: 0;
+}
+
+.timeline-body-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #f1f5f9;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.timeline-resp strong, .timeline-proxima strong {
+  color: #475569;
+}
+
+.timeline-proxima {
+  color: #0284c7;
+}
+
+@media (max-width: 640px) {
+  .timeline-container::before {
+    left: 20px;
+  }
+
+  .timeline-marker {
+    width: 32px;
+    height: 32px;
+  }
+
+  .timeline-item {
+    gap: 12px;
+  }
+
+  .timeline-body {
+    padding: 12px 14px;
+  }
+}
+

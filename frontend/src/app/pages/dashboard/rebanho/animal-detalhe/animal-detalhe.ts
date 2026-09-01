@@ -13,6 +13,8 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from "@angula
 import { TratamentoService, Tratamento } from "../../../../services/tratamento/tratamento.service";
 import { ConsultaService } from "../../../../services/consulta/consulta.service";
 import { Consulta } from "../../../../models/consulta.model";
+import { HistoricoSaudeService } from "../../../../services/historico-saude/historico-saude.service";
+import { EventoSaude, HistoricoSaudeResumo } from "../../../../models/historico-saude.model";
 
 @Component({
   selector: "app-animal-detalhe",
@@ -38,6 +40,11 @@ export class AnimalDetalhe implements OnInit {
   mensagemSucessoTratamento: string = "";
   mostrarFormTratamento: boolean = false;
 
+  // Timeline / Histórico Consolidado de Saúde (US14)
+  historicoSaude: HistoricoSaudeResumo | null = null;
+  eventosFiltrados: EventoSaude[] = [];
+  filtroSelecionado: 'TODOS' | 'VACINACAO' | 'TRATAMENTO' | 'CONSULTA' = 'TODOS';
+
   // Consultas Veterinárias
   consultaForm!: FormGroup;
   historicoConsultas: Consulta[] = [];
@@ -52,6 +59,7 @@ export class AnimalDetalhe implements OnInit {
     private fb: FormBuilder,
     private tratamentoService: TratamentoService,
     private consultaService: ConsultaService,
+    private historicoSaudeService: HistoricoSaudeService,
   ) {
   }
 
@@ -113,20 +121,25 @@ export class AnimalDetalhe implements OnInit {
     this.animal = null;
     this.historico = [];
     this.proximasDoses = [];
+    this.historicoSaude = null;
+    this.eventosFiltrados = [];
 
     forkJoin({
       animal: this.animalService.buscarAnimalPorId(animalId),
       historico: this.vacinacaoService.listarHistorico(animalId).pipe(catchError(() => of([]))),
       proximas: this.vacinacaoService.listarProximasDoses(animalId).pipe(catchError(() => of([]))),
       tratamentos: this.tratamentoService.listarPorAnimal(animalId).pipe(catchError(() => of([]))),
-      consultas: this.consultaService.listarPorAnimal(animalId).pipe(catchError(() => of([])))
+      consultas: this.consultaService.listarPorAnimal(animalId).pipe(catchError(() => of([]))),
+      historicoSaude: this.historicoSaudeService.buscarHistoricoConsolidado(animalId).pipe(catchError(() => of(null)))
     }).subscribe({
-      next: ({ animal, historico, proximas, tratamentos, consultas }) => {
+      next: ({ animal, historico, proximas, tratamentos, consultas, historicoSaude }) => {
         this.animal = animal;
         this.historico = historico ?? [];
         this.proximasDoses = proximas ?? [];
         this.historicoTratamentos = tratamentos ?? [];
         this.historicoConsultas = consultas ?? [];
+        this.historicoSaude = historicoSaude;
+        this.aplicarFiltro(this.filtroSelecionado);
         this.carregando = false;
         this.cdr.detectChanges();
       },
@@ -144,6 +157,33 @@ export class AnimalDetalhe implements OnInit {
     });
   }
 
+  aplicarFiltro(filtro: 'TODOS' | 'VACINACAO' | 'TRATAMENTO' | 'CONSULTA'): void {
+    this.filtroSelecionado = filtro;
+    if (!this.historicoSaude || !this.historicoSaude.eventos) {
+      this.eventosFiltrados = [];
+      return;
+    }
+
+    if (filtro === 'TODOS') {
+      this.eventosFiltrados = [...this.historicoSaude.eventos];
+    } else {
+      this.eventosFiltrados = this.historicoSaude.eventos.filter(e => e.tipo === filtro);
+    }
+  }
+
+  carregarHistoricoSaude(animalId: number): void {
+    this.historicoSaudeService.buscarHistoricoConsolidado(animalId).subscribe({
+      next: (resumo) => {
+        this.historicoSaude = resumo;
+        this.aplicarFiltro(this.filtroSelecionado);
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error("Erro ao atualizar histórico de saúde:", err);
+      }
+    });
+  }
+
   registrarNovoTratamento(): void {
     if (!this.animal || !this.animal.id) {
       return;
@@ -155,8 +195,9 @@ export class AnimalDetalhe implements OnInit {
     }
 
     const formValue = this.tratamentoForm.value;
+    const animalId = this.animal.id;
     const novoTratamento: Tratamento = {
-      animalId: this.animal.id,
+      animalId: animalId,
       medicamento: formValue.medicamento,
       data: formValue.data,
       motivo: formValue.motivo,
@@ -174,12 +215,13 @@ export class AnimalDetalhe implements OnInit {
 
         if (this.animal) {
           this.animal.condicaoSaude = "Em Tratamento";
-          this.animalService.atualizarAnimal(this.animal.id!, this.animal).subscribe({
+          this.animalService.atualizarAnimal(animalId, this.animal).subscribe({
             next: () => {},
             error: (err: any) => console.error("Erro ao atualizar status do animal", err)
           });
         }
 
+        this.carregarHistoricoSaude(animalId);
         this.cdr.detectChanges();
         setTimeout(() => {
           this.mensagemSucessoTratamento = "";
@@ -201,8 +243,8 @@ export class AnimalDetalhe implements OnInit {
   // === Consultas Veterinárias ===
 
   registrarNovaConsulta(): void {
-    if (this.consultaForm.valid) {
-      const id = Number(this.route.snapshot.paramMap.get("id"));
+    if (this.consultaForm.valid && this.animal && this.animal.id) {
+      const id = this.animal.id;
       const formValue = this.consultaForm.value;
       const nova: Consulta = {
         animalId: id,
@@ -220,7 +262,12 @@ export class AnimalDetalhe implements OnInit {
           this.consultaForm.reset({ tratamentoIds: [] });
           this.mostrarFormConsulta = false;
           this.mensagemSucessoConsulta = "Consulta registrada com sucesso!";
-          setTimeout(() => this.mensagemSucessoConsulta = "", 4000);
+          this.carregarHistoricoSaude(id);
+          this.cdr.detectChanges();
+          setTimeout(() => {
+            this.mensagemSucessoConsulta = "";
+            this.cdr.detectChanges();
+          }, 4000);
         },
         error: (err: any) => {
           console.error("Erro ao registrar consulta:", err);
